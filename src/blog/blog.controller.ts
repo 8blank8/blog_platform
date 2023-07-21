@@ -1,8 +1,10 @@
-import { Body, Controller, Get, Param, Post, Put } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Res } from "@nestjs/common";
+import { Response } from "express";
 import { BlogCreateType } from "./types/blog.create.type";
 import { BlogService } from "./blog.service";
 import { BlogQueryRepository } from "./blog.query.repository";
 import { BlogUpdateType } from "./types/blog.update.type";
+import { BlogQueryParamType } from "./types/blog.query.param.type";
 
 
 
@@ -14,26 +16,47 @@ export class BlogController {
     ) { }
 
     @Get()
-    getBlogs() {
-        return this.blogQueryRepository.findAllBlogs()
+    async getBlogs(@Query() queryParam: BlogQueryParamType) {
+        return this.blogQueryRepository.findAllBlogs(queryParam)
     }
 
     @Get('/:id')
-    getBlog(@Param('id') id: string) {
-        return this.blogQueryRepository.findBlogById(id)
+    async getBlog(
+        @Param('id') id: string,
+        @Res() res: Response
+    ) {
+        const blog = await this.blogQueryRepository.findBlogById(id)
+        if (!blog) return res.sendStatus(404)
+
+        return res.send(blog)
     }
 
     @Post()
-    createBlog(@Body() blog: BlogCreateType) {
+    async createBlog(@Body() blog: BlogCreateType) {
         return this.blogService.createBlog(blog)
     }
 
-    @Put()
-    updateBlog(
+    @Put('/:id')
+    async updateBlog(
         @Param('id') id: string,
-        @Body() updateData: BlogUpdateType
+        @Body() updateData: BlogUpdateType,
+        @Res() res: Response
     ) {
-        return this.blogService.updateBlog(updateData)
+        const isUpdate = await this.blogService.updateBlog(updateData, id)
+        if (!isUpdate) return res.sendStatus(404)
+
+        return res.sendStatus(204)
+    }
+
+    @Delete('/:id')
+    async deleteBlog(
+        @Param('id') id: string,
+        @Res() res: Response
+    ) {
+        const isDelete = await this.blogService.deleteBlog(id)
+        if (!isDelete) return res.sendStatus(404)
+
+        return res.sendStatus(204)
     }
 
 }

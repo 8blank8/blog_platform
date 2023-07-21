@@ -52,8 +52,6 @@ export class Blog {
     }
 }
 
-export type BlogDocument = HydratedDocument<Blog>
-
 export const BlogSchema = SchemaFactory.createForClass(Blog)
 
 BlogSchema.methods = {
@@ -62,10 +60,4 @@ BlogSchema.methods = {
     updateBlog: Blog.prototype.updateBlog
 }
 
-
-// "id": "string",
-//       "name": "string",
-//       "description": "string",
-//       "websiteUrl": "string",
-//       "createdAt": "2023-07-20T06:45:54.097Z",
-//       "isMembership": true
+export type BlogDocument = HydratedDocument<Blog>

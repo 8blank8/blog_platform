@@ -10,12 +10,15 @@ export class BlogRepository {
     constructor(@InjectModel(Blog.name) private blogModel: Model<BlogDocument>) { }
 
     async createBlog(blog: BlogCreateType) {
-        const createBlog = new this.blogModel(blog)
-        createBlog.addId()
-        createBlog.addCreatedAt()
-        createBlog.save()
-        return createBlog.id
+        return new this.blogModel(blog)
     }
 
+    async save(blog: BlogDocument) {
+        return await blog.save()
+    }
 
+    async deleteBlog(id: string) {
+        const res = await this.blogModel.deleteOne({ id: id })
+        return res.deletedCount === 1
+    }
 }
