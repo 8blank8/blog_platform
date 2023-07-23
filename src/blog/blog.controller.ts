@@ -39,7 +39,8 @@ export class BlogController {
 
     @Post()
     async createBlog(@Body() blog: BlogCreateType) {
-        return this.blogService.createBlog(blog)
+        const blogId: string = await this.blogService.createBlog(blog)
+        return this.blogQueryRepository.findBlogById(blogId)
     }
 
     @Put('/:id')

@@ -32,7 +32,7 @@ export class Blog {
     createdAt: string
 
     @Prop({
-        default: true
+        default: false
     })
     isMembership: boolean
 

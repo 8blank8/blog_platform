@@ -46,10 +46,16 @@ export class BlogQueryRepository {
         }
     }
 
-    async findBlogById(id: string): Promise<BlogDocument | null> {
+    async findBlogDocumentById(id: string): Promise<BlogDocument | null> {
         const blog = await this.blogModel.findOne({ id: id })
         if (!blog) return null
         return blog
+    }
+
+    async findBlogById(id: string): Promise<BlogViewType | null> {
+        const blog = await this.blogModel.findOne({ id: id })
+        if (!blog) return null
+        return this._mapBlog(blog)
     }
 
     _mapBlog(blog: BlogDBType): BlogViewType {

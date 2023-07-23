@@ -15,7 +15,7 @@ export class PostService {
     ) { }
 
     async createPost(inputPostData: PostCreateType): Promise<boolean> {
-        const blog = await this.blogQueryRepository.findBlogById(inputPostData.blogId)
+        const blog = await this.blogQueryRepository.findBlogDocumentById(inputPostData.blogId)
         if (!blog) return false
 
         const newPost = await this.postRepository.createPost(inputPostData)
