@@ -5,7 +5,7 @@ import { Model } from "mongoose";
 import { BlogDBType } from "./types/blog.db.type";
 import { BlogViewType } from "./types/blog.view.type";
 import { BlogQueryParamType } from "./types/blog.query.param.type";
-import { QUERY_PARAM } from "src/enum/query.param.enum";
+import { QUERY_PARAM } from "src/query.param.enum";
 
 
 @Injectable()
@@ -15,10 +15,10 @@ export class BlogQueryRepository {
     async findAllBlogs(queryParam: BlogQueryParamType) {
 
         const {
-            searchNameTerm = QUERY_PARAM.SEARCH_NAME_TERM, 
-            pageNumber = QUERY_PARAM.PAGE_NUMBER, 
-            pageSize = QUERY_PARAM.PAGE_SIZE, 
-            sortBy = QUERY_PARAM.SORT_BY, 
+            searchNameTerm = QUERY_PARAM.SEARCH_NAME_TERM,
+            pageNumber = QUERY_PARAM.PAGE_NUMBER,
+            pageSize = QUERY_PARAM.PAGE_SIZE,
+            sortBy = QUERY_PARAM.SORT_BY,
             sortDirection = QUERY_PARAM.SORT_DIRECTION_DESC
         } = queryParam
 
@@ -30,10 +30,10 @@ export class BlogQueryRepository {
         }
 
         const blogs = await this.blogModel.find(filter)
-        .skip((pageNumber - 1) * pageSize)
-        .limit(pageSize)
-        .sort({[sortBy]: sortDirection})
-        .exec()
+            .skip((pageNumber - 1) * pageSize)
+            .limit(pageSize)
+            .sort({ [sortBy]: sortDirection })
+            .exec()
 
         const totalCount = await this.blogModel.countDocuments(filter)
 
@@ -43,7 +43,7 @@ export class BlogQueryRepository {
             pageSize: pageSize,
             totalCount: totalCount,
             items: blogs.map(this._mapBlog)
-        } 
+        }
     }
 
     async findBlogById(id: string): Promise<BlogDocument | null> {

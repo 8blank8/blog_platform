@@ -5,7 +5,7 @@ import { Model } from "mongoose";
 import { UserViewType } from "./types/user.view.type";
 import { UserDBType } from "./types/user.db.type";
 import { UserQueryParamType } from "./types/user.query.param.type";
-import { QUERY_PARAM } from "src/enum/query.param.enum";
+import { QUERY_PARAM } from "src/query.param.enum";
 
 
 @Injectable()
