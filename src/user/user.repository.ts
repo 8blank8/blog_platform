@@ -12,7 +12,16 @@ export class UserRepository {
         return new this.userModel(user)
     }
 
+    async deleteUser(id: string) {
+        const res = await this.userModel.deleteOne({ id: id })
+        return res.deletedCount === 1
+    }
+
     async save(user: UserDocument) {
         return user.save()
+    }
+
+    async deleteAllData() {
+        return this.userModel.deleteMany({})
     }
 }

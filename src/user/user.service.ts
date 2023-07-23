@@ -12,8 +12,12 @@ export class UserService {
         newUser.addId()
         newUser.addCreatedAt()
         await newUser.setPassWordHash(user.password)
-
         await this.userRepository.save(newUser)
+
         return newUser.id
+    }
+
+    async deleteUser(id: string) {
+        return this.userRepository.deleteUser(id)
     }
 }
