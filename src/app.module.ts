@@ -15,20 +15,29 @@ import { PostControler } from './post/post.controller';
 import { PostService } from './post/post.service';
 import { PostRepository } from './post/post.repository';
 
+import { UserController } from './user/user.controller';
+import { UserService } from './user/user.service';
+import { UserRepository } from './user/user.repository';
+import { UserQueryRepository } from './user/user.query.repository';
+
 import { TestingController } from './testing/testing.controller';
+import { User, UserSchema } from './user/user.schema';
 
 @Module({
   imports: [
     MongooseModule.forRoot('mongodb+srv://blank:admin@cluster0.zmondyt.mongodb.net/?retryWrites=true&w=majority'),
     MongooseModule.forFeature([
       { name: Blog.name, schema: BlogSchema },
-      { name: Post.name, schema: PostSchema }
+      { name: Post.name, schema: PostSchema },
+      { name: User.name, schema: UserSchema }
     ]),
   ],
-  controllers: [AppController, BlogController, PostControler, TestingController],
+  controllers: [AppController, BlogController, PostControler, UserController, TestingController],
   providers: [
     AppService,
     BlogRepository, BlogService, BlogQueryRepository,
-    PostQueryRepository, PostService, PostRepository],
+    PostQueryRepository, PostService, PostRepository,
+    UserService, UserRepository, UserQueryRepository,
+  ],
 })
 export class AppModule { }

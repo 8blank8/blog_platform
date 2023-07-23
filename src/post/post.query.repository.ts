@@ -11,7 +11,7 @@ import { PostViewType } from "./types/post.view.type";
 export class PostQueryRepository {
     constructor(@InjectModel(Post.name) private postModel: Model<PostDocument>) { }
 
-    async findAllPosts(queryParam: PostQueryParamType) {
+    async findPosts(queryParam: PostQueryParamType, blogId?: string) {
 
         const {
             pageNumber = QUERY_PARAM.PAGE_NUMBER,
@@ -20,13 +20,19 @@ export class PostQueryRepository {
             sortDirection = QUERY_PARAM.SORT_DIRECTION_DESC
         } = queryParam
 
-        const posts = await this.postModel.find({})
+        const filter: any = {}
+
+        if (blogId) {
+            filter.blogId = blogId
+        }
+
+        const posts = await this.postModel.find(filter)
             .skip((pageNumber - 1) * pageSize)
             .limit(pageSize)
             .sort({ [sortBy]: sortDirection })
             .exec()
 
-        const totalCount = await this.postModel.countDocuments({})
+        const totalCount = await this.postModel.countDocuments(filter)
 
         return {
             pagesCount: Math.ceil(totalCount / pageSize),

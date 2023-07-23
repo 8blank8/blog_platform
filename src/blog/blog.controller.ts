@@ -7,6 +7,8 @@ import { BlogUpdateType } from "./types/blog.update.type";
 import { BlogQueryParamType } from "./types/blog.query.param.type";
 import { PostCreateType } from "src/post/types/post.create.type";
 import { PostService } from "src/post/post.service";
+import { PostQueryRepository } from "src/post/post.query.repository";
+import { PostQueryParamType } from "src/post/types/post.query.param.type";
 
 
 
@@ -15,7 +17,8 @@ export class BlogController {
     constructor(
         private readonly blogQueryRepository: BlogQueryRepository,
         private readonly blogService: BlogService,
-        private readonly postService: PostService
+        private readonly postService: PostService,
+        private readonly postQueryRepository: PostQueryRepository
     ) { }
 
     @Get()
@@ -62,20 +65,32 @@ export class BlogController {
         return res.sendStatus(204)
     }
 
+    @Get('/:id/posts')
+    async getPostByBlogId(
+        @Param('id') id: string,
+        @Res() res: Response,
+        @Query() queryParam: PostQueryParamType
+    ) {
+        const blog = await this.blogQueryRepository.findBlogById(id)
+        if (!blog) return res.sendStatus(404)
+
+        const posts = await this.postQueryRepository.findPosts(queryParam, id)
+
+        return res.status(200).send(posts)
+    }
+
+
     @Post('/:id/posts')
     async createPostByBlogId(
         @Param('id') id: string,
         @Body() inputData: PostCreateType,
         @Res() res: Response
     ) {
-        // разобраться с типизацией создания поста через блог
-        // можно попробовать сделать блогайди необязательным значением
-        // тогда придется переделать сервис создания поста 
-
-        // в другом случае можно сделать отдельный метод в сервисе блога для создания поста
-        // но тогда при изменении логики в создании поста придется менять и логику в сервисе блога 
-        // нужно постараться найти компромисс
+        inputData.blogId = id
         const isCreated = await this.postService.createPost(inputData)
+        if (!isCreated) return res.sendStatus(404)
+
+        return res.sendStatus(201)
     }
 
 }

@@ -19,7 +19,7 @@ export class PostControler {
     async getPosts(
         @Query() queryParam: PostQueryParamType
     ) {
-        return this.postQueryRepository.findAllPosts(queryParam)
+        return this.postQueryRepository.findPosts(queryParam)
     }
 
     @Get('/:id')
