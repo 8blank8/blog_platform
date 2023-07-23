@@ -88,10 +88,11 @@ export class BlogController {
         @Res() res: Response
     ) {
         inputData.blogId = id
-        const isCreated = await this.postService.createPost(inputData)
-        if (!isCreated) return res.sendStatus(404)
+        const postId = await this.postService.createPost(inputData)
+        if (!postId) return res.sendStatus(404)
 
-        return res.sendStatus(201)
+        const post = await this.postQueryRepository.findPost(postId)
+        return res.status(201).send(post)
     }
 
 }

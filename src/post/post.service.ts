@@ -14,9 +14,9 @@ export class PostService {
         private readonly blogQueryRepository: BlogQueryRepository
     ) { }
 
-    async createPost(inputPostData: PostCreateType): Promise<boolean> {
+    async createPost(inputPostData: PostCreateType): Promise<string | null> {
         const blog = await this.blogQueryRepository.findBlogDocumentById(inputPostData.blogId)
-        if (!blog) return false
+        if (!blog) return null
 
         const newPost = await this.postRepository.createPost(inputPostData)
         newPost.addId()
@@ -25,7 +25,7 @@ export class PostService {
 
         await this.postRepository.save(newPost)
 
-        return true
+        return newPost.id
     }
 
     async updatePost(id: string, inputData: PostUpdateType): Promise<boolean> {

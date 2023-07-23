@@ -39,7 +39,8 @@ export class PostQueryRepository {
             page: pageNumber,
             pageSize: pageSize,
             totalCount: totalCount,
-            items: posts.map(this._mapPost)
+            items: posts.map(this._mapPost),
+
         }
 
     }
@@ -63,7 +64,19 @@ export class PostQueryRepository {
             content: post.content,
             blogId: post.blogId,
             blogName: post.blogName,
-            createdAt: post.createdAt
+            createdAt: post.createdAt,
+            extendedLikesInfo: {
+                likesCount: 0,
+                dislikesCount: 0,
+                myStatus: "None",
+                newestLikes: [
+                    {
+                        addedAt: "2023-07-23T16:22:01.776Z",
+                        userId: "string",
+                        login: "string"
+                    }
+                ]
+            }
         }
     }
 }
