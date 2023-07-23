@@ -42,8 +42,8 @@ export class UserQueryRepository {
 
         return {
             pagesCount: Math.ceil(totalCount / pageSize),
-            page: pageNumber,
-            pageSize: pageSize,
+            page: +pageNumber,
+            pageSize: +pageSize,
             totalCount: totalCount,
             items: users.map(this._mapUser)
         }

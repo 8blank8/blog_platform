@@ -38,10 +38,11 @@ export class PostControler {
         @Body() inputPostData: PostCreateType,
         @Res() res: Response
     ) {
-        const isCreate = await this.postService.createPost(inputPostData)
-        if (!isCreate) return res.sendStatus(400)
+        const postId = await this.postService.createPost(inputPostData)
+        if (!postId) return res.sendStatus(404)
 
-        return res.sendStatus(201)
+        const post = await this.postQueryRepository.findPost(postId)
+        return res.status(201).send(post)
     }
 
     @Put('/:id')

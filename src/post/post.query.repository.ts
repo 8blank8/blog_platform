@@ -36,8 +36,8 @@ export class PostQueryRepository {
 
         return {
             pagesCount: Math.ceil(totalCount / pageSize),
-            page: pageNumber,
-            pageSize: pageSize,
+            page: +pageNumber,
+            pageSize: +pageSize,
             totalCount: totalCount,
             items: posts.map(this._mapPost),
 

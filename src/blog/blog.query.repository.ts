@@ -39,8 +39,8 @@ export class BlogQueryRepository {
 
         return {
             pagesCount: Math.ceil(totalCount / pageSize),
-            page: pageNumber,
-            pageSize: pageSize,
+            page: +pageNumber,
+            pageSize: +pageSize,
             totalCount: totalCount,
             items: blogs.map(this._mapBlog)
         }
