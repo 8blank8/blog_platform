@@ -3,6 +3,7 @@ import { PostQueryRepository } from "./post.query.repository";
 import { PostCreateType } from "./types/post.create.type";
 import { PostRepository } from "./post.repository";
 import { BlogQueryRepository } from "src/blog/blog.query.repository";
+import { PostUpdateType } from "./types/post.update.type";
 
 
 @Injectable()
@@ -25,5 +26,20 @@ export class PostService {
         await this.postRepository.save(newPost)
 
         return true
+    }
+
+    async updatePost(id: string, inputData: PostUpdateType): Promise<boolean> {
+        const post = await this.postQueryRepository.findPostDocumentById(id)
+        if (!post) return false
+
+        post.updatePost(inputData)
+
+        await this.postRepository.save(post)
+
+        return true
+    }
+
+    async deletePost(id: string) {
+        return this.postRepository.deletePost(id)
     }
 }

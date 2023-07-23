@@ -14,18 +14,36 @@ export class BlogQueryRepository {
 
     async findAllBlogs(queryParam: BlogQueryParamType) {
 
-        const filter: any = {}
-        console.log(queryParam)
+        const {
+            searchNameTerm = QUERY_PARAM.SEARCH_NAME_TERM, 
+            pageNumber = QUERY_PARAM.PAGE_NUMBER, 
+            pageSize = QUERY_PARAM.PAGE_SIZE, 
+            sortBy = QUERY_PARAM.SORT_BY, 
+            sortDirection = QUERY_PARAM.SORT_DIRECTION_DESC
+        } = queryParam
 
-        if (queryParam.searchNameTerm) {
-            // можно заполнить фильтр без if
-            const filterName = new RegExp(`${QUERY_PARAM.SEARCH_NAME_TERM}`, 'i')
+        const filter: any = {}
+
+        if (searchNameTerm) {
+            const filterName = new RegExp(`${searchNameTerm}`, 'i')
             filter.name = { $regex: filterName }
         }
 
-        const blogs = await this.blogModel.find(filter).exec()
+        const blogs = await this.blogModel.find(filter)
+        .skip((pageNumber - 1) * pageSize)
+        .limit(pageSize)
+        .sort({[sortBy]: sortDirection})
+        .exec()
 
-        return blogs.map(this._mapBlog)
+        const totalCount = await this.blogModel.countDocuments(filter)
+
+        return {
+            pagesCount: Math.ceil(totalCount / pageSize),
+            page: pageNumber,
+            pageSize: pageSize,
+            totalCount: totalCount,
+            items: blogs.map(this._mapBlog)
+        } 
     }
 
     async findBlogById(id: string): Promise<BlogDocument | null> {

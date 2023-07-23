@@ -5,6 +5,8 @@ import { BlogService } from "./blog.service";
 import { BlogQueryRepository } from "./blog.query.repository";
 import { BlogUpdateType } from "./types/blog.update.type";
 import { BlogQueryParamType } from "./types/blog.query.param.type";
+import { PostCreateType } from "src/post/types/post.create.type";
+import { PostService } from "src/post/post.service";
 
 
 
@@ -12,7 +14,8 @@ import { BlogQueryParamType } from "./types/blog.query.param.type";
 export class BlogController {
     constructor(
         private readonly blogQueryRepository: BlogQueryRepository,
-        private readonly blogService: BlogService
+        private readonly blogService: BlogService,
+        private readonly postService: PostService
     ) { }
 
     @Get()
@@ -57,6 +60,22 @@ export class BlogController {
         if (!isDelete) return res.sendStatus(404)
 
         return res.sendStatus(204)
+    }
+
+    @Post('/:id/posts')
+    async createPostByBlogId(
+        @Param('id') id: string,
+        @Body() inputData: PostCreateType,
+        @Res() res: Response
+    ) {
+        // разобраться с типизацией создания поста через блог
+        // можно попробовать сделать блогайди необязательным значением
+        // тогда придется переделать сервис создания поста 
+
+        // в другом случае можно сделать отдельный метод в сервисе блога для создания поста
+        // но тогда при изменении логики в создании поста придется менять и логику в сервисе блога 
+        // нужно постараться найти компромисс
+        const isCreated = await this.postService.createPost(inputData)
     }
 
 }

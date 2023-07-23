@@ -15,4 +15,13 @@ export class PostRepository {
     async save(post: PostDocument) {
         return await post.save()
     }
+
+    async deletePost(id: string) {
+        const res = await this.postModel.deleteOne({ id: id })
+        return res.deletedCount === 1
+    }
+
+    async deleteAllData() {
+        return await this.postModel.deleteMany({})
+    }
 }

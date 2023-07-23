@@ -15,6 +15,8 @@ import { PostControler } from './post/post.controller';
 import { PostService } from './post/post.service';
 import { PostRepository } from './post/post.repository';
 
+import { TestingController } from './testing/testing.controller';
+
 @Module({
   imports: [
     MongooseModule.forRoot('mongodb+srv://blank:admin@cluster0.zmondyt.mongodb.net/?retryWrites=true&w=majority'),
@@ -23,7 +25,7 @@ import { PostRepository } from './post/post.repository';
       { name: Post.name, schema: PostSchema }
     ]),
   ],
-  controllers: [AppController, BlogController, PostControler],
+  controllers: [AppController, BlogController, PostControler, TestingController],
   providers: [
     AppService,
     BlogRepository, BlogService, BlogQueryRepository,
