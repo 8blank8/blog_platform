@@ -1,14 +1,14 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, Res } from "@nestjs/common";
 import { Response } from "express";
-import { BlogCreateType } from "./types/blog.create.type";
-import { BlogService } from "./blog.service";
-import { BlogQueryRepository } from "./blog.query.repository";
-import { BlogUpdateType } from "./types/blog.update.type";
-import { BlogQueryParamType } from "./types/blog.query.param.type";
-import { PostCreateType } from "src/post/types/post.create.type";
-import { PostService } from "src/post/post.service";
-import { PostQueryRepository } from "src/post/post.query.repository";
-import { PostQueryParamType } from "src/post/types/post.query.param.type";
+import { BlogCreateType } from "../types/blog.create.type";
+import { BlogService } from "../application/blog.service";
+import { BlogQueryRepository } from "../infrastructure/blog.query.repository";
+import { BlogUpdateType } from "../types/blog.update.type";
+import { BlogQueryParamType } from "../types/blog.query.param.type";
+import { PostCreateType } from "src/features/post/types/post.create.type";
+import { PostService } from "src/features/post/application/post.service";
+import { PostQueryRepository } from "src/features/post/infrastructure/post.query.repository";
+import { PostQueryParamType } from "src/features/post/types/post.query.param.type";
 
 
 

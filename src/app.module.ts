@@ -3,25 +3,25 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 
-import { Blog, BlogSchema } from './blog/blog.schema';
-import { BlogRepository } from './blog/blog.repository';
-import { BlogController } from './blog/blog.controller';
-import { BlogService } from './blog/blog.service';
-import { BlogQueryRepository } from './blog/blog.query.repository';
+import { Blog, BlogSchema } from './features/blog/domain/blog.schema';
+import { BlogRepository } from './features/blog/infrastructure/blog.repository';
+import { BlogController } from './features/blog/api/blog.controller';
+import { BlogService } from './features/blog/application/blog.service';
+import { BlogQueryRepository } from './features/blog/infrastructure/blog.query.repository';
 
-import { Post, PostSchema } from './post/post.schema';
-import { PostQueryRepository } from './post/post.query.repository';
-import { PostControler } from './post/post.controller';
-import { PostService } from './post/post.service';
-import { PostRepository } from './post/post.repository';
+import { Post, PostSchema } from './features/post/domain/post.schema';
+import { PostQueryRepository } from './features/post/infrastructure/post.query.repository';
+import { PostControler } from './features/post/api/post.controller';
+import { PostService } from './features/post/application/post.service';
+import { PostRepository } from './features/post/infrastructure/post.repository';
 
-import { UserController } from './user/user.controller';
-import { UserService } from './user/user.service';
-import { UserRepository } from './user/user.repository';
-import { UserQueryRepository } from './user/user.query.repository';
+import { UserController } from './features/user/api/user.controller';
+import { UserService } from './features/user/application/user.service';
+import { UserRepository } from './features/user/infrastructure/user.repository';
+import { UserQueryRepository } from './features/user/infrastructure/user.query.repository';
 
-import { TestingController } from './testing/testing.controller';
-import { User, UserSchema } from './user/user.schema';
+import { TestingController } from './features/testing/testing.controller';
+import { User, UserSchema } from './features/user/domain/user.schema';
 
 @Module({
   imports: [

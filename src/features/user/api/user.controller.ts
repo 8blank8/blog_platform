@@ -1,9 +1,9 @@
 import { Body, Controller, Delete, Get, Param, Post, Query, Res } from "@nestjs/common";
 import { Response } from 'express';
-import { UserCreateType } from "./types/user.create.type";
-import { UserService } from "./user.service";
-import { UserQueryRepository } from "./user.query.repository";
-import { UserQueryParamType } from "./types/user.query.param.type";
+import { UserCreateType } from "../types/user.create.type";
+import { UserService } from "../application/user.service";
+import { UserQueryRepository } from "../infrastructure/user.query.repository";
+import { UserQueryParamType } from "../types/user.query.param.type";
 
 
 @Controller('users')

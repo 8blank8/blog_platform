@@ -1,11 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { User } from "./user.schema";
+import { User } from "../domain/user.schema";
 import { Model } from "mongoose";
-import { UserViewType } from "./types/user.view.type";
-import { UserDBType } from "./types/user.db.type";
-import { UserQueryParamType } from "./types/user.query.param.type";
-import { QUERY_PARAM } from "../enum/query.param.enum";
+import { UserViewType } from "../types/user.view.type";
+import { UserDBType } from "../types/user.db.type";
+import { UserQueryParamType } from "../types/user.query.param.type";
+import { QUERY_PARAM } from "../../enum/query.param.enum";
 
 
 @Injectable()

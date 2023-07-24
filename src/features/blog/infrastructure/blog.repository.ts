@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from '@nestjs/mongoose'
-import { Blog, BlogDocument } from "./blog.schema";
+import { Blog, BlogDocument } from "../domain/blog.schema";
 import { Model } from "mongoose";
-import { BlogCreateType } from "./types/blog.create.type";
+import { BlogCreateType } from "../types/blog.create.type";
 
 
 @Injectable()
@@ -22,7 +22,7 @@ export class BlogRepository {
         return res.deletedCount === 1
     }
 
-    async deleteAllData(){
+    async deleteAllData() {
         return this.blogModel.deleteMany({})
     }
 }

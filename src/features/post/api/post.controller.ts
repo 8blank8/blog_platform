@@ -1,10 +1,10 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, Res } from "@nestjs/common";
-import { PostQueryRepository } from "./post.query.repository";
-import { PostCreateType } from "./types/post.create.type";
+import { PostQueryRepository } from "../infrastructure/post.query.repository";
+import { PostCreateType } from "../types/post.create.type";
 import { Response } from "express";
-import { PostService } from "./post.service";
-import { PostQueryParamType } from "./types/post.query.param.type";
-import { PostUpdateType } from "./types/post.update.type";
+import { PostService } from "../application/post.service";
+import { PostQueryParamType } from "../types/post.query.param.type";
+import { PostUpdateType } from "../types/post.update.type";
 
 
 @Controller('posts')

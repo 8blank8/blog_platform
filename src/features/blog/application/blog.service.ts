@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
-import { BlogCreateType } from "./types/blog.create.type";
-import { BlogRepository } from "./blog.repository";
-import { BlogUpdateType } from "./types/blog.update.type";
-import { BlogQueryRepository } from "./blog.query.repository";
+import { BlogCreateType } from "../types/blog.create.type";
+import { BlogRepository } from "../infrastructure/blog.repository";
+import { BlogUpdateType } from "../types/blog.update.type";
+import { BlogQueryRepository } from "../infrastructure/blog.query.repository";
 
 
 

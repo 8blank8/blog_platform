@@ -1,8 +1,8 @@
 import { Controller, Delete, Res } from "@nestjs/common";
 import { Response } from "express";
-import { BlogRepository } from "src/blog/blog.repository";
-import { PostRepository } from "src/post/post.repository";
-import { UserRepository } from "src/user/user.repository";
+import { BlogRepository } from "src/features/blog/infrastructure/blog.repository";
+import { PostRepository } from "src/features/post/infrastructure/post.repository";
+import { UserRepository } from "src/features/user/infrastructure/user.repository";
 
 
 @Controller('/testing')

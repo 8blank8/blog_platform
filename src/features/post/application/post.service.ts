@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common";
-import { PostQueryRepository } from "./post.query.repository";
-import { PostCreateType } from "./types/post.create.type";
-import { PostRepository } from "./post.repository";
-import { BlogQueryRepository } from "src/blog/blog.query.repository";
-import { PostUpdateType } from "./types/post.update.type";
+import { PostQueryRepository } from "../infrastructure/post.query.repository";
+import { PostCreateType } from "../types/post.create.type";
+import { PostRepository } from "../infrastructure/post.repository";
+import { BlogQueryRepository } from "src/features/blog/infrastructure/blog.query.repository";
+import { PostUpdateType } from "../types/post.update.type";
 
 
 @Injectable()
