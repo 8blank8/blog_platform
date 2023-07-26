@@ -1,4 +1,4 @@
-export type BlogUpdateType = {
+export class BlogUpdateType {
     name: string
     description: string
     websiteUrl: string

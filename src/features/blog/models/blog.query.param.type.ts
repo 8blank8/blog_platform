@@ -1,4 +1,4 @@
-export type BlogQueryParamType = {
+export class BlogQueryParamType {
     searchNameTerm: string | undefined
     sortBy: string | undefined
     sortDirection: 'asc' | 'desc' | undefined

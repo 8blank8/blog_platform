@@ -1,5 +1,5 @@
 
-export type BlogDBType = {
+export class BlogViewType {
     id: string
     name: string
     description: string
