@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { UserRepository } from "../infrastructure/user.repository";
-import { UserCreateType } from "../types/user.create.type";
+import { UserCreateType } from "../models/user.create.type";
 
 
 @Injectable()

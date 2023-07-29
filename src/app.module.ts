@@ -23,6 +23,11 @@ import { UserQueryRepository } from './features/user/infrastructure/user.query.r
 import { TestingController } from './features/testing/testing.controller';
 import { User, UserSchema } from './features/user/domain/user.schema';
 
+import { AuthController } from './features/auth/api/auth.controller';
+import { AuthService } from './features/auth/application/auth.service';
+
+import { JwtModule } from '@nestjs/jwt'
+
 @Module({
   imports: [
     MongooseModule.forRoot('mongodb+srv://blank:admin@cluster0.zmondyt.mongodb.net/?retryWrites=true&w=majority'),
@@ -31,13 +36,19 @@ import { User, UserSchema } from './features/user/domain/user.schema';
       { name: Post.name, schema: PostSchema },
       { name: User.name, schema: UserSchema }
     ]),
+    JwtModule.register({
+      global: true,
+      secret: '123',
+      signOptions: { expiresIn: '5m' }
+    })
   ],
-  controllers: [AppController, BlogController, PostControler, UserController, TestingController],
+  controllers: [AppController, BlogController, PostControler, UserController, AuthController, TestingController],
   providers: [
     AppService,
     BlogRepository, BlogService, BlogQueryRepository,
     PostQueryRepository, PostService, PostRepository,
     UserService, UserRepository, UserQueryRepository,
+    AuthService
   ],
 })
 export class AppModule { }

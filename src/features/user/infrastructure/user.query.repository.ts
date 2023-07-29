@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { User } from "../domain/user.schema";
+import { User, UserDocument } from "../domain/user.schema";
 import { Model } from "mongoose";
-import { UserViewType } from "../types/user.view.type";
-import { UserDBType } from "../types/user.db.type";
-import { UserQueryParamType } from "../types/user.query.param.type";
+import { UserViewType } from "../models/user.view.type";
+import { UserDBType } from "../models/user.db.type";
+import { UserQueryParamType } from "../models/user.query.param.type";
 import { QUERY_PARAM } from "../../enum/query.param.enum";
 
 
@@ -54,6 +54,11 @@ export class UserQueryRepository {
         if (!user) return null
 
         return this._mapUser(user)
+    }
+
+    async findByLoginOrEmail(loginOrEmail: string): Promise<UserDocument | null> {
+        const user = this.userModel.findOne({ $or: [{ login: loginOrEmail }, { email: loginOrEmail }] })
+        return user
     }
 
     _mapUser(user: UserDBType): UserViewType {

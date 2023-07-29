@@ -2,9 +2,9 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { Post, PostDocument } from "../domain/post.schema";
-import { PostQueryParamType } from "../types/post.query.param.type";
+import { PostQueryParamType } from "../models/post.query.param.type";
 import { QUERY_PARAM } from "../../enum/query.param.enum";
-import { PostViewType } from "../types/post.view.type";
+import { PostViewType } from "../models/post.view.type";
 
 
 @Injectable()

@@ -1,4 +1,4 @@
-export type UserQueryParamType = {
+export class UserQueryParamType {
     sortBy: string | undefined
     sortDirection: 'asc' | 'desc' | undefined
     pageNumber: number | undefined

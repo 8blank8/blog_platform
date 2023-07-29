@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './exception.filter';
 
 
@@ -8,16 +8,18 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors()
   app.useGlobalPipes(new ValidationPipe({
-    stopAtFirstError: true,
+    transform: true,
     exceptionFactory: (errors) => {
-      console.log(errors)
-      const newArr = errors.map(({ property, constraints }) => {
-        console.log(Object.keys(constraints))
-        return {
-          message: 'x',
-          field: property
+      const errorMessages = errors.map(({ property, constraints }) => {
+        if (constraints) {
+          return {
+            message: constraints[Object.keys(constraints)[0]],
+            field: property
+          }
         }
       })
+
+      throw new BadRequestException(errorMessages)
     },
   }))
   app.useGlobalFilters(new HttpExceptionFilter())

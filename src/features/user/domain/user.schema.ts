@@ -28,6 +28,11 @@ export class User {
     @Prop({
         required: true
     })
+    passwordSalt: string
+
+    @Prop({
+        required: true
+    })
     createdAt: string
 
     addCreatedAt() {
@@ -38,15 +43,24 @@ export class User {
         this.id = uuidv4()
     }
 
-    async createPasswordHash(password: string): Promise<string> {
+    async createPasswordHash(password: string): Promise<{ hash: string, salt: string }> {
         const salt = await bcrypt.genSalt(10)
         const hash = await bcrypt.hash(password, salt)
 
-        return hash
+        return { hash, salt }
     }
 
     async setPassWordHash(password: string) {
-        this.passwordHash = await this.createPasswordHash(password)
+        const hash = await this.createPasswordHash(password)
+        this.passwordHash = hash.hash
+        this.passwordSalt = hash.salt
+    }
+
+    async validatePassword(password: string): Promise<boolean> {
+        const newPasswordHash: string = await bcrypt.hash(password, this.passwordSalt)
+        if (this.passwordHash !== newPasswordHash) return false
+
+        return true
     }
 }
 
@@ -58,6 +72,7 @@ UserSchema.methods = {
     addId: User.prototype.addId,
     createPasswordHash: User.prototype.createPasswordHash,
     setPassWordHash: User.prototype.setPassWordHash,
+    validatePassword: User.prototype.validatePassword
 }
 
 export type UserDocument = HydratedDocument<User>
