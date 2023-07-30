@@ -1,9 +1,10 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, Res } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Query, Res, UseGuards } from "@nestjs/common";
 import { Response } from 'express';
 import { UserCreateType } from "../models/user.create.type";
 import { UserService } from "../application/user.service";
 import { UserQueryRepository } from "../infrastructure/user.query.repository";
 import { UserQueryParamType } from "../models/user.query.param.type";
+import { AuthGuard } from "@nestjs/passport";
 
 
 @Controller('users')
@@ -31,6 +32,7 @@ export class UserController {
         return await this.userQueryRepository.findAllUsers(queryParam)
     }
 
+    @UseGuards(AuthGuard('jwt'))
     @Delete('/:id')
     async deleteUser(
         @Param('id') id: string,
