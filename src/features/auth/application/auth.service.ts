@@ -1,18 +1,28 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { UserQueryRepository } from "src/features/user/infrastructure/user.query.repository";
+import { JwtService } from '@nestjs/jwt'
 
 
 @Injectable()
 export class AuthService {
-    constructor(private readonly userQueryRepository: UserQueryRepository) { }
+    constructor(
+        private readonly userQueryRepository: UserQueryRepository,
+        private readonly jwtService: JwtService) { }
 
-    async validateUser(loginOrEmail: string, password: string): Promise<boolean> {
+    async validateUser(loginOrEmail: string, password: string) {
         const user = await this.userQueryRepository.findByLoginOrEmail(loginOrEmail)
-        if (!user) return false
+        if (!user) return null
 
         const isValidate = await user.validatePassword(password)
-        if (!isValidate) return false
+        if (!isValidate) return null
 
-        return true
+        return { id: user.id, login: user.login }
+    }
+
+    async login(user: { id: string, login: string }) {
+        const payload = { id: user.id, login: user.login }
+        return {
+            accessToken: this.jwtService.sign(payload),
+        }
     }
 }

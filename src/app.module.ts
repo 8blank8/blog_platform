@@ -27,6 +27,9 @@ import { AuthController } from './features/auth/api/auth.controller';
 import { AuthService } from './features/auth/application/auth.service';
 
 import { JwtModule } from '@nestjs/jwt'
+import { LocalStrategy } from './features/auth/strategies/local.strategy';
+import { PassportModule } from '@nestjs/passport';
+import { JwtStrategy } from './features/auth/strategies/jwt.strategy';
 
 @Module({
   imports: [
@@ -36,6 +39,7 @@ import { JwtModule } from '@nestjs/jwt'
       { name: Post.name, schema: PostSchema },
       { name: User.name, schema: UserSchema }
     ]),
+    PassportModule,
     JwtModule.register({
       global: true,
       secret: '123',
@@ -48,7 +52,8 @@ import { JwtModule } from '@nestjs/jwt'
     BlogRepository, BlogService, BlogQueryRepository,
     PostQueryRepository, PostService, PostRepository,
     UserService, UserRepository, UserQueryRepository,
-    AuthService
+    AuthService,
+    LocalStrategy, JwtStrategy
   ],
 })
 export class AppModule { }
