@@ -34,7 +34,6 @@ import { BasicStrategy } from './features/auth/strategies/basic-strategy';
 
 import { EmailAdapter } from './adapters/email.adapter';
 import { EmailManager } from './managers/email.manager';
-import { setting_env } from 'setting.env';
 
 @Module({
   imports: [
@@ -47,7 +46,7 @@ import { setting_env } from 'setting.env';
     PassportModule,
     JwtModule.register({
       global: true,
-      secret: setting_env.JWT_SECRET,
+      secret: '123',
       signOptions: { expiresIn: '5m' }
     })
   ],

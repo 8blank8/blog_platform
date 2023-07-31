@@ -1,6 +1,5 @@
 import nodemailer from 'nodemailer'
 import { Injectable } from '@nestjs/common'
-import { setting_env } from 'setting.env'
 
 @Injectable()
 export class EmailAdapter {
@@ -10,8 +9,8 @@ export class EmailAdapter {
         const transport = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: setting_env.EMAIL,
-                pass: setting_env.EMAIL_PASSWORD
+                user: 'springfield.3298@gmail.com',
+                pass: 'tebbhlqboaafrple'
             }
         })
 
