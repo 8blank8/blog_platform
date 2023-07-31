@@ -25,4 +25,9 @@ export class AuthService {
             accessToken: this.jwtService.sign(payload),
         }
     }
+
+    async createRefreshToken(user: { id: string, login: string }): Promise<string> {
+        const payload = { id: user.id, login: user.login }
+        return this.jwtService.sign(payload)
+    }
 }

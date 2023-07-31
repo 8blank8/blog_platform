@@ -30,6 +30,7 @@ import { JwtModule } from '@nestjs/jwt'
 import { LocalStrategy } from './features/auth/strategies/local.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './features/auth/strategies/jwt.strategy';
+import { BasicStrategy } from './features/auth/strategies/basic-strategy';
 
 @Module({
   imports: [
@@ -53,7 +54,7 @@ import { JwtStrategy } from './features/auth/strategies/jwt.strategy';
     PostQueryRepository, PostService, PostRepository,
     UserService, UserRepository, UserQueryRepository,
     AuthService,
-    LocalStrategy, JwtStrategy
+    LocalStrategy, JwtStrategy, BasicStrategy
   ],
 })
 export class AppModule { }

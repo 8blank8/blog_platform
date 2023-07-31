@@ -5,6 +5,7 @@ import { UserService } from "../application/user.service";
 import { UserQueryRepository } from "../infrastructure/user.query.repository";
 import { UserQueryParamType } from "../models/user.query.param.type";
 import { AuthGuard } from "@nestjs/passport";
+import { BasicAuthGuard } from "../../auth/guards/basic.guard";
 
 
 @Controller('users')
@@ -15,6 +16,7 @@ export class UserController {
         private readonly userQueryRepository: UserQueryRepository
     ) { }
 
+    @UseGuards(BasicAuthGuard)
     @Post()
     async createUser(
         @Body() inputData: UserCreateType
@@ -32,7 +34,6 @@ export class UserController {
         return await this.userQueryRepository.findAllUsers(queryParam)
     }
 
-    @UseGuards(AuthGuard('jwt'))
     @Delete('/:id')
     async deleteUser(
         @Param('id') id: string,
