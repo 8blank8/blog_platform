@@ -21,7 +21,11 @@ export class UserService {
         newUser.addId()
         newUser.addCreatedAt()
         await newUser.setPassWordHash(user.password)
+
+        const confirmationCode = uuidv4()
+        newUser.addConfirmationCode(confirmationCode)
         newUser.confirmationEmail()
+
         await this.userRepository.save(newUser)
 
         return newUser.id
