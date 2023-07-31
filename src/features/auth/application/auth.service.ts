@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { UserQueryRepository } from "src/features/user/infrastructure/user.query.repository";
 import { JwtService } from '@nestjs/jwt'
+import { ConfirmationCodeType } from "../models/confirmation.code.type";
 
 
 @Injectable()

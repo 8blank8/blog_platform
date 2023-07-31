@@ -6,6 +6,8 @@ import { JwtAuthGuard } from "../guards/jwt.guard";
 import { UserQueryRepository } from "src/features/user/infrastructure/user.query.repository";
 import { UserCreateType } from "src/features/user/models/user.create.type";
 import { UserService } from "src/features/user/application/user.service";
+import { ConfirmationCodeType } from "../models/confirmation.code.type";
+import { EmailType } from "../models/email.type";
 
 
 @Controller('/auth')
@@ -43,9 +45,31 @@ export class AuthController {
         @Body() inputData: UserCreateType,
         @Res() res: Response
     ) {
-        const isCreated = this.userService.createUser(inputData)
+        const isCreated = await this.userService.registrationUser(inputData)
         if (!isCreated) return res.sendStatus(400)
 
         return res.sendStatus(201)
+    }
+
+    @Post('/registration-confirmation')
+    async registrationConfirmation(
+        @Body() code: ConfirmationCodeType,
+        @Res() res: Response
+    ) {
+        const isConfirmed = await this.userService.confirmationEmail(code)
+        if (!isConfirmed) return res.sendStatus(400)
+
+        return res.sendStatus(204)
+    }
+
+    @Post('/registration-email-resending')
+    async registrationEmailResending(
+        @Body() email: EmailType,
+        @Res() res: Response
+    ) {
+        const isResending = await this.userService.confirmationCodeResending(email)
+        if (!isResending) return res.sendStatus(400)
+
+        return res.sendStatus(204)
     }
 }

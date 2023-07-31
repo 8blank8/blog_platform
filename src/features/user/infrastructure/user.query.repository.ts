@@ -57,7 +57,17 @@ export class UserQueryRepository {
     }
 
     async findByLoginOrEmail(loginOrEmail: string): Promise<UserDocument | null> {
-        const user = this.userModel.findOne({ $or: [{ login: loginOrEmail }, { email: loginOrEmail }] })
+        const user = await this.userModel.findOne({ $or: [{ login: loginOrEmail }, { email: loginOrEmail }] })
+        return user
+    }
+
+    async findByEmail(email: string): Promise<UserDocument | null> {
+        const user = await this.userModel.findOne({ email: email })
+        return user
+    }
+
+    async findUserByConfirmationCode(code: string): Promise<UserDocument | null> {
+        const user = await this.userModel.findOne({ confirmationCode: code })
         return user
     }
 

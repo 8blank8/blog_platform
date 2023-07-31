@@ -32,6 +32,10 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './features/auth/strategies/jwt.strategy';
 import { BasicStrategy } from './features/auth/strategies/basic-strategy';
 
+import { EmailAdapter } from './adapters/email.adapter';
+import { EmailManager } from './managers/email.manager';
+import { setting_env } from 'setting.env';
+
 @Module({
   imports: [
     MongooseModule.forRoot('mongodb+srv://blank:admin@cluster0.zmondyt.mongodb.net/?retryWrites=true&w=majority'),
@@ -43,7 +47,7 @@ import { BasicStrategy } from './features/auth/strategies/basic-strategy';
     PassportModule,
     JwtModule.register({
       global: true,
-      secret: '123',
+      secret: setting_env.JWT_SECRET,
       signOptions: { expiresIn: '5m' }
     })
   ],
@@ -54,7 +58,8 @@ import { BasicStrategy } from './features/auth/strategies/basic-strategy';
     PostQueryRepository, PostService, PostRepository,
     UserService, UserRepository, UserQueryRepository,
     AuthService,
-    LocalStrategy, JwtStrategy, BasicStrategy
+    LocalStrategy, JwtStrategy, BasicStrategy,
+    EmailManager, EmailAdapter
   ],
 })
 export class AppModule { }

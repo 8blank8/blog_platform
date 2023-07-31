@@ -35,6 +35,24 @@ export class User {
     })
     createdAt: string
 
+    @Prop({
+        required: true
+    })
+    confirmationCode: string
+
+    @Prop({
+        default: false
+    })
+    isConfirmed: boolean
+
+    addConfirmationCode(code: string) {
+        this.confirmationCode = code
+    }
+
+    confirmationEmail() {
+        this.isConfirmed = true
+    }
+
     addCreatedAt() {
         this.createdAt = new Date().toISOString()
     }
@@ -72,7 +90,9 @@ UserSchema.methods = {
     addId: User.prototype.addId,
     createPasswordHash: User.prototype.createPasswordHash,
     setPassWordHash: User.prototype.setPassWordHash,
-    validatePassword: User.prototype.validatePassword
+    validatePassword: User.prototype.validatePassword,
+    confirmationEmail: User.prototype.confirmationEmail,
+    addConfirmationCode: User.prototype.addConfirmationCode
 }
 
 export type UserDocument = HydratedDocument<User>
