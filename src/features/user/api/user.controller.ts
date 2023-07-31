@@ -6,6 +6,7 @@ import { UserQueryRepository } from "../infrastructure/user.query.repository";
 import { UserQueryParamType } from "../models/user.query.param.type";
 import { AuthGuard } from "@nestjs/passport";
 import { BasicAuthGuard } from "../../auth/guards/basic.guard";
+import { JwtAuthGuard } from "src/features/auth/guards/jwt.guard";
 
 
 @Controller('users')
@@ -34,6 +35,7 @@ export class UserController {
         return await this.userQueryRepository.findAllUsers(queryParam)
     }
 
+    @UseGuards(JwtAuthGuard)
     @Delete('/:id')
     async deleteUser(
         @Param('id') id: string,
