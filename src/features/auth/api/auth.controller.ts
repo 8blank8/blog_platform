@@ -48,7 +48,7 @@ export class AuthController {
         const isCreated = await this.userService.registrationUser(inputData)
         if (!isCreated) return res.sendStatus(400)
 
-        return res.sendStatus(201)
+        return res.sendStatus(204)
     }
 
     @Post('/registration-confirmation')

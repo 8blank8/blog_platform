@@ -35,7 +35,7 @@ export class UserController {
         return await this.userQueryRepository.findAllUsers(queryParam)
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(BasicAuthGuard)
     @Delete('/:id')
     async deleteUser(
         @Param('id') id: string,

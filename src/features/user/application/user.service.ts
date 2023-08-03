@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { UserRepository } from "../infrastructure/user.repository";
 import { UserCreateType } from "../models/user.create.type";
 import { UserQueryRepository } from "../infrastructure/user.query.repository";
@@ -35,7 +35,7 @@ export class UserService {
         const isEmail = await this.userQueryRepository.findByLoginOrEmail(user.email)
         const isLogin = await this.userQueryRepository.findByLoginOrEmail(user.login)
 
-        if (isEmail || isLogin) return false
+        if (isEmail || isLogin) throw new BadRequestException()
         const newUser = await this.userRepository.createUser(user)
         newUser.addId()
         newUser.addCreatedAt()
