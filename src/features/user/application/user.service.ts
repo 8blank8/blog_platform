@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { UserRepository } from "../infrastructure/user.repository";
 import { UserCreateType } from "../models/user.create.type";
 import { UserQueryRepository } from "../infrastructure/user.query.repository";
@@ -32,10 +32,6 @@ export class UserService {
     }
 
     async registrationUser(user: UserCreateType): Promise<boolean> {
-        const isEmail = await this.userQueryRepository.findByLoginOrEmail(user.email)
-        const isLogin = await this.userQueryRepository.findByLoginOrEmail(user.login)
-
-        if (isEmail || isLogin) throw new BadRequestException()
         const newUser = await this.userRepository.createUser(user)
         newUser.addId()
         newUser.addCreatedAt()
@@ -51,7 +47,7 @@ export class UserService {
 
     async confirmationEmail(code: ConfirmationCodeType): Promise<boolean> {
         const user = await this.userQueryRepository.findUserByConfirmationCode(code.code)
-        if (!user) return false
+        if (!user || user.isConfirmed === true) return false
 
         user.confirmationEmail()
         await this.userRepository.save(user)
@@ -60,7 +56,6 @@ export class UserService {
 
     async confirmationCodeResending(email: EmailType): Promise<boolean> {
         const user = await this.userQueryRepository.findByEmail(email.email)
-        console.log(user)
         if (!user || user.isConfirmed === true) return false
 
         const confirmationCode = uuidv4()

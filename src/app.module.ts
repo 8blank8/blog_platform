@@ -58,7 +58,7 @@ import { EmailManager } from './managers/email.manager';
     UserService, UserRepository, UserQueryRepository,
     AuthService,
     LocalStrategy, JwtStrategy, BasicStrategy,
-    EmailManager, EmailAdapter
+    EmailManager, EmailAdapter,
   ],
 })
 export class AppModule { }
