@@ -34,6 +34,8 @@ import { BasicStrategy } from './features/auth/strategies/basic-strategy';
 
 import { EmailAdapter } from './adapters/email.adapter';
 import { EmailManager } from './managers/email.manager';
+import { UserExistEmail, UserExistLogin } from './features/user/models/user.create.type';
+import { UserIsConfirmed } from './features/auth/models/confirmation.code.type';
 
 @Module({
   imports: [
@@ -59,6 +61,7 @@ import { EmailManager } from './managers/email.manager';
     AuthService,
     LocalStrategy, JwtStrategy, BasicStrategy,
     EmailManager, EmailAdapter,
+    UserExistLogin, UserExistEmail, UserIsConfirmed
   ],
 })
 export class AppModule { }
