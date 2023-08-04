@@ -10,8 +10,8 @@ export class EmailCodeResend implements ValidatorConstraintInterface {
 
     async validate(email: string) {
         try {
-            const isEmail = await this.usersQueryRepository.findByLoginOrEmail(email);
-            if (!isEmail) return false
+            const user = await this.usersQueryRepository.findByLoginOrEmail(email);
+            if (!user || user.isConfirmed === true) return false
         } catch (e) {
             return false;
         }
