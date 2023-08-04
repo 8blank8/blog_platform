@@ -1,53 +1,9 @@
-import { Inject, Injectable } from "@nestjs/common";
-import { IsNotEmpty, IsString, Length, Matches, Validate, ValidationArguments, ValidatorConstraint, ValidatorConstraintInterface } from "class-validator"
-import { UserQueryRepository } from "../infrastructure/user.query.repository";
+import { IsNotEmpty, IsString, Length, Matches, Validate } from "class-validator"
+import { UserExistLogin } from "../../../entity/custom-validation/user.exist.login";
+import { UserExistEmail } from "../../../entity/custom-validation/user.exist.email";
 
-
-@ValidatorConstraint({ name: 'UserExistLogin', async: true })
-@Injectable()
-export class UserExistLogin implements ValidatorConstraintInterface {
-    constructor(private readonly userQueryRepository: UserQueryRepository) { }
-
-    async validate(login: string) {
-        try {
-            const isLogin = await this.userQueryRepository.findByLoginOrEmail(login);
-            if (isLogin) return false
-        } catch (e) {
-            return false;
-        }
-
-        return true;
-    }
-
-    defaultMessage() {
-        return `Login doesn't exist`;
-    }
-}
-
-@ValidatorConstraint({ name: 'UserExistEmail', async: true })
-@Injectable()
-export class UserExistEmail implements ValidatorConstraintInterface {
-    constructor(private usersQueryRepository: UserQueryRepository) { }
-
-    async validate(email: string) {
-        try {
-            const isEmail = await this.usersQueryRepository.findByLoginOrEmail(email);
-            console.log(isEmail)
-            if (isEmail) return false
-        } catch (e) {
-            return false;
-        }
-
-        return true;
-    }
-
-    defaultMessage() {
-        return `Email doesn't exist`;
-    }
-}
 
 export class UserCreateType {
-    // constructor(private readonly userExistEmail: UserExistEmail){}
 
     @IsNotEmpty()
     @IsString()

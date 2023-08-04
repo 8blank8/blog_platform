@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { UserRepository } from "../infrastructure/user.repository";
 import { UserCreateType } from "../models/user.create.type";
 import { UserQueryRepository } from "../infrastructure/user.query.repository";
-import { EmailManager } from "src/managers/email.manager";
+import { EmailManager } from "src/entity/managers/email.manager";
 import { v4 as uuidv4 } from 'uuid'
 import { ConfirmationCodeType } from "src/features/auth/models/confirmation.code.type";
 import { EmailType } from "src/features/auth/models/email.type";

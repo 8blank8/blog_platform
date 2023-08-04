@@ -32,10 +32,12 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './features/auth/strategies/jwt.strategy';
 import { BasicStrategy } from './features/auth/strategies/basic-strategy';
 
-import { EmailAdapter } from './adapters/email.adapter';
-import { EmailManager } from './managers/email.manager';
-import { UserExistEmail, UserExistLogin } from './features/user/models/user.create.type';
+import { EmailAdapter } from './entity/adapters/email.adapter';
+import { EmailManager } from './entity/managers/email.manager';
 import { UserIsConfirmed } from './features/auth/models/confirmation.code.type';
+import { UserExistLogin } from './entity/custom-validation/user.exist.login';
+import { UserExistEmail } from './entity/custom-validation/user.exist.email';
+import { EmailCodeResend } from './entity/custom-validation/email.code.resend';
 
 @Module({
   imports: [
@@ -61,7 +63,7 @@ import { UserIsConfirmed } from './features/auth/models/confirmation.code.type';
     AuthService,
     LocalStrategy, JwtStrategy, BasicStrategy,
     EmailManager, EmailAdapter,
-    UserExistLogin, UserExistEmail, UserIsConfirmed
+    UserExistLogin, UserExistEmail, UserIsConfirmed, EmailCodeResend
   ],
 })
 export class AppModule { }
