@@ -62,6 +62,7 @@ export class UserService {
         user.addConfirmationCode(confirmationCode)
         await this.emailManager.sendEmailConfirmationMessage(user.email, confirmationCode)
 
+        this.userRepository.save(user)
         return true
     }
 

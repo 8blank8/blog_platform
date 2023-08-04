@@ -11,7 +11,6 @@ export class UserExistLogin implements ValidatorConstraintInterface {
     async validate(login: string) {
         try {
             const isLogin = await this.userQueryRepository.findByLoginOrEmail(login);
-            console.log(isLogin)
             if (isLogin) return false
         } catch (e) {
             return false;
@@ -32,8 +31,9 @@ export class UserExistEmail implements ValidatorConstraintInterface {
 
     async validate(email: string) {
         try {
-            const em = await this.usersQueryRepository.findByLoginOrEmail(email);
-            console.log(em)
+            const isEmail = await this.usersQueryRepository.findByLoginOrEmail(email);
+            console.log(isEmail)
+            if (isEmail) return false
         } catch (e) {
             return false;
         }
