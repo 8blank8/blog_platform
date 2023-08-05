@@ -1,10 +1,15 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, Res } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Res, Request, UseGuards } from "@nestjs/common";
 import { PostQueryRepository } from "../infrastructure/post.query.repository";
 import { PostCreateType } from "../models/post.create.type";
 import { Response } from "express";
 import { PostService } from "../application/post.service";
 import { PostQueryParamType } from "../models/post.query.param.type";
 import { PostUpdateType } from "../models/post.update.type";
+import { CommentCreateType } from "src/features/comment/models/comment.create.type";
+import { JwtAuthGuard } from "src/features/auth/guards/jwt.guard";
+import { CommentQueryParam } from "src/features/comment/models/comment.query.param";
+import { CommentQueryRepository } from "src/features/comment/infrastructure/comment.query.repository";
+import { PostLikeStatusType } from "../models/post.like.status.type";
 
 
 @Controller('posts')
@@ -12,7 +17,8 @@ export class PostControler {
 
     constructor(
         private readonly postQueryRepository: PostQueryRepository,
-        private readonly postService: PostService
+        private readonly postService: PostService,
+        private readonly commentQueryRepository: CommentQueryRepository
     ) { }
 
     @Get()
@@ -64,6 +70,43 @@ export class PostControler {
     ) {
         const isDelete = await this.postService.deletePost(id)
         if (!isDelete) return res.sendStatus(404)
+
+        return res.sendStatus(204)
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post('/:id/comments')
+    async createCommentForPost(
+        @Body() inputData: CommentCreateType,
+        @Param('id') id: string,
+        @Request() req,
+        @Res() res: Response
+    ) {
+        const isCreated = await this.postService.createComment(id, inputData, req.user.userId)
+        if (!isCreated) return res.sendStatus(404)
+
+        return res.sendStatus(201)
+    }
+
+    @Get('/:id/comments')
+    async findCommentsByPostId(
+        @Param('id') id: string,
+        @Query() queryParam: CommentQueryParam
+    ) {
+        const comments = await this.commentQueryRepository.findCommentsByPostId(queryParam, id)
+        return comments
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Put('/:id/like-status')
+    async updatePostLikeStatus(
+        @Param('id') id: string,
+        @Body() inputData: PostLikeStatusType,
+        @Request() req,
+        @Res() res: Response
+    ) {
+        const isUpdate = await this.postService.updatePostLikeStatus(id, inputData, req.user.userId)
+        if (!isUpdate) return res.sendStatus(404)
 
         return res.sendStatus(204)
     }

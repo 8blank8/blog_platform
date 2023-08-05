@@ -1,0 +1,55 @@
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { HydratedDocument } from "mongoose";
+import { LIKE_STATUS } from "src/entity/enums/like.status";
+import { v4 as uuidv4 } from 'uuid'
+
+
+@Schema()
+export class PostLike {
+    @Prop({
+        required: true
+    })
+    id: string
+
+    @Prop({
+        default: LIKE_STATUS.NONE
+    })
+    likeStatus: string
+
+    @Prop({
+        required: true
+    })
+    postId: string
+
+    @Prop({
+        required: true
+    })
+    userId: string
+
+    addId() {
+        this.id = uuidv4()
+    }
+
+    updateLikeStatus(likeStatus: string) {
+        this.likeStatus = likeStatus
+    }
+
+    addPostId(postId: string) {
+        this.postId = postId
+    }
+
+    addUserId(userId: string) {
+        this.userId = userId
+    }
+}
+
+export const PostLikeSchema = SchemaFactory.createForClass(PostLike)
+
+PostLikeSchema.methods = {
+    addId: PostLike.prototype.addId,
+    updateLikeStatus: PostLike.prototype.updateLikeStatus,
+    addPostId: PostLike.prototype.addPostId,
+    addUserId: PostLike.prototype.addUserId
+}
+
+export type PostLikeDocument = HydratedDocument<PostLike>

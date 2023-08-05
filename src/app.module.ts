@@ -38,6 +38,13 @@ import { UserIsConfirmed } from './features/auth/models/confirmation.code.type';
 import { UserExistLogin } from './entity/custom-validation/user.exist.login';
 import { UserExistEmail } from './entity/custom-validation/user.exist.email';
 import { EmailCodeResend } from './entity/custom-validation/email.code.resend';
+import { CommentController } from './features/comment/api/comment.controller';
+import { CommentRepository } from './features/comment/infrastructure/comment.repository';
+import { CommentQueryRepository } from './features/comment/infrastructure/comment.query.repository';
+import { Comment, CommentSchema } from './features/comment/domain/comment.schema';
+import { CommentService } from './features/comment/appication/comment.service';
+import { CommentLike, CommentLikeSchema } from './features/comment/domain/comment.like.schema';
+import { PostLike, PostLikeSchema } from './features/post/domain/post.like.schema';
 
 @Module({
   imports: [
@@ -45,7 +52,10 @@ import { EmailCodeResend } from './entity/custom-validation/email.code.resend';
     MongooseModule.forFeature([
       { name: Blog.name, schema: BlogSchema },
       { name: Post.name, schema: PostSchema },
-      { name: User.name, schema: UserSchema }
+      { name: User.name, schema: UserSchema },
+      { name: Comment.name, schema: CommentSchema },
+      { name: CommentLike.name, schema: CommentLikeSchema },
+      { name: PostLike.name, schema: PostLikeSchema }
     ]),
     PassportModule,
     JwtModule.register({
@@ -54,7 +64,7 @@ import { EmailCodeResend } from './entity/custom-validation/email.code.resend';
       signOptions: { expiresIn: '5m' }
     })
   ],
-  controllers: [AppController, BlogController, PostControler, UserController, AuthController, TestingController],
+  controllers: [AppController, BlogController, PostControler, UserController, AuthController, CommentController, TestingController],
   providers: [
     AppService,
     BlogRepository, BlogService, BlogQueryRepository,
@@ -63,7 +73,8 @@ import { EmailCodeResend } from './entity/custom-validation/email.code.resend';
     AuthService,
     LocalStrategy, JwtStrategy, BasicStrategy,
     EmailManager, EmailAdapter,
-    UserExistLogin, UserExistEmail, UserIsConfirmed, EmailCodeResend
+    UserExistLogin, UserExistEmail, UserIsConfirmed, EmailCodeResend,
+    CommentRepository, CommentQueryRepository, CommentService
   ],
 })
 export class AppModule { }

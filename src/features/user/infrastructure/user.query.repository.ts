@@ -10,7 +10,9 @@ import { QUERY_PARAM } from "../../enum/query.param.enum";
 
 @Injectable()
 export class UserQueryRepository {
-    constructor(@InjectModel(User.name) private userModel: Model<User>) { }
+    constructor(
+        @InjectModel(User.name) private userModel: Model<User>
+    ) { }
 
     async findAllUsers(queryParam: UserQueryParamType) {
 
@@ -54,6 +56,11 @@ export class UserQueryRepository {
         if (!user) return null
 
         return this._mapUser(user)
+    }
+
+    async findUserDocumentById(id: string): Promise<UserDocument | null> {
+        const user = await this.userModel.findOne({ id: id })
+        return user
     }
 
     async findByLoginOrEmail(loginOrEmail: string): Promise<UserDocument | null> {

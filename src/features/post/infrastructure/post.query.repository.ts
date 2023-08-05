@@ -5,11 +5,14 @@ import { Post, PostDocument } from "../domain/post.schema";
 import { PostQueryParamType } from "../models/post.query.param.type";
 import { QUERY_PARAM } from "../../enum/query.param.enum";
 import { PostViewType } from "../models/post.view.type";
+import { PostLike, PostLikeDocument } from "../domain/post.like.schema";
 
 
 @Injectable()
 export class PostQueryRepository {
-    constructor(@InjectModel(Post.name) private postModel: Model<PostDocument>) { }
+    constructor(@InjectModel(Post.name) private postModel: Model<PostDocument>,
+        @InjectModel(PostLike.name) private postLikeModel: Model<PostLike>
+    ) { }
 
     async findPosts(queryParam: PostQueryParamType, blogId?: string) {
 
@@ -54,6 +57,11 @@ export class PostQueryRepository {
 
     async findPostDocumentById(id: string): Promise<PostDocument | null> {
         return this.postModel.findOne({ id: id })
+    }
+
+    async findPostLikeStatus(id: string): Promise<PostLikeDocument | null> {
+        const like = await this.postLikeModel.findOne({ id: id })
+        return like
     }
 
     _mapPost(post: PostDocument): PostViewType {
