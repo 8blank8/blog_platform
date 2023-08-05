@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument } from "mongoose";
-import { LIKE_STATUS } from "src/entity/enums/like.status";
+// import { LIKE_STATUS } from "src/entity/enums/like.status";
 import { v4 as uuidv4 } from 'uuid'
 
 
@@ -12,7 +12,7 @@ export class PostLike {
     id: string
 
     @Prop({
-        default: LIKE_STATUS.NONE
+        default: 'None'
     })
     likeStatus: string
 
