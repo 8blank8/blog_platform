@@ -7,7 +7,7 @@ import { PostQueryParamType } from "../models/post.query.param.type";
 import { PostUpdateType } from "../models/post.update.type";
 import { CommentCreateType } from "src/features/comment/models/comment.create.type";
 import { JwtAuthGuard } from "src/features/auth/guards/jwt.guard";
-import { CommentQueryParam } from "src/features/comment/models/comment.query.param";
+import { CommentQueryParam } from "src/features/comment/models/comment.query.param.type";
 import { CommentQueryRepository } from "src/features/comment/infrastructure/comment.query.repository";
 import { PostLikeStatusType } from "../models/post.like.status.type";
 

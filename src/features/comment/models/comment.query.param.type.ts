@@ -1,5 +1,4 @@
 
-
 export class CommentQueryParam {
     pageNumber: number | undefined
     pageSize: number | undefined

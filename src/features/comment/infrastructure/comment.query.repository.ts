@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { Comment, CommentDocument } from "../domain/comment.schema";
-import { CommentQueryParam } from "../models/comment.query.param";
+import { CommentQueryParam } from "../models/comment.query.param.type";
 import { QUERY_PARAM } from "src/features/enum/query.param.enum";
 import { CommentLike, CommentLikeDocument } from "../domain/comment.like.schema";
 
