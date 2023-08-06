@@ -5,14 +5,12 @@ export class BlogUpdateType {
     @IsNotEmpty()
     @IsString()
     @Length(0, 15)
-    @NotContains(" ")
     @Transform(({ value }) => value?.trim())
     name: string
 
     @IsNotEmpty()
     @IsString()
     @Length(0, 500)
-    @NotContains(" ")
     @Transform(({ value }) => value?.trim())
     description: string
 
