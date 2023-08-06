@@ -53,7 +53,7 @@ export class CommentQueryRepository {
     async _mapComment(comment: CommentDocument, userId: string): Promise<CommentViewType> {
         const likeCount = await this.commentLikeModel.countDocuments({ commentId: comment.id, likeStatus: 'Like' })
         const dislikeCount = await this.commentLikeModel.countDocuments({ commentId: comment.id, likeStatus: 'Dislike' })
-        let myStatus = 'None'
+        let myStatus: string = 'None'
 
         const likeStatus = await this.commentLikeModel.findOne({ commentId: comment.id, userId: userId })
 

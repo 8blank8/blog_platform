@@ -92,7 +92,7 @@ export class PostService {
         const user = await this.userQueryRepository.findUserDocumentById(userId)
         if (!user) return false
 
-        const like = await this.postQueryRepository.findPostLikeStatus(id)
+        const like = await this.postQueryRepository.findPostLikeStatus(id, user.id)
         if (like) {
             like.updateLikeStatus(inputData.likeStatus)
             await this.postRepository.savePostLike(like)

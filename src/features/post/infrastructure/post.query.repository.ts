@@ -59,8 +59,8 @@ export class PostQueryRepository {
         return this.postModel.findOne({ id: id })
     }
 
-    async findPostLikeStatus(id: string): Promise<PostLikeDocument | null> {
-        const like = await this.postLikeModel.findOne({ id: id })
+    async findPostLikeStatus(id: string, userId: string): Promise<PostLikeDocument | null> {
+        const like = await this.postLikeModel.findOne({ id: id, userId: userId })
         return like
     }
 
@@ -68,7 +68,7 @@ export class PostQueryRepository {
         const likesCount = await this.postLikeModel.countDocuments({ likeStatus: 'Like' })
         const dislikesCount = await this.postLikeModel.countDocuments({ likeStatus: 'Dislike' })
         const like = await this.postLikeModel.findOne({ postId: post.id, userId: userId })
-        const newestLikes = await this.postLikeModel.find({}).limit(3).exec()
+        const newestLikes = await this.postLikeModel.find({}).sort({ addedAt: 'desc' }).limit(3).exec()
 
         let likeStatus: string = 'None'
 
