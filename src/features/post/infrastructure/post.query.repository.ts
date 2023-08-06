@@ -48,11 +48,11 @@ export class PostQueryRepository {
 
     }
 
-    async findPost(id: string): Promise<PostViewType | null> {
+    async findPost(id: string, userId?: string): Promise<PostViewType | null> {
         const post = await this.postModel.findOne({ id: id }).exec()
         if (!post) return null
 
-        return this._mapPost(post)
+        return await this._mapPost(post, userId)
     }
 
     async findPostDocumentById(id: string): Promise<PostDocument | null> {
@@ -70,10 +70,10 @@ export class PostQueryRepository {
         const like = await this.postLikeModel.findOne({ postId: post.id, userId: userId })
         const newestLikes = await this.postLikeModel.find({}).limit(3).exec()
 
-        let likeStatus: string | undefined = like?.likeStatus
+        let likeStatus: string = 'None'
 
-        if (!likeStatus) {
-            likeStatus = 'None'
+        if (like) {
+            likeStatus = like.likeStatus
         }
 
         return {

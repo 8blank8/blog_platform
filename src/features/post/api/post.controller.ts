@@ -31,12 +31,14 @@ export class PostControler {
         return this.postQueryRepository.findPosts(queryParam, req.user.userId)
     }
 
+    @UseGuards(JwtOrNotGuard)
     @Get('/:id')
     async getPost(
         @Param('id') id: string,
-        @Res() res: Response
+        @Res() res: Response,
+        @Request() req
     ) {
-        const post = await this.postQueryRepository.findPost(id)
+        const post = await this.postQueryRepository.findPost(id, req.user.userId)
         if (!post) return res.sendStatus(404)
 
         return res.status(200).send(post)
