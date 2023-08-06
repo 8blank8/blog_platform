@@ -93,6 +93,9 @@ export class PostService {
         if (!user) return false
 
         const like = await this.postQueryRepository.findPostLikeStatus(id, user.id)
+
+        if (inputData.likeStatus === like?.likeStatus) return true
+
         if (like) {
             like.updateLikeStatus(inputData.likeStatus)
             await this.postRepository.savePostLike(like)

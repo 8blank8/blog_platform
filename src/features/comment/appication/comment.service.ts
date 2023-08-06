@@ -42,6 +42,9 @@ export class CommentService {
         if (!user) return false
 
         const like = await this.commentQueryRepository.findLikeByCommentId(id)
+
+        if (inputData.likeStatus === like?.likeStatus) return true
+
         if (like) {
             like.updateLikeStatus(inputData.likeStatus)
             await this.commentRepository.saveCommentLike(like)
