@@ -30,6 +30,10 @@ export class PostRepository {
         return await this.postModel.deleteMany({})
     }
 
+    async deleteAllLikes() {
+        return await this.postLikeModel.deleteMany({})
+    }
+
     async savePostLike(postLike: PostLikeDocument) {
         return await postLike.save()
     }

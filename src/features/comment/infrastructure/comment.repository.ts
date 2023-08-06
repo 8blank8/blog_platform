@@ -35,4 +35,12 @@ export class CommentRepository {
         return new this.commentLikeModel(like)
     }
 
+    async deleteAllCommentsLike() {
+        return await this.commentLikeModel.deleteMany({})
+    }
+
+    async deleteAllComments() {
+        return await this.commentModel.deleteMany({})
+    }
+
 }
