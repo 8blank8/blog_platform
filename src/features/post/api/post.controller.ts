@@ -28,7 +28,8 @@ export class PostControler {
         @Query() queryParam: PostQueryParamType,
         @Request() req
     ) {
-        return this.postQueryRepository.findPosts(queryParam, req.user.userId)
+        const posts = await this.postQueryRepository.findPosts(queryParam, req.user.userId)
+        return posts
     }
 
     @UseGuards(JwtOrNotGuard)

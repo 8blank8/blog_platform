@@ -68,7 +68,7 @@ export class PostQueryRepository {
         const likesCount = await this.postLikeModel.countDocuments({ likeStatus: 'Like' })
         const dislikesCount = await this.postLikeModel.countDocuments({ likeStatus: 'Dislike' })
         const like = await this.postLikeModel.findOne({ postId: post.id, userId: userId })
-        const newestLikes = await this.postLikeModel.find({}).sort({ addedAt: 'desc' }).limit(3).exec()
+        const newestLikes = await this.postLikeModel.find({ postId: post.id, likeStatus: 'Like' }).sort({ addedAt: 'desc' }).limit(3).exec()
 
         let likeStatus: string = 'None'
 
