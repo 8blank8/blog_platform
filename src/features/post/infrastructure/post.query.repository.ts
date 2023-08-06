@@ -14,7 +14,7 @@ export class PostQueryRepository {
         @InjectModel(PostLike.name) private postLikeModel: Model<PostLike>
     ) { }
 
-    async findPosts(queryParam: PostQueryParamType, blogId?: string) {
+    async findPosts(queryParam: PostQueryParamType, userId?: string, blogId?: string) {
 
         const {
             pageNumber = QUERY_PARAM.PAGE_NUMBER,
@@ -42,7 +42,7 @@ export class PostQueryRepository {
             page: +pageNumber,
             pageSize: +pageSize,
             totalCount: totalCount,
-            items: posts.map(this._mapPost),
+            items: await Promise.all(posts.map(item => this._mapPost(item, userId))),
 
         }
 
@@ -64,7 +64,18 @@ export class PostQueryRepository {
         return like
     }
 
-    _mapPost(post: PostDocument): PostViewType {
+    async _mapPost(post: PostDocument, userId?: string): Promise<PostViewType> {
+        const likesCount = await this.postLikeModel.countDocuments({ likeStatus: 'Like' })
+        const dislikesCount = await this.postLikeModel.countDocuments({ likeStatus: 'Dislike' })
+        const like = await this.postLikeModel.findOne({ postId: post.id, userId: userId })
+        const newestLikes = await this.postLikeModel.find({}).limit(3).exec()
+
+        let likeStatus: string | undefined = like?.likeStatus
+
+        if (!likeStatus) {
+            likeStatus = 'None'
+        }
+
         return {
             id: post.id,
             title: post.title,
@@ -74,16 +85,10 @@ export class PostQueryRepository {
             blogName: post.blogName,
             createdAt: post.createdAt,
             extendedLikesInfo: {
-                likesCount: 0,
-                dislikesCount: 0,
-                myStatus: "None",
-                newestLikes: [
-                    {
-                        addedAt: "2023-07-23T16:22:01.776Z",
-                        userId: "string",
-                        login: "string"
-                    }
-                ]
+                likesCount: likesCount,
+                dislikesCount: dislikesCount,
+                myStatus: likeStatus,
+                newestLikes: newestLikes.map(item => ({ addedAt: item.id, userId: item.userId, login: item.likeStatus }))
             }
         }
     }

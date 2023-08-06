@@ -10,6 +10,7 @@ import { JwtAuthGuard } from "src/features/auth/guards/jwt.guard";
 import { CommentQueryParam } from "src/features/comment/models/comment.query.param.type";
 import { CommentQueryRepository } from "src/features/comment/infrastructure/comment.query.repository";
 import { PostLikeStatusType } from "../models/post.like.status.type";
+import { JwtOrNotGuard } from "src/features/auth/guards/jwt.or.not.guard";
 
 
 @Controller('posts')
@@ -21,11 +22,13 @@ export class PostControler {
         private readonly commentQueryRepository: CommentQueryRepository
     ) { }
 
+    @UseGuards(JwtOrNotGuard)
     @Get()
     async getPosts(
-        @Query() queryParam: PostQueryParamType
+        @Query() queryParam: PostQueryParamType,
+        @Request() req
     ) {
-        return this.postQueryRepository.findPosts(queryParam)
+        return this.postQueryRepository.findPosts(queryParam, req.user.userId)
     }
 
     @Get('/:id')

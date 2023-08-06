@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, Res } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Res, Request } from "@nestjs/common";
 import { Response } from "express";
 import { BlogCreateType } from "../models/blog.create.type";
 import { BlogService } from "../application/blog.service";
@@ -70,12 +70,13 @@ export class BlogController {
     async getPostByBlogId(
         @Param('id') id: string,
         @Res() res: Response,
-        @Query() queryParam: PostQueryParamType
+        @Query() queryParam: PostQueryParamType,
+        @Request() req
     ) {
         const blog = await this.blogQueryRepository.findBlogById(id)
         if (!blog) return res.sendStatus(404)
 
-        const posts = await this.postQueryRepository.findPosts(queryParam, id)
+        const posts = await this.postQueryRepository.findPosts(queryParam, req.user.userId, id)
 
         return res.status(200).send(posts)
     }

@@ -61,7 +61,7 @@ import { PostLike, PostLikeSchema } from './features/post/domain/post.like.schem
     JwtModule.register({
       global: true,
       secret: '123',
-      signOptions: { expiresIn: '5m' }
+      signOptions: { expiresIn: '5h' }
     })
   ],
   controllers: [AppController, BlogController, PostControler, UserController, AuthController, CommentController, TestingController],

@@ -10,10 +10,10 @@ export class PostViewType {
         likesCount: number,
         dislikesCount: number,
         myStatus: string,
-        newestLikes: [{
+        newestLikes: {
             addedAt: string,
             userId: string,
             login: string
-        }]
+        }[]
     }
 }
