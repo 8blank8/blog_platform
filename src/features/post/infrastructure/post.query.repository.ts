@@ -88,7 +88,7 @@ export class PostQueryRepository {
                 likesCount: likesCount,
                 dislikesCount: dislikesCount,
                 myStatus: likeStatus,
-                newestLikes: newestLikes.map(item => ({ addedAt: item.id, userId: item.userId, login: item.likeStatus }))
+                newestLikes: newestLikes.map(item => ({ addedAt: item.addedAt, userId: item.userId, login: item.userLogin }))
             }
         }
     }

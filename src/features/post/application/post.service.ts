@@ -86,6 +86,12 @@ export class PostService {
     }
 
     async updatePostLikeStatus(id: string, inputData: PostLikeStatusType, userId: string): Promise<boolean> {
+        const post = await this.postQueryRepository.findPost(id)
+        if (!post) return false
+
+        const user = await this.userQueryRepository.findUserDocumentById(userId)
+        if (!user) return false
+
         const like = await this.postQueryRepository.findPostLikeStatus(id)
         if (like) {
             like.updateLikeStatus(inputData.likeStatus)
@@ -97,7 +103,9 @@ export class PostService {
         const newLike = await this.postRepository.createPostLike(inputData)
         newLike.addId()
         newLike.addPostId(id)
-        newLike.addUserId(userId)
+        newLike.addUserId(user.id)
+        newLike.addAddedAt()
+        newLike.addUserLogin(user.login)
 
         await this.postRepository.savePostLike(newLike)
 

@@ -27,6 +27,16 @@ export class CommentLike {
     })
     userId: string
 
+    @Prop({
+        required: true
+    })
+    addedAt: string
+
+    @Prop({
+        required: true
+    })
+    userLogin: string
+
     updateLikeStatus(likeStatus: string) {
         this.likeStatus = likeStatus
     }
@@ -42,6 +52,14 @@ export class CommentLike {
     addCommentId(commentId: string) {
         this.commentId = commentId
     }
+
+    addAddedAt() {
+        this.addedAt = new Date().toISOString()
+    }
+
+    addUserLogin(login: string) {
+        this.userLogin = login
+    }
 }
 
 export const CommentLikeSchema = SchemaFactory.createForClass(CommentLike)
@@ -50,7 +68,9 @@ CommentLikeSchema.methods = {
     updateLikeStatus: CommentLike.prototype.updateLikeStatus,
     addUserId: CommentLike.prototype.addUserId,
     addId: CommentLike.prototype.addId,
-    addCommentId: CommentLike.prototype.addCommentId
+    addCommentId: CommentLike.prototype.addCommentId,
+    addAddedAt: CommentLike.prototype.addAddedAt,
+    addUserLogin: CommentLike.prototype.addUserLogin
 }
 
 export type CommentLikeDocument = HydratedDocument<CommentLike> 

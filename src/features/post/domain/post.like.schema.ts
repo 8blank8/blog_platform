@@ -26,6 +26,16 @@ export class PostLike {
     })
     userId: string
 
+    @Prop({
+        required: true
+    })
+    userLogin: string
+
+    @Prop({
+        required: true
+    })
+    addedAt: string
+
     addId() {
         this.id = uuidv4()
     }
@@ -41,6 +51,14 @@ export class PostLike {
     addUserId(userId: string) {
         this.userId = userId
     }
+
+    addUserLogin(login: string) {
+        this.userLogin = login
+    }
+
+    addAddedAt() {
+        this.addedAt = new Date().toISOString()
+    }
 }
 
 export const PostLikeSchema = SchemaFactory.createForClass(PostLike)
@@ -49,7 +67,9 @@ PostLikeSchema.methods = {
     addId: PostLike.prototype.addId,
     updateLikeStatus: PostLike.prototype.updateLikeStatus,
     addPostId: PostLike.prototype.addPostId,
-    addUserId: PostLike.prototype.addUserId
+    addUserId: PostLike.prototype.addUserId,
+    addUserLogin: PostLike.prototype.addUserLogin,
+    addAddedAt: PostLike.prototype.addAddedAt
 }
 
 export type PostLikeDocument = HydratedDocument<PostLike>

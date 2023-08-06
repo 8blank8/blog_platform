@@ -5,6 +5,7 @@ import { Comment, CommentDocument } from "../domain/comment.schema";
 import { CommentQueryParam } from "../models/comment.query.param.type";
 import { QUERY_PARAM } from "src/features/enum/query.param.enum";
 import { CommentLike, CommentLikeDocument } from "../domain/comment.like.schema";
+import { CommentViewType } from "../models/comment.view.type";
 
 
 @Injectable()
@@ -14,7 +15,7 @@ export class CommentQueryRepository {
         @InjectModel(CommentLike.name) private commentLikeModel: Model<CommentLikeDocument>
     ) { }
 
-    async findCommentsByPostId(queryParam: CommentQueryParam, postId: string) {
+    async findCommentsByPostId(queryParam: CommentQueryParam, postId: string, userId: string) {
         const {
             pageNumber = QUERY_PARAM.PAGE_NUMBER,
             pageSize = QUERY_PARAM.PAGE_SIZE,
@@ -35,7 +36,7 @@ export class CommentQueryRepository {
             page: +pageNumber,
             pageSize: +pageSize,
             totalCount: totalCount,
-            items: comments,
+            items: await Promise.all(comments.map(item => this._mapComment(item, userId))),
         }
     }
 
@@ -47,5 +48,32 @@ export class CommentQueryRepository {
     async findLikeByCommentId(id: string): Promise<CommentLikeDocument | null> {
         const like = this.commentLikeModel.findOne({ id: id })
         return like
+    }
+
+    async _mapComment(comment: CommentDocument, userId: string): Promise<CommentViewType> {
+        const likeCount = await this.commentLikeModel.countDocuments({ commentId: comment.id, likeStatus: 'Like' })
+        const dislikeCount = await this.commentLikeModel.countDocuments({ commentId: comment.id, likeStatus: 'Dislike' })
+        let myStatus = 'None'
+
+        const likeStatus = await this.commentLikeModel.findOne({ commentId: comment.id, userId: userId })
+
+        if (likeStatus) {
+            myStatus = likeStatus.likeStatus
+        }
+
+        return {
+            id: comment.id,
+            content: comment.content,
+            commentatorInfo: {
+                userId: comment.commentatorInfo.userId,
+                userLogin: comment.commentatorInfo.userLogin
+            },
+            createdAt: comment.createdAt,
+            likesInfo: {
+                likesCount: likeCount,
+                dislikesCount: dislikeCount,
+                myStatus: myStatus
+            }
+        }
     }
 }
