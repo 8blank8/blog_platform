@@ -8,6 +8,7 @@ import { CommentCreateType } from "src/features/comment/models/comment.create.ty
 import { CommentRepository } from "src/features/comment/infrastructure/comment.repository";
 import { UserQueryRepository } from "src/features/user/infrastructure/user.query.repository";
 import { PostLikeStatusType } from "../models/post.like.status.type";
+import { PostCreateByIdType } from "src/features/blog/models/post.create.by.id.type";
 
 @Injectable()
 export class PostService {
@@ -24,6 +25,25 @@ export class PostService {
         if (!blog) return null
 
         const newPost = await this.postRepository.createPost(inputPostData)
+        newPost.addId()
+        newPost.addBlogName(blog.name)
+        newPost.addCreatedAt()
+
+        await this.postRepository.savePost(newPost)
+
+        return newPost.id
+    }
+
+    async createPostByIdBlog(inputPostData: PostCreateByIdType, blogId: string): Promise<string | null> {
+        const blog = await this.blogQueryRepository.findBlogDocumentById(blogId)
+        if (!blog) return null
+
+        const post = {
+            ...inputPostData,
+            blogId
+        }
+
+        const newPost = await this.postRepository.createPost(post)
         newPost.addId()
         newPost.addBlogName(blog.name)
         newPost.addCreatedAt()

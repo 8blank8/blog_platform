@@ -1,14 +1,19 @@
-import { Length, IsString, IsNotEmpty, Matches } from "class-validator"
+import { Transform } from "class-transformer"
+import { Length, IsString, IsNotEmpty, Matches, NotContains } from "class-validator"
 
 export class BlogCreateType {
     @IsNotEmpty()
     @IsString()
     @Length(0, 15)
+    @NotContains(" ")
+    @Transform(({ value }) => value?.trim())
     name: string
 
     @IsNotEmpty()
     @IsString()
     @Length(0, 500)
+    @NotContains(" ")
+    @Transform(({ value }) => value?.trim())
     description: string
 
     @IsNotEmpty()

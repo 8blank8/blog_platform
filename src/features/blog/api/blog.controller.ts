@@ -1,14 +1,15 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, Res, Request } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Res, Request, UseGuards } from "@nestjs/common";
 import { Response } from "express";
 import { BlogCreateType } from "../models/blog.create.type";
 import { BlogService } from "../application/blog.service";
 import { BlogQueryRepository } from "../infrastructure/blog.query.repository";
 import { BlogUpdateType } from "../models/blog.update.type";
 import { BlogQueryParamType } from "../models/blog.query.param.type";
-import { PostCreateType } from "../../post/models/post.create.type";
 import { PostService } from "../../post/application/post.service";
 import { PostQueryRepository } from "../../post/infrastructure/post.query.repository";
 import { PostQueryParamType } from "../../post/models/post.query.param.type";
+import { JwtAuthGuard } from "src/features/auth/guards/jwt.guard";
+import { PostCreateByIdType } from "../models/post.create.by.id.type";
 
 
 
@@ -37,12 +38,14 @@ export class BlogController {
         return res.send(blog)
     }
 
+    @UseGuards(JwtAuthGuard)
     @Post()
     async createBlog(@Body() blog: BlogCreateType) {
         const blogId: string = await this.blogService.createBlog(blog)
         return this.blogQueryRepository.findBlogById(blogId)
     }
 
+    @UseGuards(JwtAuthGuard)
     @Put('/:id')
     async updateBlog(
         @Param('id') id: string,
@@ -55,6 +58,7 @@ export class BlogController {
         return res.sendStatus(204)
     }
 
+    @UseGuards(JwtAuthGuard)
     @Delete('/:id')
     async deleteBlog(
         @Param('id') id: string,
@@ -85,11 +89,10 @@ export class BlogController {
     @Post('/:id/posts')
     async createPostByBlogId(
         @Param('id') id: string,
-        @Body() inputData: PostCreateType,
+        @Body() inputData: PostCreateByIdType,
         @Res() res: Response
     ) {
-        inputData.blogId = id
-        const postId = await this.postService.createPost(inputData)
+        const postId = await this.postService.createPostByIdBlog(inputData, id)
         if (!postId) return res.sendStatus(404)
 
         const post = await this.postQueryRepository.findPost(postId)
