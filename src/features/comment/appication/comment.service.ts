@@ -41,7 +41,7 @@ export class CommentService {
         const user = await this.userQueryRepository.findUserDocumentById(userId)
         if (!user) return false
 
-        const like = await this.commentQueryRepository.findLikeByCommentId(id)
+        const like = await this.commentQueryRepository.findLikeByCommentId(id, user.id)
 
         if (inputData.likeStatus === like?.likeStatus) return true
 

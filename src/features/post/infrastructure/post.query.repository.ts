@@ -60,7 +60,7 @@ export class PostQueryRepository {
     }
 
     async findPostLikeStatus(id: string, userId: string): Promise<PostLikeDocument | null> {
-        const like = await this.postLikeModel.findOne({ id: id, userId: userId })
+        const like = await this.postLikeModel.findOne({ postId: id, userId: userId })
         return like
     }
 

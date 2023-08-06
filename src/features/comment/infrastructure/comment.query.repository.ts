@@ -45,8 +45,8 @@ export class CommentQueryRepository {
         return comment
     }
 
-    async findLikeByCommentId(id: string): Promise<CommentLikeDocument | null> {
-        const like = this.commentLikeModel.findOne({ id: id })
+    async findLikeByCommentId(id: string, userId: string): Promise<CommentLikeDocument | null> {
+        const like = this.commentLikeModel.findOne({ commentId: id, userId: userId })
         return like
     }
 
