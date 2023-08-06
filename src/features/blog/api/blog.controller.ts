@@ -5,10 +5,10 @@ import { BlogService } from "../application/blog.service";
 import { BlogQueryRepository } from "../infrastructure/blog.query.repository";
 import { BlogUpdateType } from "../models/blog.update.type";
 import { BlogQueryParamType } from "../models/blog.query.param.type";
-import { PostCreateType } from "src/features/post/models/post.create.type";
-import { PostService } from "src/features/post/application/post.service";
-import { PostQueryRepository } from "src/features/post/infrastructure/post.query.repository";
-import { PostQueryParamType } from "src/features/post/models/post.query.param.type";
+import { PostCreateType } from "../../post/models/post.create.type";
+import { PostService } from "../../post/application/post.service";
+import { PostQueryRepository } from "../../post/infrastructure/post.query.repository";
+import { PostQueryParamType } from "../../post/models/post.query.param.type";
 
 
 

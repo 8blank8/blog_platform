@@ -5,12 +5,12 @@ import { Response } from "express";
 import { PostService } from "../application/post.service";
 import { PostQueryParamType } from "../models/post.query.param.type";
 import { PostUpdateType } from "../models/post.update.type";
-import { CommentCreateType } from "src/features/comment/models/comment.create.type";
-import { JwtAuthGuard } from "src/features/auth/guards/jwt.guard";
-import { CommentQueryParam } from "src/features/comment/models/comment.query.param.type";
-import { CommentQueryRepository } from "src/features/comment/infrastructure/comment.query.repository";
+import { CommentCreateType } from "../../comment/models/comment.create.type";
+import { JwtAuthGuard } from "../../auth/guards/jwt.guard";
+import { CommentQueryParam } from "../../comment/models/comment.query.param.type";
+import { CommentQueryRepository } from "../../comment/infrastructure/comment.query.repository";
 import { PostLikeStatusType } from "../models/post.like.status.type";
-import { JwtOrNotGuard } from "src/features/auth/guards/jwt.or.not.guard";
+import { JwtOrNotGuard } from "../../auth/guards/jwt.or.not.guard";
 
 
 @Controller('posts')
