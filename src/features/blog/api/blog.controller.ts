@@ -38,14 +38,14 @@ export class BlogController {
         return res.send(blog)
     }
 
-    @UseGuards(JwtAuthGuard)
+    // @UseGuards(JwtAuthGuard)
     @Post()
     async createBlog(@Body() blog: BlogCreateType) {
         const blogId: string = await this.blogService.createBlog(blog)
         return this.blogQueryRepository.findBlogById(blogId)
     }
 
-    @UseGuards(JwtAuthGuard)
+    // @UseGuards(JwtAuthGuard)
     @Put('/:id')
     async updateBlog(
         @Param('id') id: string,
@@ -58,7 +58,7 @@ export class BlogController {
         return res.sendStatus(204)
     }
 
-    @UseGuards(JwtAuthGuard)
+    // @UseGuards(JwtAuthGuard)
     @Delete('/:id')
     async deleteBlog(
         @Param('id') id: string,
