@@ -10,6 +10,7 @@ import { PostQueryRepository } from "../../post/infrastructure/post.query.reposi
 import { PostQueryParamType } from "../../post/models/post.query.param.type";
 import { PostCreateByIdType } from "../models/post.create.by.id.type";
 import { BasicAuthGuard } from "src/features/auth/guards/basic.guard";
+import { JwtOrNotGuard } from "src/features/auth/guards/jwt.or.not.guard";
 
 
 
@@ -70,6 +71,7 @@ export class BlogController {
         return res.sendStatus(204)
     }
 
+    @UseGuards(JwtOrNotGuard)
     @Get('/:id/posts')
     async getPostByBlogId(
         @Param('id') id: string,
