@@ -8,7 +8,6 @@ import { BlogQueryParamType } from "../models/blog.query.param.type";
 import { PostService } from "../../post/application/post.service";
 import { PostQueryRepository } from "../../post/infrastructure/post.query.repository";
 import { PostQueryParamType } from "../../post/models/post.query.param.type";
-import { JwtAuthGuard } from "src/features/auth/guards/jwt.guard";
 import { PostCreateByIdType } from "../models/post.create.by.id.type";
 import { BasicAuthGuard } from "src/features/auth/guards/basic.guard";
 
@@ -39,14 +38,14 @@ export class BlogController {
         return res.send(blog)
     }
 
-    // @UseGuards(JwtAuthGuard)
+    @UseGuards(BasicAuthGuard)
     @Post()
     async createBlog(@Body() blog: BlogCreateType) {
         const blogId: string = await this.blogService.createBlog(blog)
         return this.blogQueryRepository.findBlogById(blogId)
     }
 
-    // @UseGuards(JwtAuthGuard)
+    @UseGuards(BasicAuthGuard)
     @Put('/:id')
     async updateBlog(
         @Param('id') id: string,
@@ -59,7 +58,7 @@ export class BlogController {
         return res.sendStatus(204)
     }
 
-    // @UseGuards(JwtAuthGuard)
+    @UseGuards(BasicAuthGuard)
     @Delete('/:id')
     async deleteBlog(
         @Param('id') id: string,

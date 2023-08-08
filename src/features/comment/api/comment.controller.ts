@@ -47,6 +47,7 @@ export class CommentController {
         @Res() res: Response
     ) {
         const isDelete = await this.commentService.deleteComment(id, req.user.userId)
+        console.log(isDelete)
         if (!isDelete) return res.sendStatus(404)
 
         return res.sendStatus(204)

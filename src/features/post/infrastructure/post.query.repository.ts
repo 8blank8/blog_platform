@@ -65,9 +65,16 @@ export class PostQueryRepository {
     }
 
     async _mapPost(post: PostDocument, userId?: string): Promise<PostViewType> {
+
+        const filter: any = { postId: post.id }
+
+        if (userId) {
+            filter.userId = userId
+        }
+
         const likesCount = await this.postLikeModel.countDocuments({ postId: post.id, likeStatus: 'Like' })
         const dislikesCount = await this.postLikeModel.countDocuments({ postId: post.id, likeStatus: 'Dislike' })
-        const like = await this.postLikeModel.findOne({ postId: post.id, userId: userId })
+        const like = await this.postLikeModel.findOne(filter)
         const newestLikes = await this.postLikeModel.find({ postId: post.id, likeStatus: 'Like' }).sort({ addedAt: 'desc' }).limit(3).exec()
 
         let likeStatus: string = 'None'
