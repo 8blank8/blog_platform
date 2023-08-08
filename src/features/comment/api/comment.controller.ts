@@ -6,13 +6,15 @@ import { CommentService } from "../appication/comment.service";
 import { CommentLikeStatusType } from "../models/comment.like.status";
 import { CommentQueryRepository } from "../infrastructure/comment.query.repository";
 import { JwtOrNotGuard } from "src/features/auth/guards/jwt.or.not.guard";
+import { PostQueryRepository } from "src/features/post/infrastructure/post.query.repository";
 
 @Controller('/comments')
 export class CommentController {
 
     constructor(
         private readonly commentService: CommentService,
-        private readonly commentQueryRepository: CommentQueryRepository
+        private readonly commentQueryRepository: CommentQueryRepository,
+        private readonly postQueryRepository: PostQueryRepository
     ) { }
 
     @UseGuards(JwtOrNotGuard)
@@ -20,9 +22,15 @@ export class CommentController {
     async findCommentById(
         @Param('id') id: string,
         @Request() req,
+        @Res() res: Response
     ) {
+        const post = await this.postQueryRepository.findPost(id)
+        if (!post) res.sendStatus(404)
+
         const comment = await this.commentQueryRepository.findCommentViewById(id, req.user.userId)
-        return comment
+        if (!comment) return res.sendStatus(404)
+
+        return res.status(200).send(comment)
     }
 
     @UseGuards(JwtAuthGuard)
@@ -47,7 +55,6 @@ export class CommentController {
         @Res() res: Response
     ) {
         const isDelete = await this.commentService.deleteComment(id, req.user.userId)
-        console.log(isDelete)
         if (!isDelete) return res.sendStatus(404)
 
         return res.sendStatus(204)
