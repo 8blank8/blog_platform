@@ -45,7 +45,7 @@ export class PostControler {
         return res.status(200).send(post)
     }
 
-    @UseGuards(JwtAuthGuard)
+    // @UseGuards(JwtAuthGuard)
     @Post()
     async createPost(
         @Body() inputPostData: PostCreateType,
@@ -58,7 +58,7 @@ export class PostControler {
         return res.status(201).send(post)
     }
 
-    @UseGuards(JwtAuthGuard)
+    // @UseGuards(JwtAuthGuard)
     @Put('/:id')
     async updatePost(
         @Param('id') id: string,
@@ -71,7 +71,7 @@ export class PostControler {
         return res.sendStatus(204)
     }
 
-    @UseGuards(JwtAuthGuard)
+    // @UseGuards(JwtAuthGuard)
     @Delete('/:id')
     async deletePost(
         @Param('id') id: string,
