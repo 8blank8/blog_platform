@@ -85,7 +85,7 @@ export class BlogController {
         return res.status(200).send(posts)
     }
 
-
+    @UseGuards(JwtAuthGuard)
     @Post('/:id/posts')
     async createPostByBlogId(
         @Param('id') id: string,

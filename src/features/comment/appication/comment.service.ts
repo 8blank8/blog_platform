@@ -38,6 +38,9 @@ export class CommentService {
 
     async updateLikeStatus(id: string, inputData: CommentLikeStatusType, userId: string): Promise<boolean> {
 
+        const comment = await this.commentQueryRepository.findCommentById(id)
+        if (!comment) return false
+
         const user = await this.userQueryRepository.findUserDocumentById(userId)
         if (!user) return false
 

@@ -45,6 +45,7 @@ export class PostControler {
         return res.status(200).send(post)
     }
 
+    @UseGuards(JwtAuthGuard)
     @Post()
     async createPost(
         @Body() inputPostData: PostCreateType,
@@ -57,6 +58,7 @@ export class PostControler {
         return res.status(201).send(post)
     }
 
+    @UseGuards(JwtAuthGuard)
     @Put('/:id')
     async updatePost(
         @Param('id') id: string,
@@ -69,6 +71,7 @@ export class PostControler {
         return res.sendStatus(204)
     }
 
+    @UseGuards(JwtAuthGuard)
     @Delete('/:id')
     async deletePost(
         @Param('id') id: string,
@@ -88,10 +91,12 @@ export class PostControler {
         @Request() req,
         @Res() res: Response
     ) {
-        const isCreated = await this.postService.createComment(id, inputData, req.user.userId)
-        if (!isCreated) return res.sendStatus(404)
+        const newComment = await this.postService.createComment(id, inputData, req.user.userId)
+        if (!newComment) return res.sendStatus(404)
 
-        return res.sendStatus(201)
+        const comment = await this.commentQueryRepository.findCommentViewById(newComment.id, req.user.userId)
+
+        return res.status(201).send(comment)
     }
 
 

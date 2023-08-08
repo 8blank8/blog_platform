@@ -9,6 +9,7 @@ import { CommentRepository } from "src/features/comment/infrastructure/comment.r
 import { UserQueryRepository } from "src/features/user/infrastructure/user.query.repository";
 import { PostLikeStatusType } from "../models/post.like.status.type";
 import { PostCreateByIdType } from "src/features/blog/models/post.create.by.id.type";
+import { CommentDocument } from "src/features/comment/domain/comment.schema";
 
 @Injectable()
 export class PostService {
@@ -68,7 +69,7 @@ export class PostService {
         return this.postRepository.deletePost(id)
     }
 
-    async createComment(id: string, inputData: CommentCreateType, userId: string): Promise<boolean> {
+    async createComment(id: string, inputData: CommentCreateType, userId: string): Promise<false | CommentDocument> {
         const post = await this.postQueryRepository.findPost(id)
         if (!post) return false
 
@@ -79,10 +80,11 @@ export class PostService {
         comment.addId()
         comment.addCreatedAt()
         comment.addCommentatorInfo(user)
+        comment.addPostId(post.id)
 
         await this.commentRepository.saveComment(comment)
 
-        return true
+        return comment
     }
 
     async updatePostLikeStatus(id: string, inputData: PostLikeStatusType, userId: string): Promise<boolean> {

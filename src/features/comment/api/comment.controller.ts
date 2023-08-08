@@ -1,15 +1,29 @@
-import { Body, Controller, Param, Put, UseGuards, Request, Res, Delete, Req } from "@nestjs/common";
+import { Body, Controller, Param, Put, UseGuards, Request, Res, Delete, Req, Get } from "@nestjs/common";
 import { CommentCreateType } from "../models/comment.create.type";
 import { JwtAuthGuard } from "src/features/auth/guards/jwt.guard";
 import { Response } from "express";
 import { CommentService } from "../appication/comment.service";
 import { CommentLikeStatusType } from "../models/comment.like.status";
-
+import { CommentQueryRepository } from "../infrastructure/comment.query.repository";
+import { JwtOrNotGuard } from "src/features/auth/guards/jwt.or.not.guard";
 
 @Controller('/comments')
 export class CommentController {
 
-    constructor(private readonly commentService: CommentService) { }
+    constructor(
+        private readonly commentService: CommentService,
+        private readonly commentQueryRepository: CommentQueryRepository
+    ) { }
+
+    @UseGuards(JwtOrNotGuard)
+    @Get('/:id')
+    async findCommentById(
+        @Param('id') id: string,
+        @Request() req
+    ) {
+        const comment = await this.commentQueryRepository.findCommentViewById(id, req.user.userId)
+        return comment
+    }
 
     @UseGuards(JwtAuthGuard)
     @Put('/:id')

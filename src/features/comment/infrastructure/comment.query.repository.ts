@@ -23,13 +23,13 @@ export class CommentQueryRepository {
             sortDirection = QUERY_PARAM.SORT_DIRECTION_DESC
         } = queryParam
 
-        const comments = await this.commentModel.find({})
+        const comments = await this.commentModel.find({ postId: postId })
             .skip((pageNumber - 1) * pageSize)
             .limit(pageSize)
             .sort({ [sortBy]: sortDirection })
             .exec()
 
-        const totalCount = await this.commentModel.countDocuments({})
+        const totalCount = await this.commentModel.countDocuments({ postId: postId })
 
         return {
             pagesCount: Math.ceil(totalCount / pageSize),
@@ -43,6 +43,13 @@ export class CommentQueryRepository {
     async findCommentById(id: string): Promise<CommentDocument | null> {
         const comment = await this.commentModel.findOne({ id: id })
         return comment
+    }
+
+    async findCommentViewById(id: string, userId: string): Promise<CommentViewType | null> {
+        const comment = await this.commentModel.findOne({ id: id })
+        if (!comment) return null
+
+        return await this._mapComment(comment, userId)
     }
 
     async findLikeByCommentId(id: string, userId: string): Promise<CommentLikeDocument | null> {

@@ -37,6 +37,11 @@ export class Comment {
     })
     createdAt: string
 
+    @Prop({
+        required: true
+    })
+    postId: string
+
     addCreatedAt() {
         this.createdAt = new Date().toISOString()
     }
@@ -55,6 +60,10 @@ export class Comment {
     updateContent(inputData: string) {
         this.content = inputData
     }
+
+    addPostId(postId: string) {
+        this.postId = postId
+    }
 }
 
 export const CommentSchema = SchemaFactory.createForClass(Comment)
@@ -63,7 +72,8 @@ CommentSchema.methods = {
     addCreatedAt: Comment.prototype.addCreatedAt,
     addId: Comment.prototype.addId,
     addCommentatorInfo: Comment.prototype.addCommentatorInfo,
-    updateContent: Comment.prototype.updateContent
+    updateContent: Comment.prototype.updateContent,
+    addPostId: Comment.prototype.addPostId
 }
 
 export type CommentDocument = HydratedDocument<Comment>
