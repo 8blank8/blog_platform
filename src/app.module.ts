@@ -47,6 +47,7 @@ import { CommentLike, CommentLikeSchema } from './features/comment/domain/commen
 import { PostLike, PostLikeSchema } from './features/post/domain/post.like.schema';
 import { CheckBlogId } from './entity/custom-validation/check.blogId';
 import { IsNotBlank } from './entity/custom-validation/is.not.blank';
+import { LikeStatus } from './entity/custom-validation/like.status';
 
 @Module({
   imports: [
@@ -75,7 +76,7 @@ import { IsNotBlank } from './entity/custom-validation/is.not.blank';
     AuthService,
     LocalStrategy, JwtStrategy, BasicStrategy,
     EmailManager, EmailAdapter,
-    UserExistLogin, UserExistEmail, UserIsConfirmed, EmailCodeResend, CheckBlogId, IsNotBlank,
+    UserExistLogin, UserExistEmail, UserIsConfirmed, EmailCodeResend, CheckBlogId, IsNotBlank, LikeStatus,
     CommentRepository, CommentQueryRepository, CommentService
   ],
 })

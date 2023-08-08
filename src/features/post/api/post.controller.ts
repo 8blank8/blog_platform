@@ -11,6 +11,7 @@ import { CommentQueryParam } from "../../comment/models/comment.query.param.type
 import { CommentQueryRepository } from "../../comment/infrastructure/comment.query.repository";
 import { PostLikeStatusType } from "../models/post.like.status.type";
 import { JwtOrNotGuard } from "../../auth/guards/jwt.or.not.guard";
+import { BasicAuthGuard } from "src/features/auth/guards/basic.guard";
 
 
 @Controller('posts')
@@ -45,7 +46,7 @@ export class PostControler {
         return res.status(200).send(post)
     }
 
-    // @UseGuards(JwtAuthGuard)
+    @UseGuards(BasicAuthGuard)
     @Post()
     async createPost(
         @Body() inputPostData: PostCreateType,
@@ -58,7 +59,7 @@ export class PostControler {
         return res.status(201).send(post)
     }
 
-    // @UseGuards(JwtAuthGuard)
+    @UseGuards(BasicAuthGuard)
     @Put('/:id')
     async updatePost(
         @Param('id') id: string,
@@ -71,7 +72,7 @@ export class PostControler {
         return res.sendStatus(204)
     }
 
-    // @UseGuards(JwtAuthGuard)
+    @UseGuards(BasicAuthGuard)
     @Delete('/:id')
     async deletePost(
         @Param('id') id: string,

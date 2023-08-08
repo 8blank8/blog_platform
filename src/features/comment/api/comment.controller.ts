@@ -19,7 +19,7 @@ export class CommentController {
     @Get('/:id')
     async findCommentById(
         @Param('id') id: string,
-        @Request() req
+        @Request() req,
     ) {
         const comment = await this.commentQueryRepository.findCommentViewById(id, req.user.userId)
         return comment
