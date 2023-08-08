@@ -106,10 +106,14 @@ export class PostControler {
     async findCommentsByPostId(
         @Param('id') id: string,
         @Query() queryParam: CommentQueryParam,
-        @Request() req
+        @Request() req,
+        @Res() res: Response
     ) {
+        const post = await this.postQueryRepository.findPost(id)
+        if (!post) return res.sendStatus(404)
+
         const comments = await this.commentQueryRepository.findCommentsByPostId(queryParam, id, req.user.userId)
-        return comments
+        return res.status(200).send(comments)
     }
 
     @UseGuards(JwtAuthGuard)
