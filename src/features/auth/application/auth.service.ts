@@ -1,7 +1,6 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { UserQueryRepository } from "src/features/user/infrastructure/user.query.repository";
 import { JwtService } from '@nestjs/jwt'
-import { ConfirmationCodeType } from "../models/confirmation.code.type";
 
 
 @Injectable()
@@ -20,15 +19,13 @@ export class AuthService {
         return { id: user.id, login: user.login }
     }
 
-    async login(user: { id: string, login: string }) {
-        const payload = { id: user.id, login: user.login }
+    async login(id: string) {
         return {
-            accessToken: this.jwtService.sign(payload),
+            accessToken: this.jwtService.sign({ id: id }),
         }
     }
 
-    async createRefreshToken(user: { id: string, login: string }): Promise<string> {
-        const payload = { id: user.id, login: user.login }
-        return this.jwtService.sign(payload)
+    async createRefreshToken(userId: string, deviceId: string): Promise<string> {
+        return this.jwtService.sign({ userId: userId, deviceId: deviceId })
     }
 }

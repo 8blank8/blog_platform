@@ -48,6 +48,14 @@ import { PostLike, PostLikeSchema } from './features/post/domain/post.like.schem
 import { CheckBlogId } from './entity/custom-validation/check.blogId';
 import { IsNotBlank } from './entity/custom-validation/is.not.blank';
 import { LikeStatus } from './entity/custom-validation/like.status';
+import { Device, DeviceSchema } from './features/security/domain/device.schema';
+import { SecurityController } from './features/security/api/security.controller';
+import { SecurityQueryRepository } from './features/security/infrastructure/security.query.repository';
+import { SecurityService } from './features/security/application/security.service';
+import { SecurityRepository } from './features/security/infrastructure/security.repository';
+import { JwtRefreshTokenStrategy } from './features/auth/strategies/jwt.refresh.token.straregy';
+import { ThrottlerModule } from '@nestjs/throttler';
+
 
 @Module({
   imports: [
@@ -58,8 +66,13 @@ import { LikeStatus } from './entity/custom-validation/like.status';
       { name: User.name, schema: UserSchema },
       { name: Comment.name, schema: CommentSchema },
       { name: CommentLike.name, schema: CommentLikeSchema },
-      { name: PostLike.name, schema: PostLikeSchema }
+      { name: PostLike.name, schema: PostLikeSchema },
+      { name: Device.name, schema: DeviceSchema }
     ]),
+    ThrottlerModule.forRoot({
+      ttl: 10,
+      limit: 5,
+    }),
     PassportModule,
     JwtModule.register({
       global: true,
@@ -67,17 +80,18 @@ import { LikeStatus } from './entity/custom-validation/like.status';
       signOptions: { expiresIn: '5h' }
     })
   ],
-  controllers: [AppController, BlogController, PostControler, UserController, AuthController, CommentController, TestingController],
+  controllers: [AppController, BlogController, PostControler, UserController, AuthController, CommentController, SecurityController, TestingController],
   providers: [
     AppService,
     BlogRepository, BlogService, BlogQueryRepository,
     PostQueryRepository, PostService, PostRepository,
     UserService, UserRepository, UserQueryRepository,
     AuthService,
-    LocalStrategy, JwtStrategy, BasicStrategy,
+    LocalStrategy, JwtStrategy, BasicStrategy, JwtRefreshTokenStrategy,
     EmailManager, EmailAdapter,
     UserExistLogin, UserExistEmail, UserIsConfirmed, EmailCodeResend, CheckBlogId, IsNotBlank, LikeStatus,
-    CommentRepository, CommentQueryRepository, CommentService
+    CommentRepository, CommentQueryRepository, CommentService,
+    SecurityService, SecurityQueryRepository, SecurityRepository
   ],
 })
 export class AppModule { }

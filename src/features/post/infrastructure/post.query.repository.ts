@@ -11,7 +11,7 @@ import { PostLike, PostLikeDocument } from "../domain/post.like.schema";
 @Injectable()
 export class PostQueryRepository {
     constructor(@InjectModel(Post.name) private postModel: Model<PostDocument>,
-        @InjectModel(PostLike.name) private postLikeModel: Model<PostLike>
+        @InjectModel(PostLike.name) private postLikeModel: Model<PostLikeDocument>
     ) { }
 
     async findPosts(queryParam: PostQueryParamType, userId?: string, blogId?: string) {

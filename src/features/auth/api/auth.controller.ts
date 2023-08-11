@@ -8,6 +8,9 @@ import { UserCreateType } from "src/features/user/models/user.create.type";
 import { UserService } from "src/features/user/application/user.service";
 import { ConfirmationCodeType } from "../models/confirmation.code.type";
 import { EmailType } from "../models/email.type";
+import { SecurityService } from "../../security/application/security.service";
+import { JwtRefreshTokenGuard } from "../guards/jwt.refresh.token.guard";
+import { ThrottlerGuard } from "@nestjs/throttler";
 
 
 @Controller('/auth')
@@ -15,17 +18,20 @@ export class AuthController {
     constructor(
         private readonly authService: AuthService,
         private readonly userQueryRepository: UserQueryRepository,
-        private readonly userService: UserService
+        private readonly userService: UserService,
+        private readonly securityService: SecurityService
     ) { }
 
-    @UseGuards(LocalAuthGuard)
+    @UseGuards(ThrottlerGuard, LocalAuthGuard)
     @Post('/login')
     async login(
         @Request() req,
         @Res() res: Response
     ) {
+        const device = await this.securityService.createDevice(req.user.id, req.ip, req.headers['user-agent'])
+
         const token = await this.authService.login(req.user)
-        const refreshToken = await this.authService.createRefreshToken(req.user)
+        const refreshToken = await this.authService.createRefreshToken(req.user.id, device.deviceId)
 
         res
             .status(200)
@@ -70,5 +76,20 @@ export class AuthController {
         if (!isResending) return res.sendStatus(400)
 
         return res.sendStatus(204)
+    }
+
+    @UseGuards(JwtRefreshTokenGuard)
+    @Post('refresh-token')
+    async updateRefreshRoken(
+        @Request() req,
+        @Res() res: Response
+    ) {
+        const token = await this.authService.login(req.user)
+        const refreshToken = await this.authService.createRefreshToken(req.user.userId, req.user.deviceId)
+
+        res
+            .status(200)
+            .cookie('refreshToken', refreshToken, { httpOnly: true, secure: true })
+            .send(token)
     }
 }
