@@ -47,6 +47,7 @@ export class AuthController {
         return await this.userQueryRepository.findUserById(req.user.id)
     }
 
+    @UseGuards(ThrottlerGuard)
     @Post('/registration')
     async registrationUser(
         @Body() inputData: UserCreateType,
@@ -58,6 +59,7 @@ export class AuthController {
         return res.sendStatus(204)
     }
 
+    @UseGuards(ThrottlerGuard)
     @Post('/registration-confirmation')
     async registrationConfirmation(
         @Body() code: ConfirmationCodeType,
@@ -69,6 +71,7 @@ export class AuthController {
         return res.sendStatus(204)
     }
 
+    @UseGuards(ThrottlerGuard)
     @Post('/registration-email-resending')
     async registrationEmailResending(
         @Body() email: EmailType,
