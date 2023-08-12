@@ -44,8 +44,15 @@ export class AuthService {
         return refreshToken
     }
 
-    async addRefreshTokenInBlackList(refreshToken: string) {
+    async addRefreshTokenInBlackList(refreshToken: string, deviceId?: string) {
         const token = await this.authRepository.postRefreshToken({ refreshToken })
-        return await this.authRepository.save(token)
+
+        if (deviceId) {
+            const isDeleteDevice = await this.securityRepository.deleteDevice(deviceId)
+            return isDeleteDevice
+        }
+
+        await this.authRepository.save(token)
+        return
     }
 }

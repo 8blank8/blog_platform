@@ -44,7 +44,8 @@ export class AuthController {
     @UseGuards(JwtAuthGuard)
     @Get('/me')
     async getMe(@Request() req) {
-        return await this.userQueryRepository.findUserById(req.user.id)
+        const user = await this.userQueryRepository.findUserById(req.user.id)
+        return user
     }
 
     @UseGuards(ThrottlerGuard)
@@ -108,7 +109,7 @@ export class AuthController {
         @Request() req,
         @Res() res: Response
     ) {
-        await this.authService.addRefreshTokenInBlackList(req.cookies.refreshToken)
+        await this.authService.addRefreshTokenInBlackList(req.cookies.refreshToken, req.user.deviceId)
         return res.sendStatus(204)
     }
 }
