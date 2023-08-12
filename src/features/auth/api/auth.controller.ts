@@ -42,7 +42,7 @@ export class AuthController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Post('/me')
+    @Get('/me')
     async getMe(
         @Request() req
     ) {
