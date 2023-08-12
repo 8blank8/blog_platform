@@ -55,6 +55,9 @@ import { SecurityService } from './features/security/application/security.servic
 import { SecurityRepository } from './features/security/infrastructure/security.repository';
 import { JwtRefreshTokenStrategy } from './features/auth/strategies/jwt.refresh.token.straregy';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { Auth, AuthSchema } from './features/auth/domain/auth.schema';
+import { AuthRepository } from './features/auth/infrastructure/auth.repository';
+import { AuthQueryRepository } from './features/auth/infrastructure/auth.query.repository';
 
 
 @Module({
@@ -67,7 +70,8 @@ import { ThrottlerModule } from '@nestjs/throttler';
       { name: Comment.name, schema: CommentSchema },
       { name: CommentLike.name, schema: CommentLikeSchema },
       { name: PostLike.name, schema: PostLikeSchema },
-      { name: Device.name, schema: DeviceSchema }
+      { name: Device.name, schema: DeviceSchema },
+      { name: Auth.name, schema: AuthSchema }
     ]),
     ThrottlerModule.forRoot({
       ttl: 10,
@@ -86,12 +90,12 @@ import { ThrottlerModule } from '@nestjs/throttler';
     BlogRepository, BlogService, BlogQueryRepository,
     PostQueryRepository, PostService, PostRepository,
     UserService, UserRepository, UserQueryRepository,
-    AuthService,
+    AuthService, AuthRepository, AuthQueryRepository,
     LocalStrategy, JwtStrategy, BasicStrategy, JwtRefreshTokenStrategy,
     EmailManager, EmailAdapter,
     UserExistLogin, UserExistEmail, UserIsConfirmed, EmailCodeResend, CheckBlogId, IsNotBlank, LikeStatus,
     CommentRepository, CommentQueryRepository, CommentService,
-    SecurityService, SecurityQueryRepository, SecurityRepository
+    SecurityService, SecurityQueryRepository, SecurityRepository,
   ],
 })
 export class AppModule { }

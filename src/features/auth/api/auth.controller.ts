@@ -33,14 +33,16 @@ export class AuthController {
         const token = await this.authService.login(req.user)
         const refreshToken = await this.authService.createRefreshToken(req.user.id, device.deviceId)
 
+
+
         res
             .status(200)
             .cookie('refreshToken', refreshToken, { httpOnly: true, secure: true })
             .send(token)
     }
 
-    @Get('/me')
     @UseGuards(JwtAuthGuard)
+    @Get('/me')
     async getMe(@Request() req) {
         return await this.userQueryRepository.findUserById(req.user.id)
     }
@@ -84,6 +86,8 @@ export class AuthController {
         @Request() req,
         @Res() res: Response
     ) {
+        await this.authService.addRefreshTokenInBlackList(req.cookies.refreshToken)
+
         const token = await this.authService.login(req.user)
         const refreshToken = await this.authService.createRefreshToken(req.user.userId, req.user.deviceId)
 
@@ -91,5 +95,15 @@ export class AuthController {
             .status(200)
             .cookie('refreshToken', refreshToken, { httpOnly: true, secure: true })
             .send(token)
+    }
+
+    @Post('/logout')
+    @UseGuards(JwtRefreshTokenGuard)
+    async logoutUser(
+        @Request() req,
+        @Res() res: Response
+    ) {
+        await this.authService.addRefreshTokenInBlackList(req.cookies.refreshToken)
+        return res.sendStatus(204)
     }
 }
