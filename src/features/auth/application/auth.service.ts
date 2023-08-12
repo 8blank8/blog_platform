@@ -1,7 +1,9 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { UserQueryRepository } from "src/features/user/infrastructure/user.query.repository";
 import { JwtService } from '@nestjs/jwt'
 import { AuthRepository } from "../infrastructure/auth.repository";
+import { SecurityQueryRepository } from "src/features/security/infrastructure/security.query.repository";
+import { SecurityRepository } from "src/features/security/infrastructure/security.repository";
 
 
 @Injectable()
@@ -9,7 +11,9 @@ export class AuthService {
     constructor(
         private readonly userQueryRepository: UserQueryRepository,
         private readonly jwtService: JwtService,
-        private readonly authRepository: AuthRepository
+        private readonly authRepository: AuthRepository,
+        private readonly securityQueryRepository: SecurityQueryRepository,
+        private readonly securityRepository: SecurityRepository
     ) { }
 
     async validateUser(loginOrEmail: string, password: string) {
@@ -29,6 +33,13 @@ export class AuthService {
     }
 
     async createRefreshToken(userId: string, deviceId: string): Promise<string | boolean> {
+
+        const device = await this.securityQueryRepository.findDeviceById(deviceId)
+        if (!device) return false
+
+        device.setLastActiveDate()
+        await this.securityRepository.saveDevice(device)
+
         const refreshToken = this.jwtService.sign({ userId: userId, deviceId: deviceId }, { expiresIn: '20s' })
         return refreshToken
     }

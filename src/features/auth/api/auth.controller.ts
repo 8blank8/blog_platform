@@ -94,6 +94,8 @@ export class AuthController {
         const token = await this.authService.login(req.user)
         const refreshToken = await this.authService.createRefreshToken(req.user.userId, req.user.deviceId)
 
+        if (!refreshToken) res.sendStatus(401)
+
         res
             .status(200)
             .cookie('refreshToken', refreshToken, { httpOnly: true, secure: true })
