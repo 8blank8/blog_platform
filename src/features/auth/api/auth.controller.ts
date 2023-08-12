@@ -30,7 +30,7 @@ export class AuthController {
     ) {
         const device = await this.securityService.createDevice(req.user.id, req.ip, req.headers['user-agent'])
 
-        const token = await this.authService.login(req.user)
+        const token = await this.authService.login(req.user.id)
         const refreshToken = await this.authService.createRefreshToken(req.user.id, device.deviceId)
 
         res
