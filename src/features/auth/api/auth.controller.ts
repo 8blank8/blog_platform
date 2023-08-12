@@ -44,6 +44,7 @@ export class AuthController {
     async getMe(
         @Request() req,
     ) {
+        console.log(req.user)
         const user = await this.userQueryRepository.findMeView(req.user.id)
         console.log(user)
         return user
