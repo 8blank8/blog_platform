@@ -51,11 +51,11 @@ export class UserQueryRepository {
         }
     }
 
-    async findUserById(id: string) {
+    async findUserById(id: string): Promise<UserViewType | null> {
         const user = await this.userModel.findOne({ id: id })
         if (!user) return null
 
-        return this._mapUserForGetMe(user)
+        return this._mapUser(user)
     }
 
     async findUserDocumentById(id: string): Promise<UserDocument | null> {
@@ -76,14 +76,6 @@ export class UserQueryRepository {
     async findUserByConfirmationCode(code: string): Promise<UserDocument | null> {
         const user = await this.userModel.findOne({ confirmationCode: code })
         return user
-    }
-
-    _mapUserForGetMe(user: UserDBType) {
-        return {
-            userId: user.id,
-            login: user.login,
-            email: user.email
-        }
     }
 
     _mapUser(user: UserDBType): UserViewType {
