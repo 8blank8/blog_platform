@@ -44,10 +44,11 @@ export class AuthController {
     @UseGuards(JwtAuthGuard)
     @Get('/me')
     async getMe(
-        @Request() req
+        @Request() req,
+        @Res() res: Response
     ) {
         const user = await this.userQueryRepository.findMeView(req.user.id)
-        return user
+        return res.status(200).send(user)
     }
 
     @UseGuards(ThrottlerGuard)
