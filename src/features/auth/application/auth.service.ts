@@ -24,12 +24,12 @@ export class AuthService {
 
     async login(id: string) {
         return {
-            accessToken: this.jwtService.sign({ id: id }, { expiresIn: '10h' }),
+            accessToken: this.jwtService.sign({ id: id }, { expiresIn: '10s' }),
         }
     }
 
     async createRefreshToken(userId: string, deviceId: string): Promise<string | boolean> {
-        const refreshToken = this.jwtService.sign({ userId: userId, deviceId: deviceId }, { expiresIn: '20h' })
+        const refreshToken = this.jwtService.sign({ userId: userId, deviceId: deviceId }, { expiresIn: '20s' })
         return refreshToken
     }
 
