@@ -78,6 +78,20 @@ export class UserQueryRepository {
         return user
     }
 
+    async findMeView(userId: string) {
+        const user = await this.userModel.findOne({ id: userId })
+        if (!user) return null
+        return this._mapUserForGetMe(user)
+    }
+
+    _mapUserForGetMe(user: UserDocument) {
+        return {
+            userId: user.id,
+            login: user.login,
+            email: user.email
+        }
+    }
+
     _mapUser(user: UserDBType): UserViewType {
         return {
             id: user.id,
