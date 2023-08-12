@@ -33,8 +33,6 @@ export class AuthController {
         const token = await this.authService.login(req.user)
         const refreshToken = await this.authService.createRefreshToken(req.user.id, device.deviceId)
 
-
-
         res
             .status(200)
             .cookie('refreshToken', refreshToken, { httpOnly: true, secure: true })
@@ -45,10 +43,10 @@ export class AuthController {
     @Get('/me')
     async getMe(
         @Request() req,
-        @Res() res: Response
     ) {
         const user = await this.userQueryRepository.findMeView(req.user.id)
-        return res.status(200).send(user)
+        console.log(user)
+        return user
     }
 
     @UseGuards(ThrottlerGuard)
