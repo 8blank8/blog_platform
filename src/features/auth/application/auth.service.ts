@@ -21,11 +21,11 @@ export class AuthService {
 
     async login(id: string) {
         return {
-            accessToken: this.jwtService.sign({ id: id }),
+            accessToken: this.jwtService.sign({ id: id }, { expiresIn: '10s' }),
         }
     }
 
     async createRefreshToken(userId: string, deviceId: string): Promise<string> {
-        return this.jwtService.sign({ userId: userId, deviceId: deviceId })
+        return this.jwtService.sign({ userId: userId, deviceId: deviceId }, { expiresIn: '20s' })
     }
 }

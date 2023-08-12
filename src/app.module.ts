@@ -77,7 +77,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
     JwtModule.register({
       global: true,
       secret: '123',
-      signOptions: { expiresIn: '5h' }
+      // signOptions: { expiresIn: '5h' },
     })
   ],
   controllers: [AppController, BlogController, PostControler, UserController, AuthController, CommentController, SecurityController, TestingController],
