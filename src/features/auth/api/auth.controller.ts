@@ -30,7 +30,7 @@ export class AuthController {
     ) {
         const device = await this.securityService.createDevice(req.user.id, req.ip, req.headers['user-agent'])
 
-        const token = await this.authService.login(req.user)
+        const token = await this.authService.login(req.user.id)
         const refreshToken = await this.authService.createRefreshToken(req.user.id, device.deviceId)
 
         res
@@ -39,12 +39,18 @@ export class AuthController {
             .send(token)
     }
 
-    @Get('/me')
     @UseGuards(JwtAuthGuard)
-    async getMe(@Request() req) {
-        return await this.userQueryRepository.findUserById(req.user.id)
+    @Get('/me')
+    async getMe(
+        @Request() req,
+    ) {
+        // console.log(req.user.userId)
+        const user = await this.userQueryRepository.findMeView(req.user.userId)
+        console.log(user)
+        return user
     }
 
+    @UseGuards(ThrottlerGuard)
     @Post('/registration')
     async registrationUser(
         @Body() inputData: UserCreateType,
@@ -56,6 +62,7 @@ export class AuthController {
         return res.sendStatus(STATUS_CODE.NO_CONTENT)
     }
 
+    @UseGuards(ThrottlerGuard)
     @Post('/registration-confirmation')
     async registrationConfirmation(
         @Body() code: ConfirmationCodeType,
@@ -67,6 +74,7 @@ export class AuthController {
         return res.sendStatus(STATUS_CODE.NO_CONTENT)
     }
 
+    @UseGuards(ThrottlerGuard)
     @Post('/registration-email-resending')
     async registrationEmailResending(
         @Body() email: EmailType,
@@ -84,12 +92,26 @@ export class AuthController {
         @Request() req,
         @Res() res: Response
     ) {
+        await this.authService.addRefreshTokenInBlackList(req.cookies.refreshToken)
+
         const token = await this.authService.login(req.user)
         const refreshToken = await this.authService.createRefreshToken(req.user.userId, req.user.deviceId)
+
+        if (!refreshToken) res.sendStatus(401)
 
         res
             .status(STATUS_CODE.OK)
             .cookie('refreshToken', refreshToken, { httpOnly: true, secure: true })
             .send(token)
+    }
+
+    @Post('/logout')
+    @UseGuards(JwtRefreshTokenGuard)
+    async logoutUser(
+        @Request() req,
+        @Res() res: Response
+    ) {
+        await this.authService.addRefreshTokenInBlackList(req.cookies.refreshToken, req.user.deviceId)
+        return res.sendStatus(204)
     }
 }

@@ -40,8 +40,10 @@ export class SecurityController {
     @UseGuards(JwtRefreshTokenGuard)
     @Delete('/devices')
     async deleteAllDevices(
-        @Request() req
+        @Request() req,
+        @Res() res: Response
     ) {
-        return await this.securityService.deleteAllDevices(req.user.userId, req.user.deviceId)
+        await this.securityService.deleteAllDevices(req.user.userId, req.user.deviceId)
+        res.sendStatus(204)
     }
 }
