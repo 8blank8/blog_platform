@@ -11,7 +11,7 @@ import { EmailType } from "../models/email.type";
 import { SecurityService } from "../../security/application/security.service";
 import { JwtRefreshTokenGuard } from "../guards/jwt.refresh.token.guard";
 import { ThrottlerGuard } from "@nestjs/throttler";
-
+import { STATUS_CODE } from "src/entity/enum/status.code";
 
 @Controller('/auth')
 export class AuthController {
@@ -34,7 +34,7 @@ export class AuthController {
         const refreshToken = await this.authService.createRefreshToken(req.user.id, device.deviceId)
 
         res
-            .status(200)
+            .status(STATUS_CODE.OK)
             .cookie('refreshToken', refreshToken, { httpOnly: true, secure: true })
             .send(token)
     }
@@ -51,9 +51,9 @@ export class AuthController {
         @Res() res: Response
     ) {
         const isCreated = await this.userService.registrationUser(inputData)
-        if (!isCreated) return res.sendStatus(400)
+        if (!isCreated) return res.sendStatus(STATUS_CODE.BAD_REQUEST)
 
-        return res.sendStatus(204)
+        return res.sendStatus(STATUS_CODE.NO_CONTENT)
     }
 
     @Post('/registration-confirmation')
@@ -62,9 +62,9 @@ export class AuthController {
         @Res() res: Response
     ) {
         const isConfirmed = await this.userService.confirmationEmail(code)
-        if (!isConfirmed) return res.sendStatus(400)
+        if (!isConfirmed) return res.sendStatus(STATUS_CODE.BAD_REQUEST)
 
-        return res.sendStatus(204)
+        return res.sendStatus(STATUS_CODE.NO_CONTENT)
     }
 
     @Post('/registration-email-resending')
@@ -73,9 +73,9 @@ export class AuthController {
         @Res() res: Response
     ) {
         const isResending = await this.userService.confirmationCodeResending(email)
-        if (!isResending) return res.sendStatus(400)
+        if (!isResending) return res.sendStatus(STATUS_CODE.BAD_REQUEST)
 
-        return res.sendStatus(204)
+        return res.sendStatus(STATUS_CODE.NO_CONTENT)
     }
 
     @UseGuards(JwtRefreshTokenGuard)
@@ -88,7 +88,7 @@ export class AuthController {
         const refreshToken = await this.authService.createRefreshToken(req.user.userId, req.user.deviceId)
 
         res
-            .status(200)
+            .status(STATUS_CODE.OK)
             .cookie('refreshToken', refreshToken, { httpOnly: true, secure: true })
             .send(token)
     }

@@ -4,6 +4,7 @@ import { BlogRepository } from "src/features/blog/infrastructure/blog.repository
 import { PostRepository } from "src/features/post/infrastructure/post.repository";
 import { UserRepository } from "src/features/user/infrastructure/user.repository";
 import { CommentRepository } from "../comment/infrastructure/comment.repository";
+import { STATUS_CODE } from "src/entity/enum/status.code";
 
 
 @Controller('/testing')
@@ -26,6 +27,6 @@ export class TestingController {
         await this.commentsRepository.deleteAllCommentsLike()
         await this.postRepository.deleteAllLikes()
 
-        return res.sendStatus(204)
+        return res.sendStatus(STATUS_CODE.NO_CONTENT)
     }
 }

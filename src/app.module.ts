@@ -1,3 +1,6 @@
+import { ConfigModule } from '@nestjs/config';
+const configModule = ConfigModule.forRoot({})
+
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -57,9 +60,13 @@ import { JwtRefreshTokenStrategy } from './features/auth/strategies/jwt.refresh.
 import { ThrottlerModule } from '@nestjs/throttler';
 
 
+import { setting_env } from 'src/setting.env';
+
+
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb+srv://blank:admin@cluster0.zmondyt.mongodb.net/?retryWrites=true&w=majority'),
+    configModule,
+    MongooseModule.forRoot(setting_env.MONGO_URL),
     MongooseModule.forFeature([
       { name: Blog.name, schema: BlogSchema },
       { name: Post.name, schema: PostSchema },
@@ -70,14 +77,14 @@ import { ThrottlerModule } from '@nestjs/throttler';
       { name: Device.name, schema: DeviceSchema }
     ]),
     ThrottlerModule.forRoot({
-      ttl: 10,
-      limit: 5,
+      ttl: +setting_env.TTL,
+      limit: +setting_env.LIMIT,
     }),
     PassportModule,
     JwtModule.register({
       global: true,
-      secret: '123',
-      signOptions: { expiresIn: '5h' }
+      secret: setting_env.JWT_SECRET,
+      signOptions: { expiresIn: setting_env.JWT_ACCESS_EXP }
     })
   ],
   controllers: [AppController, BlogController, PostControler, UserController, AuthController, CommentController, SecurityController, TestingController],
@@ -94,4 +101,5 @@ import { ThrottlerModule } from '@nestjs/throttler';
     SecurityService, SecurityQueryRepository, SecurityRepository
   ],
 })
+
 export class AppModule { }

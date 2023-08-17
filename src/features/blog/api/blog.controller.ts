@@ -11,6 +11,7 @@ import { PostQueryParamType } from "../../post/models/post.query.param.type";
 import { PostCreateByIdType } from "../models/post.create.by.id.type";
 import { BasicAuthGuard } from "src/features/auth/guards/basic.guard";
 import { JwtOrNotGuard } from "src/features/auth/guards/jwt.or.not.guard";
+import { STATUS_CODE } from "src/entity/enum/status.code";
 
 
 
@@ -34,7 +35,7 @@ export class BlogController {
         @Res() res: Response
     ) {
         const blog = await this.blogQueryRepository.findBlogById(id)
-        if (!blog) return res.sendStatus(404)
+        if (!blog) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         return res.send(blog)
     }
@@ -54,9 +55,9 @@ export class BlogController {
         @Res() res: Response
     ) {
         const isUpdate = await this.blogService.updateBlog(updateData, id)
-        if (!isUpdate) return res.sendStatus(404)
+        if (!isUpdate) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
-        return res.sendStatus(204)
+        return res.sendStatus(STATUS_CODE.NO_CONTENT)
     }
 
     @UseGuards(BasicAuthGuard)
@@ -66,9 +67,9 @@ export class BlogController {
         @Res() res: Response
     ) {
         const isDelete = await this.blogService.deleteBlog(id)
-        if (!isDelete) return res.sendStatus(404)
+        if (!isDelete) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
-        return res.sendStatus(204)
+        return res.sendStatus(STATUS_CODE.NO_CONTENT)
     }
 
     @UseGuards(JwtOrNotGuard)
@@ -80,11 +81,11 @@ export class BlogController {
         @Request() req
     ) {
         const blog = await this.blogQueryRepository.findBlogById(id)
-        if (!blog) return res.sendStatus(404)
+        if (!blog) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         const posts = await this.postQueryRepository.findPosts(queryParam, req.user.userId, id)
 
-        return res.status(200).send(posts)
+        return res.status(STATUS_CODE.OK).send(posts)
     }
 
     @UseGuards(BasicAuthGuard)
@@ -95,10 +96,10 @@ export class BlogController {
         @Res() res: Response
     ) {
         const postId = await this.postService.createPostByIdBlog(inputData, id)
-        if (!postId) return res.sendStatus(404)
+        if (!postId) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         const post = await this.postQueryRepository.findPost(postId)
-        return res.status(201).send(post)
+        return res.status(STATUS_CODE.CREATED).send(post)
     }
 
 }

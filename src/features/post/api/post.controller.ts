@@ -12,6 +12,7 @@ import { CommentQueryRepository } from "../../comment/infrastructure/comment.que
 import { PostLikeStatusType } from "../models/post.like.status.type";
 import { JwtOrNotGuard } from "../../auth/guards/jwt.or.not.guard";
 import { BasicAuthGuard } from "src/features/auth/guards/basic.guard";
+import { STATUS_CODE } from "src/entity/enum/status.code";
 
 
 @Controller('posts')
@@ -41,9 +42,9 @@ export class PostControler {
         @Request() req
     ) {
         const post = await this.postQueryRepository.findPost(id, req.user.userId)
-        if (!post) return res.sendStatus(404)
+        if (!post) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
-        return res.status(200).send(post)
+        return res.status(STATUS_CODE.OK).send(post)
     }
 
     @UseGuards(BasicAuthGuard)
@@ -53,10 +54,10 @@ export class PostControler {
         @Res() res: Response
     ) {
         const postId = await this.postService.createPost(inputPostData)
-        if (!postId) return res.sendStatus(404)
+        if (!postId) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         const post = await this.postQueryRepository.findPost(postId)
-        return res.status(201).send(post)
+        return res.status(STATUS_CODE.CREATED).send(post)
     }
 
     @UseGuards(BasicAuthGuard)
@@ -67,9 +68,9 @@ export class PostControler {
         @Res() res: Response
     ) {
         const isUpdate = await this.postService.updatePost(id, inputData)
-        if (!isUpdate) return res.sendStatus(404)
+        if (!isUpdate) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
-        return res.sendStatus(204)
+        return res.sendStatus(STATUS_CODE.NO_CONTENT)
     }
 
     @UseGuards(BasicAuthGuard)
@@ -79,9 +80,9 @@ export class PostControler {
         @Res() res: Response
     ) {
         const isDelete = await this.postService.deletePost(id)
-        if (!isDelete) return res.sendStatus(404)
+        if (!isDelete) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
-        return res.sendStatus(204)
+        return res.sendStatus(STATUS_CODE.NO_CONTENT)
     }
 
     @UseGuards(JwtAuthGuard)
@@ -93,11 +94,11 @@ export class PostControler {
         @Res() res: Response
     ) {
         const newComment = await this.postService.createComment(id, inputData, req.user.userId)
-        if (!newComment) return res.sendStatus(404)
+        if (!newComment) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         const comment = await this.commentQueryRepository.findCommentViewById(newComment.id, req.user.userId)
 
-        return res.status(201).send(comment)
+        return res.status(STATUS_CODE.CREATED).send(comment)
     }
 
 
@@ -110,10 +111,10 @@ export class PostControler {
         @Res() res: Response
     ) {
         const post = await this.postQueryRepository.findPost(id)
-        if (!post) return res.sendStatus(404)
+        if (!post) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         const comments = await this.commentQueryRepository.findCommentsByPostId(queryParam, id, req.user.userId)
-        return res.status(200).send(comments)
+        return res.status(STATUS_CODE.OK).send(comments)
     }
 
     @UseGuards(JwtAuthGuard)
@@ -125,9 +126,9 @@ export class PostControler {
         @Res() res: Response
     ) {
         const isUpdate = await this.postService.updatePostLikeStatus(id, inputData, req.user.userId)
-        if (!isUpdate) return res.sendStatus(404)
+        if (!isUpdate) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
-        return res.sendStatus(204)
+        return res.sendStatus(STATUS_CODE.NO_CONTENT)
     }
 
 }
