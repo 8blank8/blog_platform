@@ -4,6 +4,9 @@ import { JwtRefreshTokenGuard } from "src/features/auth/guards/jwt.refresh.token
 import { SecurityService } from "../application/security.service";
 import { Response } from 'express'
 import { STATUS_CODE } from "src/entity/enum/status.code";
+import { CommandBus } from "@nestjs/cqrs";
+import { DeleteDeviceCommand } from "../application/useCases/delete.device.use.case";
+import { DeleteAllDevicesCommand } from "../application/useCases/delete.all.device.use.case";
 
 
 
@@ -12,7 +15,8 @@ export class SecurityController {
 
     constructor(
         private readonly securityQueryRepository: SecurityQueryRepository,
-        private readonly securityService: SecurityService
+        private readonly securityService: SecurityService,
+        private commandBus: CommandBus
     ) { }
 
     @UseGuards(JwtRefreshTokenGuard)
@@ -31,7 +35,7 @@ export class SecurityController {
         @Request() req,
         @Res() res: Response
     ) {
-        const isDelete = await this.securityService.deleteDeviceById(id, req.user.userId)
+        const isDelete = await this.commandBus.execute(new DeleteDeviceCommand(id, req.user.userId))
         if (!isDelete) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         return res.sendStatus(STATUS_CODE.NO_CONTENT)
@@ -43,7 +47,7 @@ export class SecurityController {
         @Request() req,
         @Res() res: Response
     ) {
-        await this.securityService.deleteAllDevices(req.user.userId, req.user.deviceId)
+        await this.commandBus.execute(new DeleteAllDevicesCommand(req.user.userId, req.user.deviceId))
         res.sendStatus(204)
     }
 }

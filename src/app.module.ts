@@ -63,10 +63,69 @@ import { Auth, AuthSchema } from './features/auth/domain/auth.schema';
 import { AuthRepository } from './features/auth/infrastructure/auth.repository';
 import { AuthQueryRepository } from './features/auth/infrastructure/auth.query.repository';
 
+import { CqrsModule } from '@nestjs/cqrs/dist';
+
+import { CreateBlogUseCase } from './features/blog/application/useCases/create.blog.use.case';
+import { UpdateBlogUseCase } from './features/blog/application/useCases/update.blog.use.case';
+import { DeleteBlogUseCase } from './features/blog/application/useCases/delete.blog.use.case';
+const blogUseCases = [
+  CreateBlogUseCase, UpdateBlogUseCase, DeleteBlogUseCase
+]
+
+
+import { DeleteCommentUseCase } from './features/comment/appication/useCases/delete.comment.use.case';
+import { UpdateCommentUseCase } from './features/comment/appication/useCases/update.comment.use.case';
+import { UpdateLikeStatusCommentUseCase } from './features/comment/appication/useCases/update.like.status.comment.use.case'
+const commentUseCase = [
+  DeleteCommentUseCase, UpdateCommentUseCase, UpdateLikeStatusCommentUseCase
+]
+
+
+import { CreatePostUseCase } from './features/post/application/useCases/create.post.use.case';
+import { CreatePostByBlogIdUseCase } from './features/post/application/useCases/create.post.by.blog.id.use.case';
+import { UpdatePostUseCase } from './features/post/application/useCases/update.post.use.case';
+import { DeletePostUseCase } from './features/post/application/useCases/delete.post.use.case';
+import { CreateCommentForPostUseCase } from './features/post/application/useCases/create.comment.for.post';
+import { UpdateLikeStatusForPostUseCase } from './features/post/application/useCases/update.like.status.for.post';
+const postUseCase = [
+  CreatePostUseCase, CreatePostByBlogIdUseCase, UpdatePostUseCase,
+  DeletePostUseCase, CreateCommentForPostUseCase, UpdateLikeStatusForPostUseCase
+]
+
+
+import { CreateDeviceUseCase } from './features/security/application/useCases/create.device.use.case';
+import { DeleteDeviceUseCase } from './features/security/application/useCases/delete.device.use.case';
+import { DeleteAllDevicesUseCase } from './features/security/application/useCases/delete.all.device.use.case';
+const securityUseCase = [
+  CreateDeviceUseCase, DeleteDeviceUseCase, DeleteAllDevicesUseCase
+]
+
+
+import { CreateUserUseCase } from './features/user/application/useCases/create.user.use.case';
+import { RegistrationUserUseCase } from './features/user/application/useCases/registration.user.use.case';
+import { EmailConfirmationUseCase } from './features/user/application/useCases/email.confirmation.use.case';
+import { ResendingConfirmationCodeUseCase } from './features/user/application/useCases/resending.confirmation.code.use.case';
+import { DeleteUserUseCase } from './features/user/application/useCases/delete.user.use.case';
+const userUseCase = [
+  CreateUserUseCase, RegistrationUserUseCase, EmailConfirmationUseCase,
+  ResendingConfirmationCodeUseCase, DeleteUserUseCase
+]
+
+
+import { ValidateUserUseCase } from './features/auth/application/useCases/validate.user.use.case';
+import { LoginUserUseCase } from './features/auth/application/useCases/login.user.use.case';
+import { CreateRefreshTokenUseCase } from './features/auth/application/useCases/create.refresh.token.use.case';
+import { AddRefreshTokenInBlackListUseCase } from './features/auth/application/useCases/add.refresh.token.in.black.list.use.case';
+const authUseCase = [
+  ValidateUserUseCase, LoginUserUseCase, CreateRefreshTokenUseCase,
+  AddRefreshTokenInBlackListUseCase
+]
+
 
 @Module({
   imports: [
     configModule,
+    CqrsModule,
     MongooseModule.forRoot(setting_env.MONGO_URL),
     MongooseModule.forFeature([
       { name: Blog.name, schema: BlogSchema },
@@ -101,6 +160,8 @@ import { AuthQueryRepository } from './features/auth/infrastructure/auth.query.r
     UserExistLogin, UserExistEmail, UserIsConfirmed, EmailCodeResend, CheckBlogId, IsNotBlank, LikeStatus,
     CommentRepository, CommentQueryRepository, CommentService,
     SecurityService, SecurityQueryRepository, SecurityRepository,
+    ...blogUseCases, ...commentUseCase, ...postUseCase, ...securityUseCase,
+    ...userUseCase, ...authUseCase
   ],
 })
 

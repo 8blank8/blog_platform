@@ -12,6 +12,11 @@ import { PostCreateByIdType } from "../models/post.create.by.id.type";
 import { BasicAuthGuard } from "src/features/auth/guards/basic.guard";
 import { JwtOrNotGuard } from "src/features/auth/guards/jwt.or.not.guard";
 import { STATUS_CODE } from "src/entity/enum/status.code";
+import { CommandBus } from "@nestjs/cqrs";
+import { CreateBlogCommand } from "../application/useCases/create.blog.use.case";
+import { UpdateBlogCommand } from "../application/useCases/update.blog.use.case";
+import { DeleteBlogCommand } from "../application/useCases/delete.blog.use.case";
+import { CreatePostByBlogIdCommand } from "src/features/post/application/useCases/create.post.by.blog.id.use.case";
 
 
 
@@ -19,9 +24,8 @@ import { STATUS_CODE } from "src/entity/enum/status.code";
 export class BlogController {
     constructor(
         private readonly blogQueryRepository: BlogQueryRepository,
-        private readonly blogService: BlogService,
-        private readonly postService: PostService,
-        private readonly postQueryRepository: PostQueryRepository
+        private readonly postQueryRepository: PostQueryRepository,
+        private commandBus: CommandBus
     ) { }
 
     @Get()
@@ -43,7 +47,10 @@ export class BlogController {
     @UseGuards(BasicAuthGuard)
     @Post()
     async createBlog(@Body() blog: BlogCreateType) {
-        const blogId: string = await this.blogService.createBlog(blog)
+        const blogId: string = await this.commandBus.execute(
+            new CreateBlogCommand(blog)
+        )
+
         return this.blogQueryRepository.findBlogById(blogId)
     }
 
@@ -54,7 +61,9 @@ export class BlogController {
         @Body() updateData: BlogUpdateType,
         @Res() res: Response
     ) {
-        const isUpdate = await this.blogService.updateBlog(updateData, id)
+        const isUpdate = await this.commandBus.execute(
+            new UpdateBlogCommand(updateData, id)
+        )
         if (!isUpdate) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         return res.sendStatus(STATUS_CODE.NO_CONTENT)
@@ -66,7 +75,7 @@ export class BlogController {
         @Param('id') id: string,
         @Res() res: Response
     ) {
-        const isDelete = await this.blogService.deleteBlog(id)
+        const isDelete = await this.commandBus.execute(new DeleteBlogCommand(id))
         if (!isDelete) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         return res.sendStatus(STATUS_CODE.NO_CONTENT)
@@ -95,7 +104,7 @@ export class BlogController {
         @Body() inputData: PostCreateByIdType,
         @Res() res: Response
     ) {
-        const postId = await this.postService.createPostByIdBlog(inputData, id)
+        const postId = await this.commandBus.execute(new CreatePostByBlogIdCommand(inputData, id))
         if (!postId) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         const post = await this.postQueryRepository.findPost(postId)

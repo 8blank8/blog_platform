@@ -13,6 +13,12 @@ import { PostLikeStatusType } from "../models/post.like.status.type";
 import { JwtOrNotGuard } from "../../auth/guards/jwt.or.not.guard";
 import { BasicAuthGuard } from "src/features/auth/guards/basic.guard";
 import { STATUS_CODE } from "src/entity/enum/status.code";
+import { CommandBus } from "@nestjs/cqrs";
+import { CreatePostCommand } from "../application/useCases/create.post.use.case";
+import { UpdatePostCommand } from "../application/useCases/update.post.use.case";
+import { DeletePostCommand } from "../application/useCases/delete.post.use.case";
+import { CreateCommentForPostCommand } from "../application/useCases/create.comment.for.post";
+import { UpdateLikeStatusForPostCommand } from "../application/useCases/update.like.status.for.post";
 
 
 @Controller('posts')
@@ -21,7 +27,8 @@ export class PostControler {
     constructor(
         private readonly postQueryRepository: PostQueryRepository,
         private readonly postService: PostService,
-        private readonly commentQueryRepository: CommentQueryRepository
+        private readonly commentQueryRepository: CommentQueryRepository,
+        private commandBus: CommandBus
     ) { }
 
     @UseGuards(JwtOrNotGuard)
@@ -53,7 +60,7 @@ export class PostControler {
         @Body() inputPostData: PostCreateType,
         @Res() res: Response
     ) {
-        const postId = await this.postService.createPost(inputPostData)
+        const postId = await this.commandBus.execute(new CreatePostCommand(inputPostData))
         if (!postId) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         const post = await this.postQueryRepository.findPost(postId)
@@ -67,7 +74,7 @@ export class PostControler {
         @Body() inputData: PostUpdateType,
         @Res() res: Response
     ) {
-        const isUpdate = await this.postService.updatePost(id, inputData)
+        const isUpdate = await this.commandBus.execute(new UpdatePostCommand(id, inputData))
         if (!isUpdate) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         return res.sendStatus(STATUS_CODE.NO_CONTENT)
@@ -79,7 +86,7 @@ export class PostControler {
         @Param('id') id: string,
         @Res() res: Response
     ) {
-        const isDelete = await this.postService.deletePost(id)
+        const isDelete = await this.commandBus.execute(new DeletePostCommand(id))
         if (!isDelete) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         return res.sendStatus(STATUS_CODE.NO_CONTENT)
@@ -93,7 +100,7 @@ export class PostControler {
         @Request() req,
         @Res() res: Response
     ) {
-        const newComment = await this.postService.createComment(id, inputData, req.user.userId)
+        const newComment = await this.commandBus.execute(new CreateCommentForPostCommand(id, inputData, req.user.userId))
         if (!newComment) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         const comment = await this.commentQueryRepository.findCommentViewById(newComment.id, req.user.userId)
@@ -125,7 +132,7 @@ export class PostControler {
         @Request() req,
         @Res() res: Response
     ) {
-        const isUpdate = await this.postService.updatePostLikeStatus(id, inputData, req.user.userId)
+        const isUpdate = await this.commandBus.execute(new UpdateLikeStatusForPostCommand(id, inputData, req.user.userId))
         if (!isUpdate) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         return res.sendStatus(STATUS_CODE.NO_CONTENT)

@@ -12,6 +12,14 @@ import { SecurityService } from "../../security/application/security.service";
 import { JwtRefreshTokenGuard } from "../guards/jwt.refresh.token.guard";
 import { ThrottlerGuard } from "@nestjs/throttler";
 import { STATUS_CODE } from "src/entity/enum/status.code";
+import { CommandBus } from "@nestjs/cqrs";
+import { CreateDeviceCommand } from "src/features/security/application/useCases/create.device.use.case";
+import { RegistrationUserCommand } from "src/features/user/application/useCases/registration.user.use.case";
+import { EmailConfirmationCommand } from "src/features/user/application/useCases/email.confirmation.use.case";
+import { ResendingConfirmationCodeCommand } from "src/features/user/application/useCases/resending.confirmation.code.use.case";
+import { LoginUserCommand } from "../application/useCases/login.user.use.case";
+import { CreateRefreshTokenCommand } from "../application/useCases/create.refresh.token.use.case";
+import { AddRefreshTokenInBlackListCommand } from "../application/useCases/add.refresh.token.in.black.list.use.case";
 
 @Controller('/auth')
 export class AuthController {
@@ -19,7 +27,8 @@ export class AuthController {
         private readonly authService: AuthService,
         private readonly userQueryRepository: UserQueryRepository,
         private readonly userService: UserService,
-        private readonly securityService: SecurityService
+        private readonly securityService: SecurityService,
+        private commandBus: CommandBus
     ) { }
 
     @UseGuards(ThrottlerGuard, LocalAuthGuard)
@@ -28,10 +37,10 @@ export class AuthController {
         @Request() req,
         @Res() res: Response
     ) {
-        const device = await this.securityService.createDevice(req.user.id, req.ip, req.headers['user-agent'])
+        const device = await this.commandBus.execute(new CreateDeviceCommand(req.user.id, req.ip, req.headers['user-agent']))
 
-        const token = await this.authService.login(req.user.id)
-        const refreshToken = await this.authService.createRefreshToken(req.user.id, device.deviceId)
+        const token = await this.commandBus.execute(new LoginUserCommand(req.user.id))
+        const refreshToken = await this.commandBus.execute(new CreateRefreshTokenCommand(req.user.id, device.deviceId))
 
         res
             .status(STATUS_CODE.OK)
@@ -44,7 +53,6 @@ export class AuthController {
     async getMe(
         @Request() req,
     ) {
-        // console.log(req.user.userId)
         const user = await this.userQueryRepository.findMeView(req.user.userId)
         console.log(user)
         return user
@@ -56,7 +64,7 @@ export class AuthController {
         @Body() inputData: UserCreateType,
         @Res() res: Response
     ) {
-        const isCreated = await this.userService.registrationUser(inputData)
+        const isCreated = await this.commandBus.execute(new RegistrationUserCommand(inputData))
         if (!isCreated) return res.sendStatus(STATUS_CODE.BAD_REQUEST)
 
         return res.sendStatus(STATUS_CODE.NO_CONTENT)
@@ -68,7 +76,7 @@ export class AuthController {
         @Body() code: ConfirmationCodeType,
         @Res() res: Response
     ) {
-        const isConfirmed = await this.userService.confirmationEmail(code)
+        const isConfirmed = await this.commandBus.execute(new EmailConfirmationCommand(code))
         if (!isConfirmed) return res.sendStatus(STATUS_CODE.BAD_REQUEST)
 
         return res.sendStatus(STATUS_CODE.NO_CONTENT)
@@ -80,7 +88,7 @@ export class AuthController {
         @Body() email: EmailType,
         @Res() res: Response
     ) {
-        const isResending = await this.userService.confirmationCodeResending(email)
+        const isResending = await this.commandBus.execute(new ResendingConfirmationCodeCommand(email))
         if (!isResending) return res.sendStatus(STATUS_CODE.BAD_REQUEST)
 
         return res.sendStatus(STATUS_CODE.NO_CONTENT)
@@ -92,10 +100,10 @@ export class AuthController {
         @Request() req,
         @Res() res: Response
     ) {
-        await this.authService.addRefreshTokenInBlackList(req.cookies.refreshToken)
+        await this.commandBus.execute(new AddRefreshTokenInBlackListCommand(req.cookies.refreshToken))
 
-        const token = await this.authService.login(req.user)
-        const refreshToken = await this.authService.createRefreshToken(req.user.userId, req.user.deviceId)
+        const token = await this.commandBus.execute(new LoginUserCommand(req.user.userId))
+        const refreshToken = await this.commandBus.execute(new CreateRefreshTokenCommand(req.user.userId, req.user.deviceId))
 
         if (!refreshToken) res.sendStatus(401)
 
@@ -111,7 +119,7 @@ export class AuthController {
         @Request() req,
         @Res() res: Response
     ) {
-        await this.authService.addRefreshTokenInBlackList(req.cookies.refreshToken, req.user.deviceId)
+        await this.commandBus.execute(new AddRefreshTokenInBlackListCommand(req.cookies.refreshToken, req.user.deviceId))
         return res.sendStatus(204)
     }
 }
