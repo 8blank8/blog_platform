@@ -65,12 +65,7 @@ import { AuthQueryRepository } from './features/auth/infrastructure/auth.query.r
 
 import { CqrsModule } from '@nestjs/cqrs/dist';
 
-import { CreateBlogUseCase } from './features/blog/application/useCases/create.blog.use.case';
-import { UpdateBlogUseCase } from './features/blog/application/useCases/update.blog.use.case';
-import { DeleteBlogUseCase } from './features/blog/application/useCases/delete.blog.use.case';
-const blogUseCases = [
-  CreateBlogUseCase, UpdateBlogUseCase, DeleteBlogUseCase
-]
+
 
 
 import { DeleteCommentUseCase } from './features/comment/appication/useCases/delete.comment.use.case';
@@ -116,9 +111,27 @@ import { ValidateUserUseCase } from './features/auth/application/useCases/valida
 import { LoginUserUseCase } from './features/auth/application/useCases/login.user.use.case';
 import { CreateRefreshTokenUseCase } from './features/auth/application/useCases/create.refresh.token.use.case';
 import { AddRefreshTokenInBlackListUseCase } from './features/auth/application/useCases/add.refresh.token.in.black.list.use.case';
+import { BloggerController } from './features/blog/api/blogger.controller';
 const authUseCase = [
   ValidateUserUseCase, LoginUserUseCase, CreateRefreshTokenUseCase,
   AddRefreshTokenInBlackListUseCase
+]
+
+import { CreateBlogUseCase } from './features/blog/application/useCases/create.blog.use.case';
+import { UpdateBlogUseCase } from './features/blog/application/useCases/update.blog.use.case';
+import { DeleteBlogUseCase } from './features/blog/application/useCases/delete.blog.use.case';
+import { DeletePostByBlogIdUseCase } from './features/blog/application/useCases/delete.post.by.blog.id.use.case';
+import { UpdatePostByBlogIdUseCase } from './features/blog/application/useCases/update.post.by.blog.id.use.case';
+import { SaController } from './features/sa/api/sa.controller';
+const bloggerUseCase = [
+  DeletePostByBlogIdUseCase, UpdatePostByBlogIdUseCase,
+  CreateBlogUseCase, UpdateBlogUseCase, DeleteBlogUseCase
+]
+
+import { BindUserForBlogUseCase } from './features/sa/application/useCases/bind.user.for.blog.use.case';
+import { SaQueryRepository } from './features/sa/infrastructure/sa.query.repository';
+const saUseCase = [
+  BindUserForBlogUseCase
 ]
 
 
@@ -148,7 +161,12 @@ const authUseCase = [
       signOptions: { expiresIn: setting_env.JWT_ACCESS_EXP }
     })
   ],
-  controllers: [AppController, BlogController, PostControler, UserController, AuthController, CommentController, SecurityController, TestingController],
+  controllers: [
+    AppController, BlogController, PostControler,
+    UserController, AuthController, CommentController,
+    SecurityController, TestingController, BloggerController,
+    SaController
+  ],
   providers: [
     AppService,
     BlogRepository, BlogService, BlogQueryRepository,
@@ -160,8 +178,9 @@ const authUseCase = [
     UserExistLogin, UserExistEmail, UserIsConfirmed, EmailCodeResend, CheckBlogId, IsNotBlank, LikeStatus,
     CommentRepository, CommentQueryRepository, CommentService,
     SecurityService, SecurityQueryRepository, SecurityRepository,
-    ...blogUseCases, ...commentUseCase, ...postUseCase, ...securityUseCase,
-    ...userUseCase, ...authUseCase
+    SaQueryRepository,
+    ...bloggerUseCase, ...commentUseCase, ...postUseCase, ...securityUseCase,
+    ...userUseCase, ...authUseCase, ...saUseCase
   ],
 })
 

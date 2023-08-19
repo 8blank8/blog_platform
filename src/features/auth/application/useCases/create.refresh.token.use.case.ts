@@ -2,6 +2,7 @@ import { CommandHandler } from "@nestjs/cqrs";
 import { JwtService } from "@nestjs/jwt";
 import { SecurityQueryRepository } from "src/features/security/infrastructure/security.query.repository";
 import { SecurityRepository } from "src/features/security/infrastructure/security.repository";
+import { setting_env } from "src/setting.env";
 
 
 export class CreateRefreshTokenCommand {
@@ -29,7 +30,7 @@ export class CreateRefreshTokenUseCase {
         device.setLastActiveDate()
         await this.securityRepository.saveDevice(device)
 
-        const refreshToken = this.jwtService.sign({ userId: userId, deviceId: deviceId }, { expiresIn: '20s' })
+        const refreshToken = this.jwtService.sign({ userId: userId, deviceId: deviceId }, { expiresIn: setting_env.JWT_REFRESH_EXP })
         return refreshToken
     }
 }

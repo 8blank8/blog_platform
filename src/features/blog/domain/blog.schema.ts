@@ -36,6 +36,10 @@ export class Blog {
     })
     isMembership: boolean
 
+    @Prop({
+        required: true
+    })
+    userId: string
 
     addCreatedAt() {
         this.createdAt = new Date().toISOString()
@@ -50,6 +54,10 @@ export class Blog {
         this.description = data.description
         this.websiteUrl = data.websiteUrl
     }
+
+    setUserId(userId: string) {
+        this.userId = userId
+    }
 }
 
 export const BlogSchema = SchemaFactory.createForClass(Blog)
@@ -57,7 +65,8 @@ export const BlogSchema = SchemaFactory.createForClass(Blog)
 BlogSchema.methods = {
     addCreatedAt: Blog.prototype.addCreatedAt,
     addId: Blog.prototype.addId,
-    updateBlog: Blog.prototype.updateBlog
+    updateBlog: Blog.prototype.updateBlog,
+    setUserId: Blog.prototype.setUserId
 }
 
 export type BlogDocument = HydratedDocument<Blog>

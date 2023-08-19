@@ -1,5 +1,6 @@
 import { CommandHandler } from "@nestjs/cqrs";
 import { JwtService } from "@nestjs/jwt";
+import { setting_env } from "src/setting.env";
 
 
 export class LoginUserCommand {
@@ -19,7 +20,7 @@ export class LoginUserUseCase {
         const { id } = command
 
         return {
-            accessToken: this.jwtService.sign({ id: id }, { expiresIn: '10s' }),
+            accessToken: this.jwtService.sign({ id: id }, { expiresIn: setting_env.JWT_ACCESS_EXP }),
         }
     }
 }
