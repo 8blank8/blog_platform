@@ -4,8 +4,8 @@ export const setting_env = {
     JWT_ACCESS_EXP: process.env.JWT_ACCESS_EXP ?? '5m',
     JWT_REFRESH_EXP: process.env.JWT_REFRESH_EXP ?? '5m',
 
-    TTL: process.env.TTL ?? 10,
-    LIMIT: process.env.LIMIT ?? 5,
+    TTL: process.env.TTL ?? 1000,
+    LIMIT: process.env.LIMIT ?? 500,
 
     EMAIL: process.env.EMAIL ?? ' ',
     EMAIL_PASSWORD: process.env.EMAIL_PASSWORD ?? '  '

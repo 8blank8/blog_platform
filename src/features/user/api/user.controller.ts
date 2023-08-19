@@ -12,7 +12,7 @@ import { CreateUserCommand } from "../application/useCases/create.user.use.case"
 import { DeleteUserCommand } from "../application/useCases/delete.user.use.case";
 
 
-@Controller('users')
+@Controller('sa/users')
 export class UserController {
 
     constructor(

@@ -8,7 +8,7 @@ import { SaQueryRepository } from "../infrastructure/sa.query.repository";
 import { BlogQueryParamModel } from "../infrastructure/models/blog.query.param";
 
 @Controller('sa')
-export class SaController {
+export class SaBlogController {
     constructor(
         private commandBus: CommandBus,
         private saQueryRepository: SaQueryRepository

@@ -122,7 +122,7 @@ import { UpdateBlogUseCase } from './features/blog/application/useCases/update.b
 import { DeleteBlogUseCase } from './features/blog/application/useCases/delete.blog.use.case';
 import { DeletePostByBlogIdUseCase } from './features/blog/application/useCases/delete.post.by.blog.id.use.case';
 import { UpdatePostByBlogIdUseCase } from './features/blog/application/useCases/update.post.by.blog.id.use.case';
-import { SaController } from './features/sa/api/sa.controller';
+import { SaBlogController } from './features/sa/api/sa.blog.controller';
 const bloggerUseCase = [
   DeletePostByBlogIdUseCase, UpdatePostByBlogIdUseCase,
   CreateBlogUseCase, UpdateBlogUseCase, DeleteBlogUseCase
@@ -165,7 +165,7 @@ const saUseCase = [
     AppController, BlogController, PostControler,
     UserController, AuthController, CommentController,
     SecurityController, TestingController, BloggerController,
-    SaController
+    SaBlogController
   ],
   providers: [
     AppService,
