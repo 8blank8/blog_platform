@@ -1,12 +1,12 @@
 import { Body, Controller, Param, Put, UseGuards, Request, Res, Delete, Req, Get } from "@nestjs/common";
 import { CommentCreateType } from "../models/comment.create.type";
-import { JwtAuthGuard } from "src/features/auth/guards/jwt.guard";
+import { JwtAuthGuard } from "../../auth/guards/jwt.guard";
 import { Response } from "express";
 import { CommentService } from "../appication/comment.service";
 import { CommentLikeStatusType } from "../models/comment.like.status";
 import { CommentQueryRepository } from "../infrastructure/comment.query.repository";
-import { JwtOrNotGuard } from "src/features/auth/guards/jwt.or.not.guard";
-import { STATUS_CODE } from "src/entity/enum/status.code";
+import { JwtOrNotGuard } from "../../auth/guards/jwt.or.not.guard";
+import { STATUS_CODE } from "../../../entity/enum/status.code";
 import { CommandBus } from "@nestjs/cqrs";
 import { UpdateCommetCommand } from "../appication/useCases/update.comment.use.case";
 import { DeleteCommentCommand } from "../appication/useCases/delete.comment.use.case";

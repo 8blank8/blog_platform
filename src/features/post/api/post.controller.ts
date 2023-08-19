@@ -11,8 +11,8 @@ import { CommentQueryParam } from "../../comment/models/comment.query.param.type
 import { CommentQueryRepository } from "../../comment/infrastructure/comment.query.repository";
 import { PostLikeStatusType } from "../models/post.like.status.type";
 import { JwtOrNotGuard } from "../../auth/guards/jwt.or.not.guard";
-import { BasicAuthGuard } from "src/features/auth/guards/basic.guard";
-import { STATUS_CODE } from "src/entity/enum/status.code";
+import { BasicAuthGuard } from "../../auth/guards/basic.guard";
+import { STATUS_CODE } from "../../../entity/enum/status.code";
 import { CommandBus } from "@nestjs/cqrs";
 import { CreatePostCommand } from "../application/useCases/create.post.use.case";
 import { UpdatePostCommand } from "../application/useCases/update.post.use.case";

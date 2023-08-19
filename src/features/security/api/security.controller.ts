@@ -1,9 +1,9 @@
 import { Controller, Delete, Get, Param, Request, Res, UseGuards } from "@nestjs/common";
 import { SecurityQueryRepository } from "../infrastructure/security.query.repository";
-import { JwtRefreshTokenGuard } from "src/features/auth/guards/jwt.refresh.token.guard";
+import { JwtRefreshTokenGuard } from "../../auth/guards/jwt.refresh.token.guard";
 import { SecurityService } from "../application/security.service";
 import { Response } from 'express'
-import { STATUS_CODE } from "src/entity/enum/status.code";
+import { STATUS_CODE } from "../../../entity/enum/status.code";
 import { CommandBus } from "@nestjs/cqrs";
 import { DeleteDeviceCommand } from "../application/useCases/delete.device.use.case";
 import { DeleteAllDevicesCommand } from "../application/useCases/delete.all.device.use.case";

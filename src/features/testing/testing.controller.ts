@@ -1,10 +1,10 @@
 import { Controller, Delete, Res } from "@nestjs/common";
 import { Response } from "express";
-import { BlogRepository } from "src/features/blog/infrastructure/blog.repository";
-import { PostRepository } from "src/features/post/infrastructure/post.repository";
-import { UserRepository } from "src/features/user/infrastructure/user.repository";
+import { BlogRepository } from "../blog/infrastructure/blog.repository";
+import { PostRepository } from "../post/infrastructure/post.repository";
+import { UserRepository } from "../user/infrastructure/user.repository";
 import { CommentRepository } from "../comment/infrastructure/comment.repository";
-import { STATUS_CODE } from "src/entity/enum/status.code";
+import { STATUS_CODE } from "../../entity/enum/status.code";
 
 
 @Controller('/testing')

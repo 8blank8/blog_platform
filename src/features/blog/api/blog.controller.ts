@@ -4,8 +4,8 @@ import { BlogQueryRepository } from "../infrastructure/blog.query.repository";
 import { BlogQueryParamType } from "../models/blog.query.param.type";
 import { PostQueryRepository } from "../../post/infrastructure/post.query.repository";
 import { PostQueryParamType } from "../../post/models/post.query.param.type";
-import { JwtOrNotGuard } from "src/features/auth/guards/jwt.or.not.guard";
-import { STATUS_CODE } from "src/entity/enum/status.code";
+import { JwtOrNotGuard } from "../../auth/guards/jwt.or.not.guard";
+import { STATUS_CODE } from "../../../entity/enum/status.code";
 
 
 
