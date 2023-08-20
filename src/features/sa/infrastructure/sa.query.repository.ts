@@ -28,6 +28,7 @@ export class SaQueryRepository {
 
         const filter: any = {}
 
+
         if (searchNameTerm) {
             const filterName = new RegExp(`${searchNameTerm}`, 'i')
             filter.name = { $regex: filterName }

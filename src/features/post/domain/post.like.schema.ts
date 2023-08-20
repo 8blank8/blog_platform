@@ -36,6 +36,11 @@ export class PostLike {
     })
     addedAt: string
 
+    @Prop({
+        default: false
+    })
+    userIsBanned: boolean
+
     addId() {
         this.id = uuidv4()
     }

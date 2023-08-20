@@ -81,9 +81,9 @@ export class User {
         this.id = uuidv4()
     }
 
-    bannedUser(text: string) {
+    bannedUser(isBanned: boolean, text: string) {
         this.banDate = new Date().toISOString()
-        this.isBanned = true
+        this.isBanned = isBanned
         this.banReason = text
     }
 

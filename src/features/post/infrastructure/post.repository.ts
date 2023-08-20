@@ -26,6 +26,10 @@ export class PostRepository {
         return res.deletedCount === 1
     }
 
+    async updateBanStatusPosts(userId: string, banStatus: boolean) {
+        return await this.postModel.updateMany({ userId: userId }, { $set: { userIsBanned: banStatus } })
+    }
+
     async deleteAllData() {
         return await this.postModel.deleteMany({})
     }
@@ -40,5 +44,9 @@ export class PostRepository {
 
     async createPostLike(postLike: PostLikeStatusType): Promise<PostLikeDocument> {
         return new this.postLikeModel(postLike)
+    }
+
+    async updateBanStatusPostsLikeStatus(userId: string, banStatus: boolean) {
+        return await this.postLikeModel.updateMany({ userId: userId }, { $set: { userIsBanned: banStatus } })
     }
 }

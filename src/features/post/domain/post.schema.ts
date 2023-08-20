@@ -40,10 +40,16 @@ export class Post {
     })
     createdAt: string
 
-    // @Prop({
-    //     default: false
-    // })
-    // userIsBanned: boolean
+    @Prop({
+        required: true
+    })
+
+    userId: string
+
+    @Prop({
+        default: false
+    })
+    userIsBanned: boolean
 
     addId() {
         this.id = uuidv4()
@@ -63,8 +69,12 @@ export class Post {
         this.blogId = inputData.blogId
     }
 
-    setUserIsBanned(ban: boolean) {
+    setUserId(userId: string) {
+        this.userId = userId
+    }
 
+    setUserIsBanned(ban: boolean) {
+        this.userIsBanned = ban
     }
 }
 
@@ -74,7 +84,9 @@ PostSchema.methods = {
     addId: Post.prototype.addId,
     addBlogName: Post.prototype.addBlogName,
     addCreatedAt: Post.prototype.addCreatedAt,
-    updatePost: Post.prototype.updatePost
+    updatePost: Post.prototype.updatePost,
+    setUserIsBanned: Post.prototype.setUserIsBanned,
+    setUserId: Post.prototype.setUserId
 }
 
 export type PostDocument = HydratedDocument<Post>

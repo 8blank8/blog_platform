@@ -12,7 +12,7 @@ import { QUERY_PARAM } from "../../../entity/enum/query.param.enum";
 export class BlogQueryRepository {
     constructor(@InjectModel(Blog.name) private blogModel: Model<BlogDocument>) { }
 
-    async findAllBlogs(queryParam: BlogQueryParamType) {
+    async findAllBlogs(queryParam: BlogQueryParamType, userId?: string) {
 
         const {
             searchNameTerm = QUERY_PARAM.SEARCH_NAME_TERM,
@@ -23,6 +23,10 @@ export class BlogQueryRepository {
         } = queryParam
 
         const filter: any = {}
+
+        if (userId) {
+            filter.userId = userId
+        }
 
         if (searchNameTerm) {
             const filterName = new RegExp(`${searchNameTerm}`, 'i')

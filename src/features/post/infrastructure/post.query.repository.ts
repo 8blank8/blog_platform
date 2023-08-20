@@ -26,7 +26,7 @@ export class PostQueryRepository {
             sortDirection = QUERY_PARAM.SORT_DIRECTION_DESC
         } = queryParam
 
-        const filter: any = {}
+        const filter: any = { userIsBanned: false }
 
         if (blogId) {
             filter.blogId = blogId

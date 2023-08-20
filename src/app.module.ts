@@ -71,8 +71,11 @@ import { CqrsModule } from '@nestjs/cqrs/dist';
 import { DeleteCommentUseCase } from './features/comment/appication/useCases/delete.comment.use.case';
 import { UpdateCommentUseCase } from './features/comment/appication/useCases/update.comment.use.case';
 import { UpdateLikeStatusCommentUseCase } from './features/comment/appication/useCases/update.like.status.comment.use.case'
+import { UpdateBanCommentUseCase } from './features/comment/appication/useCases/update.ban.comment.use.case';
+import { UpdateBanCommentLikeStatusUseCase } from './features/comment/appication/useCases/update.ban.comment.like.status.use.case';
 const commentUseCase = [
-  DeleteCommentUseCase, UpdateCommentUseCase, UpdateLikeStatusCommentUseCase
+  DeleteCommentUseCase, UpdateCommentUseCase, UpdateLikeStatusCommentUseCase,
+  UpdateBanCommentUseCase, UpdateBanCommentLikeStatusUseCase
 ]
 
 
@@ -82,9 +85,12 @@ import { UpdatePostUseCase } from './features/post/application/useCases/update.p
 import { DeletePostUseCase } from './features/post/application/useCases/delete.post.use.case';
 import { CreateCommentForPostUseCase } from './features/post/application/useCases/create.comment.for.post';
 import { UpdateLikeStatusForPostUseCase } from './features/post/application/useCases/update.like.status.for.post';
+import { UpdateBanPostUseCase } from './features/post/application/useCases/update.ban.post.use.case';
+import { UpdateBanPostLikeStatusUseCase } from './features/post/application/useCases/update.ban.post.like.status.use.case';
 const postUseCase = [
   CreatePostUseCase, CreatePostByBlogIdUseCase, UpdatePostUseCase,
-  DeletePostUseCase, CreateCommentForPostUseCase, UpdateLikeStatusForPostUseCase
+  DeletePostUseCase, CreateCommentForPostUseCase, UpdateLikeStatusForPostUseCase,
+  UpdateBanPostUseCase, UpdateBanPostLikeStatusUseCase
 ]
 
 

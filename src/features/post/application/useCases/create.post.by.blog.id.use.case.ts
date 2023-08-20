@@ -43,6 +43,7 @@ export class CreatePostByBlogIdUseCase {
         newPost.addId()
         newPost.addBlogName(blog.name)
         newPost.addCreatedAt()
+        newPost.setUserId(blog.userId)
 
         await this.postRepository.savePost(newPost)
 

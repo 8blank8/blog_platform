@@ -13,6 +13,11 @@ class CommentatorInfo {
         required: true
     })
     userLogin: string
+
+    @Prop({
+        default: false
+    })
+    userIsBanned: boolean
 }
 
 @Schema()
@@ -53,7 +58,8 @@ export class Comment {
     addCommentatorInfo(user: UserDocument) {
         this.commentatorInfo = {
             userId: user.id,
-            userLogin: user.login
+            userLogin: user.login,
+            userIsBanned: false
         }
     }
 
@@ -64,6 +70,10 @@ export class Comment {
     addPostId(postId: string) {
         this.postId = postId
     }
+
+    setUserIsBanned(isBanned: boolean) {
+        this.commentatorInfo.userIsBanned = isBanned
+    }
 }
 
 export const CommentSchema = SchemaFactory.createForClass(Comment)
@@ -73,7 +83,8 @@ CommentSchema.methods = {
     addId: Comment.prototype.addId,
     addCommentatorInfo: Comment.prototype.addCommentatorInfo,
     updateContent: Comment.prototype.updateContent,
-    addPostId: Comment.prototype.addPostId
+    addPostId: Comment.prototype.addPostId,
+    setUserIsBanned: Comment.prototype.setUserIsBanned
 }
 
 export type CommentDocument = HydratedDocument<Comment>

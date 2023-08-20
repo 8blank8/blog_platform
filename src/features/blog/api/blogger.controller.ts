@@ -62,8 +62,12 @@ export class BloggerController {
 
     @UseGuards(JwtAuthGuard)
     @Get()
-    async getBlogs(@Query() queryParam: BlogQueryParamType) {
-        return this.blogQueryRepository.findAllBlogs(queryParam)
+    async getBlogs(
+        @Query() queryParam: BlogQueryParamType,
+        @Request() req
+    ) {
+        const userId = req.user
+        return this.blogQueryRepository.findAllBlogs(queryParam, userId)
     }
 
     @UseGuards(JwtAuthGuard)

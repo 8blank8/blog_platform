@@ -27,6 +27,10 @@ export class CommentRepository {
         return res.deletedCount === 1
     }
 
+    async updateBanStatusComments(userId: string, banStatus: boolean) {
+        return await this.commentModel.updateMany({ "commentatorInfo.userId": userId }, { $set: { "commentatorInfo.userIsBanned": banStatus } })
+    }
+
     async saveCommentLike(commentLike: CommentLikeDocument) {
         return await commentLike.save()
     }
@@ -37,6 +41,10 @@ export class CommentRepository {
 
     async deleteAllCommentsLike() {
         return await this.commentLikeModel.deleteMany({})
+    }
+
+    async updateBanStatusCommentsLikeStatus(userId: string, banStatus: boolean) {
+        return await this.commentLikeModel.updateMany({ userId: userId }, { $set: { userIsBanned: banStatus } })
     }
 
     async deleteAllComments() {

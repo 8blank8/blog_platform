@@ -28,6 +28,11 @@ export class CommentLike {
     userId: string
 
     @Prop({
+        default: false
+    })
+    userIsBanned: boolean
+
+    @Prop({
         required: true
     })
     addedAt: string
@@ -60,6 +65,7 @@ export class CommentLike {
     addUserLogin(login: string) {
         this.userLogin = login
     }
+
 }
 
 export const CommentLikeSchema = SchemaFactory.createForClass(CommentLike)
