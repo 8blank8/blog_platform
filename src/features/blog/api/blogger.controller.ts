@@ -91,10 +91,14 @@ export class BloggerController {
     async updateBlog(
         @Param('id') id: string,
         @Body() updateData: BlogUpdateType,
-        @Res() res: Response
+        @Res() res: Response,
+        @Request() req
     ) {
+
+        const userId = req.user
+
         const isUpdate = await this.commandBus.execute(
-            new UpdateBlogCommand(updateData, id)
+            new UpdateBlogCommand(updateData, id, userId)
         )
         if (!isUpdate) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
@@ -126,9 +130,13 @@ export class BloggerController {
     @Delete('/:id')
     async deleteBlog(
         @Param('id') id: string,
-        @Res() res: Response
+        @Res() res: Response,
+        @Request() req
     ) {
-        const isDelete = await this.commandBus.execute(new DeleteBlogCommand(id))
+
+        const userId = req.user
+
+        const isDelete = await this.commandBus.execute(new DeleteBlogCommand(id, userId))
         if (!isDelete) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         return res.sendStatus(STATUS_CODE.NO_CONTENT)

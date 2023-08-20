@@ -26,7 +26,6 @@ export class PostControler {
 
     constructor(
         private readonly postQueryRepository: PostQueryRepository,
-        private readonly postService: PostService,
         private readonly commentQueryRepository: CommentQueryRepository,
         private commandBus: CommandBus
     ) { }
@@ -37,7 +36,7 @@ export class PostControler {
         @Query() queryParam: PostQueryParamType,
         @Request() req
     ) {
-        const posts = await this.postQueryRepository.findPosts(queryParam, req.user.userId)
+        const posts = await this.postQueryRepository.findPosts(queryParam, req.user)
         return posts
     }
 
@@ -48,7 +47,7 @@ export class PostControler {
         @Res() res: Response,
         @Request() req
     ) {
-        const post = await this.postQueryRepository.findPost(id, req.user.userId)
+        const post = await this.postQueryRepository.findPost(id, req.user)
         if (!post) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         return res.status(STATUS_CODE.OK).send(post)
@@ -100,10 +99,10 @@ export class PostControler {
         @Request() req,
         @Res() res: Response
     ) {
-        const newComment = await this.commandBus.execute(new CreateCommentForPostCommand(id, inputData, req.user.userId))
+        const newComment = await this.commandBus.execute(new CreateCommentForPostCommand(id, inputData, req.user))
         if (!newComment) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
-        const comment = await this.commentQueryRepository.findCommentViewById(newComment.id, req.user.userId)
+        const comment = await this.commentQueryRepository.findCommentViewById(newComment.id, req.user)
 
         return res.status(STATUS_CODE.CREATED).send(comment)
     }
@@ -120,7 +119,7 @@ export class PostControler {
         const post = await this.postQueryRepository.findPost(id)
         if (!post) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
-        const comments = await this.commentQueryRepository.findCommentsByPostId(queryParam, id, req.user.userId)
+        const comments = await this.commentQueryRepository.findCommentsByPostId(queryParam, id, req.user)
         return res.status(STATUS_CODE.OK).send(comments)
     }
 

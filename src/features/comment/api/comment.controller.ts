@@ -28,7 +28,7 @@ export class CommentController {
         @Request() req,
         @Res() res: Response
     ) {
-        const comment = await this.commentQueryRepository.findCommentViewById(id, req.user.userId)
+        const comment = await this.commentQueryRepository.findCommentViewById(id, req.user)
         if (!comment) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         return res.status(STATUS_CODE.OK).send(comment)
@@ -42,7 +42,7 @@ export class CommentController {
         @Request() req,
         @Res() res: Response
     ) {
-        const isUpdate = await this.commandBus.execute(new UpdateCommetCommand(inputData, id, req.user.userId))
+        const isUpdate = await this.commandBus.execute(new UpdateCommetCommand(inputData, id, req.user))
         if (!isUpdate) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         return res.sendStatus(STATUS_CODE.NO_CONTENT)
@@ -55,7 +55,7 @@ export class CommentController {
         @Request() req,
         @Res() res: Response
     ) {
-        const isDelete = await this.commandBus.execute(new DeleteCommentCommand(id, req.user.userId))
+        const isDelete = await this.commandBus.execute(new DeleteCommentCommand(id, req.user))
         if (!isDelete) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         return res.sendStatus(STATUS_CODE.NO_CONTENT)
@@ -69,7 +69,7 @@ export class CommentController {
         @Body() inputData: CommentLikeStatusType,
         @Request() req
     ) {
-        const isUpdate = await this.commandBus.execute(new UpdateLikeStatusCommentCommand(id, inputData, req.user.userId))
+        const isUpdate = await this.commandBus.execute(new UpdateLikeStatusCommentCommand(id, inputData, req.user))
         if (!isUpdate) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         return res.sendStatus(STATUS_CODE.NO_CONTENT)

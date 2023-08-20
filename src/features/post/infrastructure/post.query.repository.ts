@@ -52,7 +52,7 @@ export class PostQueryRepository {
     }
 
     async findPost(id: string, userId?: string): Promise<PostViewType | null> {
-        const post = await this.postModel.findOne({ id: id }).exec()
+        const post = await this.postModel.findOne({ id: id, userIsBanned: false }).exec()
         if (!post) return null
 
         return await this._mapPost(post, userId)
