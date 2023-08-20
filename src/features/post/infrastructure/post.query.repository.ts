@@ -52,7 +52,7 @@ export class PostQueryRepository {
     }
 
     async findPost(id: string, userId?: string): Promise<PostViewType | null> {
-        const post = await this.postModel.findOne({ id: id, userIsBanned: false }).exec()
+        const post = await this.postModel.findOne({ id: id, userIsBanned: false })
         if (!post) return null
 
         return await this._mapPost(post, userId)
@@ -63,7 +63,7 @@ export class PostQueryRepository {
     }
 
     async findPostLikeStatus(id: string, userId: string): Promise<PostLikeDocument | null> {
-        const like = await this.postLikeModel.findOne({ postId: id, userId: userId, userIsBanned: false })
+        const like = await this.postLikeModel.findOne({ postId: id, userId: userId })
         return like
     }
 

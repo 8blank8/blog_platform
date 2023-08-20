@@ -30,7 +30,7 @@ export class UpdateLikeStatusForPostUseCase {
         if (!post) return false
 
         const user = await this.userQueryRepository.findUserDocumentById(userId)
-        if (!user) return false
+        if (!user || user.isBanned) return false
 
         const like = await this.postQueryRepository.findPostLikeStatus(id, user.id)
 

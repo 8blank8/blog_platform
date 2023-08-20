@@ -25,7 +25,7 @@ export class DeletePostByBlogIdUseCase {
 
         const blog = await this.blogQueryRepository.findBlogDocumentById(blogId)
         if (!blog) return false
-        if (userId !== blog.userId) new ForbiddenException()
+        if (userId !== blog.userId) throw new ForbiddenException()
 
         const isDelete = await this.postRepository.deletePost(postId)
         return isDelete

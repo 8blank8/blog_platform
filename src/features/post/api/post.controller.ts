@@ -19,6 +19,7 @@ import { UpdatePostCommand } from "../application/useCases/update.post.use.case"
 import { DeletePostCommand } from "../application/useCases/delete.post.use.case";
 import { CreateCommentForPostCommand } from "../application/useCases/create.comment.for.post";
 import { UpdateLikeStatusForPostCommand } from "../application/useCases/update.like.status.for.post";
+import { ConnectionStates } from "mongoose";
 
 
 @Controller('posts')
@@ -47,7 +48,9 @@ export class PostControler {
         @Res() res: Response,
         @Request() req
     ) {
+        console.log(req.user)
         const post = await this.postQueryRepository.findPost(id, req.user)
+        console.log(post)
         if (!post) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         return res.status(STATUS_CODE.OK).send(post)
@@ -131,7 +134,7 @@ export class PostControler {
         @Request() req,
         @Res() res: Response
     ) {
-        const isUpdate = await this.commandBus.execute(new UpdateLikeStatusForPostCommand(id, inputData, req.user.userId))
+        const isUpdate = await this.commandBus.execute(new UpdateLikeStatusForPostCommand(id, inputData, req.user))
         if (!isUpdate) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         return res.sendStatus(STATUS_CODE.NO_CONTENT)
