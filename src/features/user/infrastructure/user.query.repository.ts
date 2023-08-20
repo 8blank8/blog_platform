@@ -28,18 +28,18 @@ export class UserQueryRepository {
 
         const filter: any = {
             $or: [
-                {},
+
                 { email: { $regex: RegExp(`${searchEmailTerm}`, 'i') } },
                 { login: { $regex: RegExp(`${searchLoginTerm}`, 'i') } },
             ]
         }
 
         if (banStatus === QUERY_PARAM.BAN_STATUS_BANNED) {
-            filter["banInfo"].isBanned = true
+            filter.$or.push({ "banInfo.isBanned": true })
         }
 
         if (banStatus === QUERY_PARAM.BAN_STATUS_NOT_BANNED) {
-            filter["banInfo"].isBanned = false
+            filter.$or.push({ "banInfo.isBanned": false })
         }
 
         const users = await this.userModel.find(filter)

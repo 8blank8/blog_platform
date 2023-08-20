@@ -31,6 +31,7 @@ export class UserController {
         return user
     }
 
+    @UseGuards(BasicAuthGuard)
     @Get()
     async getUsers(
         @Query() queryParam: UserQueryParamType
