@@ -22,7 +22,7 @@ export class CreatePostByBlogIdUseCase {
         private userQueryRepository: UserQueryRepository
     ) { }
 
-    async execute(command: CreatePostByBlogIdCommand): Promise<string | null> {
+    async execute(command: CreatePostByBlogIdCommand) {
 
         const { inputPostData, blogId, userId } = command
 
@@ -32,7 +32,7 @@ export class CreatePostByBlogIdUseCase {
         const blog = await this.blogQueryRepository.findBlogDocumentById(blogId)
         if (!blog) return null
 
-        if (user.id !== blog.userId) new ForbiddenException()
+        if (user.id !== blog.userId) throw new ForbiddenException()
 
         const post = {
             ...inputPostData,

@@ -63,16 +63,16 @@ export class PostQueryRepository {
     }
 
     async findPostLikeStatus(id: string, userId: string): Promise<PostLikeDocument | null> {
-        const like = await this.postLikeModel.findOne({ postId: id, userId: userId })
+        const like = await this.postLikeModel.findOne({ postId: id, userId: userId, userIsBanned: false })
         return like
     }
 
     async _mapPost(post: PostDocument, userId?: string): Promise<PostViewType> {
 
-        const likesCount = await this.postLikeModel.countDocuments({ postId: post.id, likeStatus: 'Like' })
-        const dislikesCount = await this.postLikeModel.countDocuments({ postId: post.id, likeStatus: 'Dislike' })
-        const like = await this.postLikeModel.findOne({ postId: post.id, userId: userId })
-        const newestLikes = await this.postLikeModel.find({ postId: post.id, likeStatus: 'Like' }).sort({ addedAt: 'desc' }).limit(3).exec()
+        const likesCount = await this.postLikeModel.countDocuments({ postId: post.id, likeStatus: 'Like', userIsBanned: false })
+        const dislikesCount = await this.postLikeModel.countDocuments({ postId: post.id, likeStatus: 'Dislike', userIsBanned: false })
+        const like = await this.postLikeModel.findOne({ postId: post.id, userId: userId, userIsBanned: false })
+        const newestLikes = await this.postLikeModel.find({ postId: post.id, likeStatus: 'Like', userIsBanned: false }).sort({ addedAt: 'desc' }).limit(3).exec()
 
         let likeStatus: string = 'None'
 

@@ -23,7 +23,7 @@ export class CommentQueryRepository {
             sortDirection = QUERY_PARAM.SORT_DIRECTION_DESC
         } = queryParam
 
-        const comments = await this.commentModel.find({ postId: postId })
+        const comments = await this.commentModel.find({ postId: postId, "commentatorInfo.userIsBanned": false })
             .skip((pageNumber - 1) * pageSize)
             .limit(pageSize)
             .sort({ [sortBy]: sortDirection })
@@ -46,23 +46,23 @@ export class CommentQueryRepository {
     }
 
     async findCommentViewById(id: string, userId: string): Promise<CommentViewType | null> {
-        const comment = await this.commentModel.findOne({ id: id })
+        const comment = await this.commentModel.findOne({ id: id, "commentatorInfo.userIsBanned": false })
         if (!comment) return null
 
         return await this._mapComment(comment, userId)
     }
 
     async findLikeByCommentId(id: string, userId: string): Promise<CommentLikeDocument | null> {
-        const like = this.commentLikeModel.findOne({ commentId: id, userId: userId })
+        const like = this.commentLikeModel.findOne({ commentId: id, userId: userId, userIsBanned: false })
         return like
     }
 
     async _mapComment(comment: CommentDocument, userId: string): Promise<CommentViewType> {
-        const likeCount = await this.commentLikeModel.countDocuments({ commentId: comment.id, likeStatus: 'Like' })
-        const dislikeCount = await this.commentLikeModel.countDocuments({ commentId: comment.id, likeStatus: 'Dislike' })
+        const likeCount = await this.commentLikeModel.countDocuments({ commentId: comment.id, likeStatus: 'Like', userIsBanned: false })
+        const dislikeCount = await this.commentLikeModel.countDocuments({ commentId: comment.id, likeStatus: 'Dislike', userIsBanned: false })
         let myStatus: string = 'None'
 
-        const likeStatus = await this.commentLikeModel.findOne({ commentId: comment.id, userId: userId })
+        const likeStatus = await this.commentLikeModel.findOne({ commentId: comment.id, userId: userId, userIsBanned: false })
 
         if (likeStatus) {
             myStatus = likeStatus.likeStatus

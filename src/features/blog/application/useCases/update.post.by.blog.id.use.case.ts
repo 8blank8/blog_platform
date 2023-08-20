@@ -30,7 +30,7 @@ export class UpdatePostByBlogIdUseCase {
         const blog = await this.blogQueryRepository.findBlogDocumentById(blogId)
         const post = await this.postQueryRepository.findPostDocumentById(postId)
         if (!blog || !post) return false
-        if (blog.userId !== userId) new ForbiddenException()
+        if (blog.userId !== userId) throw new ForbiddenException()
 
         const postUpdate = {
             ...inputData,
