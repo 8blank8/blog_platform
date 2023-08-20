@@ -28,20 +28,21 @@ export class UserQueryRepository {
 
         const filter: any = {
             $or: [
-
                 { email: { $regex: RegExp(`${searchEmailTerm}`, 'i') } },
                 { login: { $regex: RegExp(`${searchLoginTerm}`, 'i') } },
             ]
         }
 
         if (banStatus === QUERY_PARAM.BAN_STATUS_BANNED) {
-            filter.$or.push({ "banInfo.isBanned": true })
+            filter.isBanned = true
         }
 
         if (banStatus === QUERY_PARAM.BAN_STATUS_NOT_BANNED) {
-            filter.$or.push({ "banInfo.isBanned": false })
+            filter.isBanned = false
         }
 
+
+        console.log(filter)
         const users = await this.userModel.find(filter)
             .skip((pageNumber - 1) * pageSize)
             .limit(pageSize)
