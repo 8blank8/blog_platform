@@ -22,16 +22,23 @@ export class UserQueryRepository {
             pageNumber = QUERY_PARAM.PAGE_NUMBER,
             pageSize = QUERY_PARAM.PAGE_SIZE,
             searchLoginTerm = QUERY_PARAM.SEARCH_NAME_TERM,
-            searchEmailTerm = QUERY_PARAM.SEARCH_NAME_TERM
+            searchEmailTerm = QUERY_PARAM.SEARCH_NAME_TERM,
+            banStatus
         } = queryParam
 
-        console.log(searchEmailTerm)
         const filter: any = {
             $or: [
                 { email: { $regex: RegExp(`${searchEmailTerm}`, 'i') } },
                 { login: { $regex: RegExp(`${searchLoginTerm}`, 'i') } },
-
             ]
+        }
+
+        if (banStatus === QUERY_PARAM.BAN_STATUS_BANNED) {
+            filter.banInfo.isBanned = true
+        }
+
+        if (banStatus === QUERY_PARAM.BAN_STATUS_NOT_BANNED) {
+            filter.banInfo.isBanned = false
         }
 
         const users = await this.userModel.find(filter)
@@ -92,12 +99,17 @@ export class UserQueryRepository {
         }
     }
 
-    _mapUser(user: UserDBType): UserViewType {
+    _mapUser(user: UserDocument): UserViewType {
         return {
             id: user.id,
             login: user.login,
             email: user.email,
-            createdAt: user.createdAt
+            createdAt: user.createdAt,
+            banInfo: {
+                isBanned: user.isBanned,
+                banDate: user.banDate,
+                banReason: user.banReason
+            }
         }
     }
 }

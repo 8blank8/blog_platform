@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Res, UseGuards } from "@nestjs/common";
 import { Response } from 'express';
 import { UserCreateType } from "../models/user.create.type";
 import { UserQueryRepository } from "../infrastructure/user.query.repository";
@@ -8,6 +8,8 @@ import { CommandBus } from "@nestjs/cqrs";
 import { CreateUserCommand } from "../application/useCases/create.user.use.case";
 import { DeleteUserCommand } from "../application/useCases/delete.user.use.case";
 import { STATUS_CODE } from "../../../entity/enum/status.code";
+import { UserBanModel } from "../models/user.ban.model";
+import { BannedUserCommand } from "../application/useCases/banned.user.use.case";
 
 
 @Controller('sa/users')
@@ -44,6 +46,22 @@ export class UserController {
     ) {
         const isDelete = await this.commandBus.execute(new DeleteUserCommand(id))
         if (!isDelete) return res.sendStatus(STATUS_CODE.NOT_FOUND)
+
+        return res.sendStatus(STATUS_CODE.NO_CONTENT)
+    }
+
+    @UseGuards(BasicAuthGuard)
+    @Put('/:id/ban')
+    async banUser(
+        @Param("id") userId,
+        @Body() inuptData: UserBanModel,
+        @Res() res: Response
+    ) {
+        const isBanned = await this.commandBus.execute(
+            new BannedUserCommand(inuptData, userId)
+        )
+
+        if (!isBanned) return res.sendStatus(STATUS_CODE.BAD_REQUEST)
 
         return res.sendStatus(STATUS_CODE.NO_CONTENT)
     }

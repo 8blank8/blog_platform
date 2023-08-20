@@ -4,6 +4,11 @@ import { v4 as uuidv4 } from 'uuid'
 import bcrypt from 'bcrypt'
 
 @Schema()
+class BanInfo {
+
+}
+
+@Schema()
 export class User {
     @Prop({
         required: true
@@ -45,6 +50,21 @@ export class User {
     })
     isConfirmed: boolean
 
+    @Prop({
+        default: false
+    })
+    isBanned: boolean
+
+    @Prop({
+        default: null
+    })
+    banDate: string
+
+    @Prop({
+        default: null
+    })
+    banReason: string
+
     addConfirmationCode(code: string) {
         this.confirmationCode = code
     }
@@ -60,6 +80,13 @@ export class User {
     addId() {
         this.id = uuidv4()
     }
+
+    bannedUser(text: string) {
+        this.banDate = new Date().toISOString()
+        this.isBanned = true
+        this.banReason = text
+    }
+
 
     async createPasswordHash(password: string): Promise<{ hash: string, salt: string }> {
         const salt = await bcrypt.genSalt(10)
@@ -92,7 +119,8 @@ UserSchema.methods = {
     setPassWordHash: User.prototype.setPassWordHash,
     validatePassword: User.prototype.validatePassword,
     confirmationEmail: User.prototype.confirmationEmail,
-    addConfirmationCode: User.prototype.addConfirmationCode
+    addConfirmationCode: User.prototype.addConfirmationCode,
+    bannedUser: User.prototype.bannedUser
 }
 
 export type UserDocument = HydratedDocument<User>

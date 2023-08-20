@@ -20,7 +20,7 @@ export class ValidateUserUseCase {
         const { loginOrEmail, password } = command
 
         const user = await this.userQueryRepository.findByLoginOrEmail(loginOrEmail)
-        if (!user) return null
+        if (!user || user.isBanned) return null
 
         const isValidate = await user.validatePassword(password)
         if (!isValidate) return null

@@ -40,6 +40,11 @@ export class Post {
     })
     createdAt: string
 
+    // @Prop({
+    //     default: false
+    // })
+    // userIsBanned: boolean
+
     addId() {
         this.id = uuidv4()
     }
@@ -56,6 +61,10 @@ export class Post {
         this.shortDescription = inputData.shortDescription
         this.content = inputData.content
         this.blogId = inputData.blogId
+    }
+
+    setUserIsBanned(ban: boolean) {
+
     }
 }
 

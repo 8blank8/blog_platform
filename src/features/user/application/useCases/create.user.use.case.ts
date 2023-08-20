@@ -28,7 +28,7 @@ export class CreateUserUseCase {
         const confirmationCode = uuidv4()
         newUser.addConfirmationCode(confirmationCode)
         newUser.confirmationEmail()
-
+        console.log(newUser)
         await this.userRepository.save(newUser)
 
         return newUser.id

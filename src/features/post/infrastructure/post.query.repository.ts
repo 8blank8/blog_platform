@@ -6,12 +6,15 @@ import { PostQueryParamType } from "../models/post.query.param.type";
 import { QUERY_PARAM } from "../../../entity/enum/query.param.enum";
 import { PostViewType } from "../models/post.view.type";
 import { PostLike, PostLikeDocument } from "../domain/post.like.schema";
+import { BlogQueryRepository } from "src/features/blog/infrastructure/blog.query.repository";
+import { UserQueryRepository } from "src/features/user/infrastructure/user.query.repository";
 
 
 @Injectable()
 export class PostQueryRepository {
-    constructor(@InjectModel(Post.name) private postModel: Model<PostDocument>,
-        @InjectModel(PostLike.name) private postLikeModel: Model<PostLikeDocument>
+    constructor(
+        @InjectModel(Post.name) private postModel: Model<PostDocument>,
+        @InjectModel(PostLike.name) private postLikeModel: Model<PostLikeDocument>,
     ) { }
 
     async findPosts(queryParam: PostQueryParamType, userId?: string, blogId?: string) {

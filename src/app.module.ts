@@ -91,8 +91,9 @@ const postUseCase = [
 import { CreateDeviceUseCase } from './features/security/application/useCases/create.device.use.case';
 import { DeleteDeviceUseCase } from './features/security/application/useCases/delete.device.use.case';
 import { DeleteAllDevicesUseCase } from './features/security/application/useCases/delete.all.device.use.case';
+import { DeleteDeviceForBannedUseCase } from './features/security/application/useCases/delete.device.for.banned.use.case';
 const securityUseCase = [
-  CreateDeviceUseCase, DeleteDeviceUseCase, DeleteAllDevicesUseCase
+  CreateDeviceUseCase, DeleteDeviceUseCase, DeleteAllDevicesUseCase, DeleteDeviceForBannedUseCase
 ]
 
 
@@ -130,8 +131,9 @@ const bloggerUseCase = [
 
 import { BindUserForBlogUseCase } from './features/sa/application/useCases/bind.user.for.blog.use.case';
 import { SaQueryRepository } from './features/sa/infrastructure/sa.query.repository';
+import { BannedUserUseCase } from './features/user/application/useCases/banned.user.use.case';
 const saUseCase = [
-  BindUserForBlogUseCase
+  BindUserForBlogUseCase, BannedUserUseCase
 ]
 
 

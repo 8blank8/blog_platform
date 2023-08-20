@@ -25,4 +25,8 @@ export class SecurityRepository {
         return await this.deviceModel.deleteMany({ userId: userId, $nor: [{ deviceId: deviceId }] })
 
     }
+
+    async deleteDeviceForBanned(userId: string) {
+        return await this.deviceModel.deleteMany({ userId: userId })
+    }
 }
