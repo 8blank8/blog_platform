@@ -4,6 +4,7 @@ import { CommentCreateType } from "src/features/comment/models/comment.create.ty
 import { PostQueryRepository } from "../../infrastructure/post.query.repository";
 import { UserQueryRepository } from "src/features/user/infrastructure/user.query.repository";
 import { CommentRepository } from "src/features/comment/infrastructure/comment.repository";
+import { UserBanBlogRepository } from "src/features/blog/infrastructure/user.ban.blog.repository";
 
 
 export class CreateCommentForPostCommand {
@@ -19,7 +20,8 @@ export class CreateCommentForPostUseCase {
     constructor(
         private postQueryRepository: PostQueryRepository,
         private userQueryRepository: UserQueryRepository,
-        private commentRepository: CommentRepository
+        private commentRepository: CommentRepository,
+        private userBanBlogRepository: UserBanBlogRepository
     ) { }
 
     async execute(command: CreateCommentForPostCommand): Promise<false | CommentDocument> {
@@ -32,11 +34,15 @@ export class CreateCommentForPostUseCase {
         const user = await this.userQueryRepository.findUserDocumentById(userId)
         if (!user) return false
 
+        const bannedUser = await this.userBanBlogRepository.findBannedUser(user.id, post.blogId)
+        if (bannedUser?.isBanned === true) return false
+
         const comment = await this.commentRepository.createComment(inputData)
         comment.addId()
         comment.addCreatedAt()
         comment.addCommentatorInfo(user)
         comment.addPostId(post.id)
+        comment.addBlogId(post.blogId)
 
         await this.commentRepository.saveComment(comment)
 

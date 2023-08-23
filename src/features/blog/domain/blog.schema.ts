@@ -41,6 +41,15 @@ export class Blog {
     })
     userId: string
 
+    @Prop({
+        default: false
+    })
+    isBanned: boolean
+
+    bannedBlog(isBanned: boolean) {
+        this.isBanned = isBanned
+    }
+
     addCreatedAt() {
         this.createdAt = new Date().toISOString()
     }
@@ -66,7 +75,8 @@ BlogSchema.methods = {
     addCreatedAt: Blog.prototype.addCreatedAt,
     addId: Blog.prototype.addId,
     updateBlog: Blog.prototype.updateBlog,
-    setUserId: Blog.prototype.setUserId
+    setUserId: Blog.prototype.setUserId,
+    bannedBlog: Blog.prototype.bannedBlog
 }
 
 export type BlogDocument = HydratedDocument<Blog>

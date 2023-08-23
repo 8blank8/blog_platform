@@ -47,6 +47,11 @@ export class Comment {
     })
     postId: string
 
+    @Prop({
+        required: true
+    })
+    blogId: string
+
     addCreatedAt() {
         this.createdAt = new Date().toISOString()
     }
@@ -71,6 +76,10 @@ export class Comment {
         this.postId = postId
     }
 
+    addBlogId(blogId: string) {
+        this.blogId = blogId
+    }
+
     setUserIsBanned(isBanned: boolean) {
         this.commentatorInfo.userIsBanned = isBanned
     }
@@ -84,7 +93,8 @@ CommentSchema.methods = {
     addCommentatorInfo: Comment.prototype.addCommentatorInfo,
     updateContent: Comment.prototype.updateContent,
     addPostId: Comment.prototype.addPostId,
-    setUserIsBanned: Comment.prototype.setUserIsBanned
+    setUserIsBanned: Comment.prototype.setUserIsBanned,
+    addBlogId: Comment.prototype.addBlogId
 }
 
 export type CommentDocument = HydratedDocument<Comment>

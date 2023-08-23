@@ -6,13 +6,17 @@ import { CommentQueryParam } from "../models/comment.query.param.type";
 import { QUERY_PARAM } from "src/entity/enum/query.param.enum";
 import { CommentLike, CommentLikeDocument } from "../domain/comment.like.schema";
 import { CommentViewType } from "../models/comment.view.type";
+import { PostQueryRepository } from "src/features/post/infrastructure/post.query.repository";
+import { BlogQueryRepository } from "src/features/blog/infrastructure/blog.query.repository";
 
 
 @Injectable()
 export class CommentQueryRepository {
     constructor(
         @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
-        @InjectModel(CommentLike.name) private commentLikeModel: Model<CommentLikeDocument>
+        @InjectModel(CommentLike.name) private commentLikeModel: Model<CommentLikeDocument>,
+        private postQueryRepository: PostQueryRepository,
+        private blogQueryRepository: BlogQueryRepository
     ) { }
 
     async findCommentsByPostId(queryParam: CommentQueryParam, postId: string, userId: string) {
@@ -55,6 +59,69 @@ export class CommentQueryRepository {
     async findLikeByCommentId(id: string, userId: string): Promise<CommentLikeDocument | null> {
         const like = this.commentLikeModel.findOne({ commentId: id, userId: userId, userIsBanned: false })
         return like
+    }
+
+    async findAllCommentBlog(userId: string, queryParam: CommentQueryParam) {
+        const {
+            pageNumber = QUERY_PARAM.PAGE_NUMBER,
+            pageSize = QUERY_PARAM.PAGE_SIZE,
+            sortBy = QUERY_PARAM.SORT_BY,
+            sortDirection = QUERY_PARAM.SORT_DIRECTION_DESC
+        } = queryParam
+
+        const blog = await this.blogQueryRepository.findBlogDocumentByUserId(userId)
+        if (!blog) return null
+
+        const comments = await this.commentModel.find({ blogId: blog.id })
+            .skip((pageNumber - 1) * pageSize)
+            .limit(pageSize)
+            .sort({ [sortBy]: sortDirection })
+
+        const totalCount = await this.commentModel.countDocuments({})
+
+        return {
+            pagesCount: Math.ceil(totalCount / pageSize),
+            page: +pageNumber,
+            pageSize: +pageSize,
+            totalCount: totalCount,
+            items: await Promise.all(comments.map(comment => this._mapCommentForAllPosts(comment, userId)))
+        }
+    }
+
+    async _mapCommentForAllPosts(comment: CommentDocument, userId: string) {
+        const likeCount = await this.commentLikeModel.countDocuments({ commentId: comment.id, likeStatus: 'Like', userIsBanned: false })
+        const dislikeCount = await this.commentLikeModel.countDocuments({ commentId: comment.id, likeStatus: 'Dislike', userIsBanned: false })
+        let myStatus: string = 'None'
+
+        const likeStatus = await this.commentLikeModel.findOne({ commentId: comment.id, userId: userId, userIsBanned: false })
+
+        if (likeStatus) {
+            myStatus = likeStatus.likeStatus
+        }
+
+        const post = await this.postQueryRepository.findPostDocumentById(comment.postId)
+
+        return {
+            id: comment.id,
+            content: comment.content,
+            commentatorInfo: {
+                userId: comment.commentatorInfo.userId,
+                userLogin: comment.commentatorInfo.userLogin
+            },
+            createdAt: comment.createdAt,
+            likesInfo: {
+                likesCount: likeCount,
+                dislikesCount: dislikeCount,
+                myStatus: myStatus
+            },
+            postInfo: {
+                id: post!.id,
+                title: post!.title,
+                blogId: post!.blogId,
+                blogName: post!.blogName
+            }
+        }
+
     }
 
     async _mapComment(comment: CommentDocument, userId: string): Promise<CommentViewType> {

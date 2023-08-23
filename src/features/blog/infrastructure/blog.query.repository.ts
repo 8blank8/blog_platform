@@ -63,6 +63,10 @@ export class BlogQueryRepository {
         return this._mapBlog(blog)
     }
 
+    async findBlogDocumentByUserId(userId: string): Promise<BlogDocument | null> {
+        return await this.blogModel.findOne({ userId: userId })
+    }
+
     _mapBlog(blog: BlogDBType): BlogViewType {
         return {
             id: blog.id,

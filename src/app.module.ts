@@ -138,6 +138,11 @@ const bloggerUseCase = [
 import { BindUserForBlogUseCase } from './features/sa/application/useCases/bind.user.for.blog.use.case';
 import { SaQueryRepository } from './features/sa/infrastructure/sa.query.repository';
 import { BannedUserUseCase } from './features/user/application/useCases/banned.user.use.case';
+import { UserBanBlog, UserBanBlogSchema } from './features/blog/domain/user.ban.blog.schema';
+import { UserBanBlogRepository } from './features/blog/infrastructure/user.ban.blog.repository';
+import { BloggerUserController } from './features/blog/api/blogger.user.controller';
+import { BanUserForBlogUseCase } from './features/blog/application/useCases/ban.user.for.blog.use.case';
+import { UserBanBlogQueryRepository } from './features/blog/infrastructure/user.ban.blog.query.repository';
 const saUseCase = [
   BindUserForBlogUseCase, BannedUserUseCase
 ]
@@ -156,7 +161,8 @@ const saUseCase = [
       { name: CommentLike.name, schema: CommentLikeSchema },
       { name: PostLike.name, schema: PostLikeSchema },
       { name: Device.name, schema: DeviceSchema },
-      { name: Auth.name, schema: AuthSchema }
+      { name: Auth.name, schema: AuthSchema },
+      { name: UserBanBlog.name, schema: UserBanBlogSchema }
     ]),
     ThrottlerModule.forRoot({
       ttl: +setting_env.TTL,
@@ -173,7 +179,7 @@ const saUseCase = [
     AppController, BlogController, PostControler,
     UserController, AuthController, CommentController,
     SecurityController, TestingController, BloggerController,
-    SaBlogController
+    SaBlogController, BloggerUserController
   ],
   providers: [
     AppService,
@@ -186,7 +192,8 @@ const saUseCase = [
     UserExistLogin, UserExistEmail, UserIsConfirmed, EmailCodeResend, CheckBlogId, IsNotBlank, LikeStatus,
     CommentRepository, CommentQueryRepository, CommentService,
     SecurityService, SecurityQueryRepository, SecurityRepository,
-    SaQueryRepository,
+    SaQueryRepository, UserBanBlogRepository, BanUserForBlogUseCase,
+    UserBanBlogQueryRepository,
     ...bloggerUseCase, ...commentUseCase, ...postUseCase, ...securityUseCase,
     ...userUseCase, ...authUseCase, ...saUseCase
   ],

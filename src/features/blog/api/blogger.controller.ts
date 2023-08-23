@@ -17,6 +17,8 @@ import { PostUpdateByIdModel } from "../models/post.update.by.id";
 import { UpdatePostByBlogIdCommand } from "../application/useCases/update.post.by.blog.id.use.case";
 import { DeleteBlogCommand } from "../application/useCases/delete.blog.use.case";
 import { DeletePostByBlogIdCommand } from "../application/useCases/delete.post.by.blog.id.use.case";
+import { CommentQueryRepository } from "src/features/comment/infrastructure/comment.query.repository";
+import { CommentQueryParam } from "src/features/comment/models/comment.query.param.type";
 
 
 @Controller('blogger/blogs')
@@ -24,7 +26,8 @@ export class BloggerController {
     constructor(
         private commandBus: CommandBus,
         private blogQueryRepository: BlogQueryRepository,
-        private postQueryRepository: PostQueryRepository
+        private postQueryRepository: PostQueryRepository,
+        private commentQueryRepository: CommentQueryRepository
     ) { }
 
     @UseGuards(JwtAuthGuard)
@@ -161,4 +164,15 @@ export class BloggerController {
 
         return res.sendStatus(STATUS_CODE.NO_CONTENT)
     }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('comments')
+    async getAllCommentsPosts(
+        @Request() req,
+        @Query() queryParam: CommentQueryParam
+    ) {
+        const userId = req.user
+        return this.commentQueryRepository.findAllCommentBlog(userId, queryParam)
+    }
+
 }
