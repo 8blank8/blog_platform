@@ -67,6 +67,10 @@ export class PostQueryRepository {
         return like
     }
 
+    async findAllPostsUser(userId): Promise<PostDocument[]> {
+        return this.postModel.find({ userId: userId })
+    }
+
     async _mapPost(post: PostDocument, userId?: string): Promise<PostViewType> {
 
         const likesCount = await this.postLikeModel.countDocuments({ postId: post.id, likeStatus: 'Like', userIsBanned: false })
