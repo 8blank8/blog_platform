@@ -143,6 +143,7 @@ import { UserBanBlogRepository } from './features/blog/infrastructure/user.ban.b
 import { BloggerUserController } from './features/blog/api/blogger.user.controller';
 import { BanUserForBlogUseCase } from './features/blog/application/useCases/ban.user.for.blog.use.case';
 import { UserBanBlogQueryRepository } from './features/blog/infrastructure/user.ban.blog.query.repository';
+import { BlogBanUseCase } from './features/sa/application/useCases/blog.ban.use.case';
 const saUseCase = [
   BindUserForBlogUseCase, BannedUserUseCase
 ]
@@ -193,7 +194,7 @@ const saUseCase = [
     CommentRepository, CommentQueryRepository, CommentService,
     SecurityService, SecurityQueryRepository, SecurityRepository,
     SaQueryRepository, UserBanBlogRepository, BanUserForBlogUseCase,
-    UserBanBlogQueryRepository,
+    UserBanBlogQueryRepository, BlogBanUseCase,
     ...bloggerUseCase, ...commentUseCase, ...postUseCase, ...securityUseCase,
     ...userUseCase, ...authUseCase, ...saUseCase
   ],
