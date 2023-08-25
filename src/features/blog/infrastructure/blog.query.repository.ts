@@ -22,7 +22,9 @@ export class BlogQueryRepository {
             sortDirection = QUERY_PARAM.SORT_DIRECTION_DESC
         } = queryParam
 
-        const filter: any = {}
+        const filter: any = {
+            isBanned: false
+        }
 
         if (userId) {
             filter.userId = userId
@@ -65,6 +67,10 @@ export class BlogQueryRepository {
 
     async findBlogDocumentByUserId(userId: string): Promise<BlogDocument | null> {
         return await this.blogModel.findOne({ userId: userId })
+    }
+
+    async findBannedBlog(blogId: string): Promise<BlogDocument | null> {
+        return await this.blogModel.findOne({ id: blogId, isBanned: true })
     }
 
     _mapBlog(blog: BlogDBType): BlogViewType {

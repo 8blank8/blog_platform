@@ -19,16 +19,17 @@ export class BloggerUserController {
     @UseGuards(JwtAuthGuard)
     @Put('/:id/ban')
     async banUserForBlog(
-        @Param('id') id,
+        @Param('id') bannedUserId,
         @Body() inputData: BanUserForBlogModel,
         @Request() req,
         @Res() res: Response
     ) {
         const userId = req.user
 
-        await this.commandBus.execute(
-            new BanUserForBlogCommand(inputData, id, userId)
+        const isBanned = await this.commandBus.execute(
+            new BanUserForBlogCommand(inputData, bannedUserId, userId)
         )
+        if (!isBanned) return res.sendStatus(STATUS_CODE.BAD_REQUEST)
 
         return res.sendStatus(STATUS_CODE.NO_CONTENT)
     }

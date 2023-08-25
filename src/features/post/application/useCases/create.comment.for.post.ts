@@ -5,6 +5,7 @@ import { PostQueryRepository } from "../../infrastructure/post.query.repository"
 import { UserQueryRepository } from "src/features/user/infrastructure/user.query.repository";
 import { CommentRepository } from "src/features/comment/infrastructure/comment.repository";
 import { UserBanBlogRepository } from "src/features/blog/infrastructure/user.ban.blog.repository";
+import { ForbiddenException } from "@nestjs/common";
 
 
 export class CreateCommentForPostCommand {
@@ -35,7 +36,7 @@ export class CreateCommentForPostUseCase {
         if (!user) return false
 
         const bannedUser = await this.userBanBlogRepository.findBannedUser(user.id, post.blogId)
-        if (bannedUser?.isBanned === true) return false
+        if (bannedUser?.isBanned === true) throw new ForbiddenException()
 
         const comment = await this.commentRepository.createComment(inputData)
         comment.addId()

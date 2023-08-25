@@ -7,5 +7,6 @@ export enum QUERY_PARAM {
     PAGE_SIZE = 10,
     BAN_STATUS_All = 'all',
     BAN_STATUS_BANNED = 'banned',
-    BAN_STATUS_NOT_BANNED = 'notBanned'
+    BAN_STATUS_NOT_BANNED = 'notBanned',
+    SORT_BY_FOR_BAN = 'banDate'
 }

@@ -10,4 +10,8 @@ export class BanUserForBlogModel {
     @IsString()
     @MinLength(20)
     banReason: string
+
+    @IsNotEmpty()
+    @IsString()
+    blogId: string
 }

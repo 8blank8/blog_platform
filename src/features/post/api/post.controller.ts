@@ -20,15 +20,17 @@ import { DeletePostCommand } from "../application/useCases/delete.post.use.case"
 import { CreateCommentForPostCommand } from "../application/useCases/create.comment.for.post";
 import { UpdateLikeStatusForPostCommand } from "../application/useCases/update.like.status.for.post";
 import { ConnectionStates } from "mongoose";
+import { BlogQueryRepository } from "src/features/blog/infrastructure/blog.query.repository";
 
 
 @Controller('posts')
 export class PostControler {
 
     constructor(
-        private readonly postQueryRepository: PostQueryRepository,
-        private readonly commentQueryRepository: CommentQueryRepository,
-        private commandBus: CommandBus
+        private postQueryRepository: PostQueryRepository,
+        private commentQueryRepository: CommentQueryRepository,
+        private commandBus: CommandBus,
+        private blogQueryRepository: BlogQueryRepository
     ) { }
 
     @UseGuards(JwtOrNotGuard)
@@ -48,10 +50,11 @@ export class PostControler {
         @Res() res: Response,
         @Request() req
     ) {
-        console.log(req.user)
         const post = await this.postQueryRepository.findPost(id, req.user)
-        console.log(post)
         if (!post) return res.sendStatus(STATUS_CODE.NOT_FOUND)
+
+        const blogIsBanned = await this.blogQueryRepository.findBannedBlog(post?.blogId)
+        if (blogIsBanned) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         return res.status(STATUS_CODE.OK).send(post)
     }

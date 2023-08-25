@@ -16,11 +16,13 @@ export class UserBanBlogQueryRepository {
             searchLoginTerm = QUERY_PARAM.SEARCH_NAME_TERM,
             pageNumber = QUERY_PARAM.PAGE_NUMBER,
             pageSize = QUERY_PARAM.PAGE_SIZE,
-            sortBy = QUERY_PARAM.SORT_BY,
-            sortDirection = QUERY_PARAM.SORT_DIRECTION_ASC
+            sortBy = QUERY_PARAM.SORT_BY_FOR_BAN,
+            sortDirection = QUERY_PARAM.SORT_DIRECTION_DESC
         } = queryParam
 
-        const filter: any = { blogId: blogId, isBanned: true }
+        const filter: any = {
+            blogId: blogId, isBanned: true
+        }
 
         if (searchLoginTerm) {
             const filterUserLogin = new RegExp(`${searchLoginTerm}`, 'i')
@@ -41,6 +43,10 @@ export class UserBanBlogQueryRepository {
             totalCount: totalCount,
             items: bannedUsers.map(this._mapBannedUser)
         }
+    }
+
+    async findBannedUser(userId: string, blogId: string): Promise<UserBanBlogDocument | null> {
+        return await this.userBanBlogModel.findOne({ userId: userId, blogId: blogId })
     }
 
     _mapBannedUser(bannedUser: UserBanBlogDocument) {

@@ -9,4 +9,8 @@ export class BlogViewModel {
         userId: string
         userLogin: string
     }
+    banInfo: {
+        isBanned: boolean
+        banDate: string
+    }
 }
