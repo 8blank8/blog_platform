@@ -104,21 +104,21 @@ export class CommentQueryRepository {
         return {
             id: comment.id,
             content: comment.content,
+            createdAt: comment.createdAt,
             commentatorInfo: {
                 userId: comment.commentatorInfo.userId,
                 userLogin: comment.commentatorInfo.userLogin
             },
-            createdAt: comment.createdAt,
             likesInfo: {
                 likesCount: likeCount,
                 dislikesCount: dislikeCount,
                 myStatus: myStatus
             },
             postInfo: {
-                id: post!.id,
-                title: post!.title,
                 blogId: post!.blogId,
-                blogName: post!.blogName
+                blogName: post!.blogName,
+                title: post!.title,
+                id: post!.id
             }
         }
 

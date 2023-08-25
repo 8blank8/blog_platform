@@ -8,5 +8,5 @@ export enum QUERY_PARAM {
     BAN_STATUS_All = 'all',
     BAN_STATUS_BANNED = 'banned',
     BAN_STATUS_NOT_BANNED = 'notBanned',
-    SORT_BY_FOR_BAN = 'banDate'
+    SORT_BY_FOR_BAN = 'login'
 }

@@ -29,7 +29,7 @@ export class BloggerUserController {
         const isBanned = await this.commandBus.execute(
             new BanUserForBlogCommand(inputData, bannedUserId, userId)
         )
-        if (!isBanned) return res.sendStatus(STATUS_CODE.BAD_REQUEST)
+        if (!isBanned) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         return res.sendStatus(STATUS_CODE.NO_CONTENT)
     }
