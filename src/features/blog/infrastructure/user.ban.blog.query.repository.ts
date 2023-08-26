@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { UserBanBlog, UserBanBlogDocument } from "../domain/user.ban.blog.schema";
-import { Model } from "mongoose";
+import { FilterQuery, Model } from "mongoose";
 import { UsersBanQueryParamModel } from "../models/users.ban.query.param.model";
 import { QUERY_PARAM } from "../../../entity/enum/query.param.enum";
 
@@ -20,12 +20,12 @@ export class UserBanBlogQueryRepository {
             sortDirection = QUERY_PARAM.SORT_DIRECTION_DESC
         } = queryParam
 
-        const filter: any = {
+        const filter: FilterQuery<UserBanBlogDocument> = {
             blogId: blogId, isBanned: true
         }
 
         if (searchLoginTerm) {
-            filter.userLogin = { $regex: { searchLoginTerm, $options: 'i' } }
+            filter.login = { $regex: { searchLoginTerm, $options: 'i' } }
         }
 
         const bannedUsers = await this.userBanBlogModel.find(filter)
@@ -53,7 +53,7 @@ export class UserBanBlogQueryRepository {
         console.log(bannedUser)
         return {
             id: bannedUser.userId,
-            login: bannedUser.userLogin,
+            login: bannedUser.login,
             banInfo: {
                 isBanned: bannedUser.isBanned,
                 banDate: bannedUser.banDate,

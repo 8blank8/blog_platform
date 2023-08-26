@@ -73,9 +73,10 @@ export class CommentQueryRepository {
         if (!blog) return null
 
         const comments = await this.commentModel.find({ blogId: blog.id })
+            .sort({ [sortBy]: sortDirection })
             .skip((pageNumber - 1) * pageSize)
             .limit(pageSize)
-            .sort({ [sortBy]: sortDirection })
+
 
         const totalCount = await this.commentModel.countDocuments({})
 

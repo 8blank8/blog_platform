@@ -32,7 +32,7 @@ export class UserBanBlog {
     @Prop({
         required: true
     })
-    userLogin: string
+    login: string
 
     @Prop({
         required: true
@@ -44,7 +44,7 @@ export class UserBanBlog {
     }
 
     setUserLogin(login: string) {
-        this.userLogin = login
+        this.login = login
     }
 
     setBan(banReason: string, isBanned: boolean) {
