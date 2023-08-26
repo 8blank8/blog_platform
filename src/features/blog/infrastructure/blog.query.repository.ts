@@ -53,9 +53,7 @@ export class BlogQueryRepository {
     }
 
     async findBlogDocumentById(id: string): Promise<BlogDocument | null> {
-        const blog = await this.blogModel.findOne({ id: id })
-        if (!blog) return null
-        return blog
+        return this.blogModel.findOne({ id: id })
     }
 
     async findBlogById(id: string): Promise<BlogViewType | null> {

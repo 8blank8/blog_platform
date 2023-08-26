@@ -44,7 +44,7 @@ export class BloggerUserController {
         @Res() res: Response,
         @Request() req
     ) {
-        const blog = await this.blogQueryRepository.findBlogDocumentByUserId(req.user)
+        const blog = await this.blogQueryRepository.findBlogDocumentById(blogId)
         if (!blog) return res.sendStatus(STATUS_CODE.NOT_FOUND)
         if (blog.userId !== req.user) throw new ForbiddenException()
 
