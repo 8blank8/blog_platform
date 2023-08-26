@@ -66,7 +66,7 @@ export class CommentQueryRepository {
             pageNumber = QUERY_PARAM.PAGE_NUMBER,
             pageSize = QUERY_PARAM.PAGE_SIZE,
             sortBy = QUERY_PARAM.SORT_BY,
-            sortDirection = QUERY_PARAM.SORT_DIRECTION_DESC
+            sortDirection = QUERY_PARAM.SORT_DIRECTION_ASC
         } = queryParam
 
         const blog = await this.blogQueryRepository.findBlogDocumentByUserId(userId)

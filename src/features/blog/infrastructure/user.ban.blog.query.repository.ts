@@ -25,14 +25,14 @@ export class UserBanBlogQueryRepository {
         }
 
         if (searchLoginTerm) {
-            const filterUserLogin = new RegExp(`${searchLoginTerm}`, 'i')
-            filter.userLogin = { $regex: filterUserLogin }
+            filter.userLogin = { $regex: { searchLoginTerm, $options: 'i' } }
         }
 
         const bannedUsers = await this.userBanBlogModel.find(filter)
+            .sort({ [sortBy]: sortDirection })
             .skip((pageNumber - 1) * pageSize)
             .limit(pageSize)
-            .sort({ [sortBy]: sortDirection })
+
 
         const totalCount = await this.userBanBlogModel.countDocuments(filter)
 
