@@ -48,7 +48,7 @@ export class SaBlogController {
     ) {
         const isBanned = await this.commandBus.execute(new BlogBanCommand(blogId, inputData))
 
-        if (!isBanned) return res.sendStatus(STATUS_CODE.BAD_REQUEST)
+        if (!isBanned) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         return res.sendStatus(STATUS_CODE.NO_CONTENT)
     }

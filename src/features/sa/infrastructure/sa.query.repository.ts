@@ -67,8 +67,8 @@ export class SaQueryRepository {
                 userLogin: user!.login
             },
             banInfo: {
-                isBanned: user!.isBanned,
-                banDate: user!.banDate
+                isBanned: blog.isBanned,
+                banDate: blog.banDate
             }
         }
     }

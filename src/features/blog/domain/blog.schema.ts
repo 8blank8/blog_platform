@@ -46,8 +46,15 @@ export class Blog {
     })
     isBanned: boolean
 
+
+    @Prop({
+        default: null
+    })
+    banDate: string
+
     bannedBlog(isBanned: boolean) {
         this.isBanned = isBanned
+        this.banDate = new Date().toISOString()
     }
 
     addCreatedAt() {
