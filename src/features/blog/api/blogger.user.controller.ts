@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Put, UseGuards, Request, Res, Get, Query } from "@nestjs/common";
+import { Body, Controller, Param, Put, UseGuards, Request, Res, Get, Query, ForbiddenException } from "@nestjs/common";
 import { CommandBus } from "@nestjs/cqrs";
 import { JwtAuthGuard } from "src/features/auth/guards/jwt.guard";
 import { BanUserForBlogModel } from "../models/ban.user.for.blog.model";
@@ -7,13 +7,15 @@ import { STATUS_CODE } from "src/entity/enum/status.code";
 import { BanUserForBlogCommand } from "../application/useCases/ban.user.for.blog.use.case";
 import { UsersBanQueryParamModel } from "../models/users.ban.query.param.model";
 import { UserBanBlogQueryRepository } from "../infrastructure/user.ban.blog.query.repository";
+import { BlogQueryRepository } from "../infrastructure/blog.query.repository";
 
 
 @Controller('blogger/users')
 export class BloggerUserController {
     constructor(
         private commandBus: CommandBus,
-        private userBanBlogQueryRepository: UserBanBlogQueryRepository
+        private userBanBlogQueryRepository: UserBanBlogQueryRepository,
+        private blogQueryRepository: BlogQueryRepository
     ) { }
 
     @UseGuards(JwtAuthGuard)
@@ -38,9 +40,16 @@ export class BloggerUserController {
     @Get("/blog/:id")
     async findBannedUsersForBlog(
         @Param('id') blogId,
-        @Query() queryParam: UsersBanQueryParamModel
+        @Query() queryParam: UsersBanQueryParamModel,
+        @Res() res: Response,
+        @Request() req
     ) {
-        return await this.userBanBlogQueryRepository.findBannedUsers(blogId, queryParam)
+        const blog = await this.blogQueryRepository.findBlogDocumentByUserId(req.user)
+        if (!blog) return res.sendStatus(STATUS_CODE.NOT_FOUND)
+        if (blog.userId !== req.user) throw new ForbiddenException()
+
+        const bannedUsers = await this.userBanBlogQueryRepository.findBannedUsers(blogId, queryParam)
+        return res.status(STATUS_CODE.OK).send(bannedUsers)
     }
 
 }
