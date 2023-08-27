@@ -31,11 +31,8 @@ export class CreateCommentForPostUseCase {
 
         const post = await this.postQueryRepository.findPost(id)
         if (!post) return false
-        console.log(post)
-        console.log(userId)
         const user = await this.userQueryRepository.findUserDocumentById(userId)
         if (!user) return false
-        console.log(user)
         const bannedUser = await this.userBanBlogRepository.findBannedUser(user.id, post.blogId)
         if (bannedUser?.isBanned === true) throw new ForbiddenException()
 
@@ -45,6 +42,8 @@ export class CreateCommentForPostUseCase {
         comment.addCommentatorInfo(user)
         comment.addPostId(post.id)
         comment.addBlogId(post.blogId)
+        console.log(post.blogId, 'blogid for create')
+
 
         await this.commentRepository.saveComment(comment)
 

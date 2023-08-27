@@ -7,6 +7,9 @@ import { UpdateBanPostCommand } from "src/features/post/application/useCases/upd
 import { UpdateBanCommentCommand } from "src/features/comment/appication/useCases/update.ban.comment.use.case";
 import { UpdateBanCommentLikeStatusCommand } from "src/features/comment/appication/useCases/update.ban.comment.like.status.use.case";
 import { UpdateBanPostLikeStatusCommand } from "src/features/post/application/useCases/update.ban.post.like.status.use.case";
+import { UserQueryRepositorySql } from "../../infrastructure/user.query.repository.sql";
+import { UserRepositorySql } from "../../infrastructure/user.repository.sql";
+import { UpdateBannedUserForSqlModel } from "../../infrastructure/models/update.banned.user.for.sql.model";
 
 
 export class BannedUserCommand {
@@ -19,8 +22,10 @@ export class BannedUserCommand {
 @CommandHandler(BannedUserCommand)
 export class BannedUserUseCase {
     constructor(
-        private userQueryRepository: UserQueryRepository,
-        private userRepository: UserRepository,
+        // private userQueryRepository: UserQueryRepository,
+        // private userRepository: UserRepository,
+        private userQueryRepositorySql: UserQueryRepositorySql,
+        private userRepositorySql: UserRepositorySql,
         private commandBus: CommandBus
     ) { }
 
@@ -29,21 +34,28 @@ export class BannedUserUseCase {
         const { isBanned, banReason } = command.inputData
         const { userId } = command
 
-        const user = await this.userQueryRepository.findUserDocumentById(userId)
+        const user = await this.userQueryRepositorySql.findUser(userId)
         if (!user) return false
 
-
-        user.bannedUser(isBanned, banReason)
-        await this.commandBus.execute(new UpdateBanPostCommand(isBanned, user.id))
-        await this.commandBus.execute(new UpdateBanCommentCommand(isBanned, user.id))
-        await this.commandBus.execute(new UpdateBanCommentLikeStatusCommand(isBanned, user.id))
-        await this.commandBus.execute(new UpdateBanPostLikeStatusCommand(isBanned, user.id))
-
-        if (isBanned) {
-            await this.commandBus.execute(new DeleteDeviceForBannedCommand(user.id))
+        const banDto: UpdateBannedUserForSqlModel = {
+            userId: userId,
+            isBanned: isBanned,
+            banReason: banReason,
+            banDate: new Date().toISOString()
         }
 
-        await this.userRepository.save(user)
+        await this.userRepositorySql.updateBanUserForSa(banDto)
+        // user.bannedUser(isBanned, banReason)
+        // await this.commandBus.execute(new UpdateBanPostCommand(isBanned, user.id))
+        // await this.commandBus.execute(new UpdateBanCommentCommand(isBanned, user.id))
+        // await this.commandBus.execute(new UpdateBanCommentLikeStatusCommand(isBanned, user.id))
+        // await this.commandBus.execute(new UpdateBanPostLikeStatusCommand(isBanned, user.id))
+
+        // if (isBanned) {
+        //     await this.commandBus.execute(new DeleteDeviceForBannedCommand(user.id))
+        // }
+
+        // await this.userRepository.save(user)
         return true
     }
 }

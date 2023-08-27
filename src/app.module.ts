@@ -144,6 +144,9 @@ import { BloggerUserController } from './features/blog/api/blogger.user.controll
 import { BanUserForBlogUseCase } from './features/blog/application/useCases/ban.user.for.blog.use.case';
 import { UserBanBlogQueryRepository } from './features/blog/infrastructure/user.ban.blog.query.repository';
 import { BlogBanUseCase } from './features/sa/application/useCases/blog.ban.use.case';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UserQueryRepositorySql } from './features/user/infrastructure/user.query.repository.sql';
+import { UserRepositorySql } from './features/user/infrastructure/user.repository.sql';
 const saUseCase = [
   BindUserForBlogUseCase, BannedUserUseCase
 ]
@@ -153,6 +156,16 @@ const saUseCase = [
   imports: [
     configModule,
     CqrsModule,
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: 'localhost',
+      port: 5432,
+      username: 'blank',
+      password: 'blank',
+      database: 'BlogPlatform',
+      entities: [],
+      synchronize: false,
+    }),
     MongooseModule.forRoot(setting_env.MONGO_URL),
     MongooseModule.forFeature([
       { name: Blog.name, schema: BlogSchema },
@@ -195,6 +208,8 @@ const saUseCase = [
     SecurityService, SecurityQueryRepository, SecurityRepository,
     SaQueryRepository, UserBanBlogRepository, BanUserForBlogUseCase,
     UserBanBlogQueryRepository, BlogBanUseCase,
+
+    UserQueryRepositorySql, UserRepositorySql,
     ...bloggerUseCase, ...commentUseCase, ...postUseCase, ...securityUseCase,
     ...userUseCase, ...authUseCase, ...saUseCase
   ],

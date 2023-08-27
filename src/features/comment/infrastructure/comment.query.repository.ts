@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import { FilterQuery, Model } from "mongoose";
 import { Comment, CommentDocument } from "../domain/comment.schema";
 import { CommentQueryParam } from "../models/comment.query.param.type";
 import { QUERY_PARAM } from "src/entity/enum/query.param.enum";
@@ -8,6 +8,7 @@ import { CommentLike, CommentLikeDocument } from "../domain/comment.like.schema"
 import { CommentViewType } from "../models/comment.view.type";
 import { PostQueryRepository } from "src/features/post/infrastructure/post.query.repository";
 import { BlogQueryRepository } from "src/features/blog/infrastructure/blog.query.repository";
+import { log } from "console";
 
 
 @Injectable()
@@ -66,19 +67,20 @@ export class CommentQueryRepository {
             pageNumber = QUERY_PARAM.PAGE_NUMBER,
             pageSize = QUERY_PARAM.PAGE_SIZE,
             sortBy = QUERY_PARAM.SORT_BY,
-            sortDirection = QUERY_PARAM.SORT_DIRECTION_ASC
+            sortDirection = QUERY_PARAM.SORT_DIRECTION_DESC
         } = queryParam
 
-        const blog = await this.blogQueryRepository.findBlogDocumentByUserId(userId)
-        if (!blog) return null
+        const blogs = await this.blogQueryRepository.findBlogsDocumentByUserId(userId)
 
-        const comments = await this.commentModel.find({ blogId: blog.id })
+        const blogIds = blogs.map(b => b.id)
+        const filter: FilterQuery<CommentDocument> = { blogId: { $in: blogIds } }
+        const comments = await this.commentModel.find(filter)
             .sort({ [sortBy]: sortDirection })
             .skip((pageNumber - 1) * pageSize)
             .limit(pageSize)
 
 
-        const totalCount = await this.commentModel.countDocuments({})
+        const totalCount = await this.commentModel.countDocuments(filter)
 
         return {
             pagesCount: Math.ceil(totalCount / pageSize),

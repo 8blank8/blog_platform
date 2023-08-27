@@ -10,14 +10,16 @@ import { DeleteUserCommand } from "../application/useCases/delete.user.use.case"
 import { STATUS_CODE } from "../../../entity/enum/status.code";
 import { UserBanModel } from "../models/user.ban.model";
 import { BannedUserCommand } from "../application/useCases/banned.user.use.case";
+import { UserQueryRepositorySql } from "../infrastructure/user.query.repository.sql";
 
 
 @Controller('sa/users')
 export class UserController {
 
     constructor(
-        private readonly userQueryRepository: UserQueryRepository,
-        private commandBus: CommandBus
+        private userQueryRepository: UserQueryRepository,
+        private commandBus: CommandBus,
+        private userQueryRepositorySql: UserQueryRepositorySql
     ) { }
 
     @UseGuards(BasicAuthGuard)
@@ -36,7 +38,8 @@ export class UserController {
     async getUsers(
         @Query() queryParam: UserQueryParamType
     ) {
-        return await this.userQueryRepository.findAllUsers(queryParam)
+        // return await this.userQueryRepository.findAllUsers(queryParam)
+        return await this.userQueryRepositorySql.findAllUsers()
     }
 
     @UseGuards(BasicAuthGuard)
