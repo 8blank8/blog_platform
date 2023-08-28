@@ -1,15 +1,16 @@
 import { Injectable } from "@nestjs/common";
 import { InjectDataSource } from "@nestjs/typeorm";
 import { DataSource } from "typeorm";
-import { CreateUserForSqlModel } from "./models/create.user.for.sql.model";
-import { UpdateBannedUserForSqlModel } from "./models/update.banned.user.for.sql.model";
+import { CreateUserForSaSqlModel } from "./models/repositorySql/create.user.for..sa.sql.model";
+import { UpdateBannedUserForSqlModel } from "./models/repositorySql/update.banned.user.for.sql.model";
+import { CreateUserForRegistrationSqlModel } from "./models/repositorySql/create.user.for.registration.sql.model";
 
 
 @Injectable()
 export class UserRepositorySql {
     constructor(@InjectDataSource() private dataSource: DataSource) { }
 
-    async createUserForAdmin(user: CreateUserForSqlModel): Promise<boolean> {
+    async createUserForAdmin(user: CreateUserForSaSqlModel): Promise<boolean> {
         await this.dataSource.query(`
             INSERT INTO public."Users"(
                 "Id", "Login", "Email", "CreatedAt")
@@ -27,6 +28,33 @@ export class UserRepositorySql {
                 "UserId", "IsConfirmed")
             VALUES ($1, $2);
         `, [user.id, true])
+
+        return true
+    }
+
+    async createUserForRegistration(user: CreateUserForRegistrationSqlModel) {
+
+        const { login, email, createdAt, passwordHash, passwordSalt, confirmationCode } = user
+
+        const createdUser = await this.dataSource.query(`
+        INSERT INTO public."Users"(
+            "Login", "Email", "CreatedAt")
+        VALUES ($1, $2, $3) RETURNING "Id";
+        `, [login, email, createdAt])
+
+        const userId = createdUser[0].Id
+
+        await this.dataSource.query(`
+        INSERT INTO public."UsersPassword"(
+            "UserId", "PasswordHash", "PasswordSalt")
+            VALUES ($1, $2, $3);
+        `, [userId, passwordHash, passwordSalt])
+
+        await this.dataSource.query(`
+        INSERT INTO public."UsersConfirmationEmail"(
+            "UserId", "IsConfirmed", "Code")
+        VALUES ($1, $2, $3);
+        `, [userId, false, confirmationCode])
 
         return true
     }
@@ -50,4 +78,6 @@ export class UserRepositorySql {
 	    WHERE "Id" = $1;
         `, [userId])
     }
+
+    // TASK  сделать функцию обновления кода емейла юзера
 }

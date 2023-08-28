@@ -9,7 +9,7 @@ import { UpdateBanCommentLikeStatusCommand } from "src/features/comment/appicati
 import { UpdateBanPostLikeStatusCommand } from "src/features/post/application/useCases/update.ban.post.like.status.use.case";
 import { UserQueryRepositorySql } from "../../infrastructure/user.query.repository.sql";
 import { UserRepositorySql } from "../../infrastructure/user.repository.sql";
-import { UpdateBannedUserForSqlModel } from "../../infrastructure/models/update.banned.user.for.sql.model";
+import { UpdateBannedUserForSqlModel } from "../../infrastructure/models/repositorySql/update.banned.user.for.sql.model";
 
 
 export class BannedUserCommand {

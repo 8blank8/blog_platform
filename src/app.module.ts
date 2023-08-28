@@ -147,6 +147,8 @@ import { BlogBanUseCase } from './features/sa/application/useCases/blog.ban.use.
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserQueryRepositorySql } from './features/user/infrastructure/user.query.repository.sql';
 import { UserRepositorySql } from './features/user/infrastructure/user.repository.sql';
+import { SecurityQueryRepositorySql } from './features/security/infrastructure/security.query.repository.sql';
+import { SecurityRepositorySql } from './features/security/infrastructure/security.repository.sql';
 const saUseCase = [
   BindUserForBlogUseCase, BannedUserUseCase
 ]
@@ -209,7 +211,7 @@ const saUseCase = [
     SaQueryRepository, UserBanBlogRepository, BanUserForBlogUseCase,
     UserBanBlogQueryRepository, BlogBanUseCase,
 
-    UserQueryRepositorySql, UserRepositorySql,
+    UserQueryRepositorySql, UserRepositorySql, SecurityQueryRepositorySql, SecurityRepositorySql,
     ...bloggerUseCase, ...commentUseCase, ...postUseCase, ...securityUseCase,
     ...userUseCase, ...authUseCase, ...saUseCase
   ],

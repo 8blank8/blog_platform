@@ -20,12 +20,14 @@ import { ResendingConfirmationCodeCommand } from "../../user/application/useCase
 import { LoginUserCommand } from "../application/useCases/login.user.use.case";
 import { CreateRefreshTokenCommand } from "../application/useCases/create.refresh.token.use.case";
 import { AddRefreshTokenInBlackListCommand } from "../application/useCases/add.refresh.token.in.black.list.use.case";
+import { UserQueryRepositorySql } from "src/features/user/infrastructure/user.query.repository.sql";
 
 @Controller('/auth')
 export class AuthController {
     constructor(
         private readonly authService: AuthService,
-        private readonly userQueryRepository: UserQueryRepository,
+        // private readonly userQueryRepository: UserQueryRepository,
+        private userQueryRepositorySql: UserQueryRepositorySql,
         private readonly userService: UserService,
         private readonly securityService: SecurityService,
         private commandBus: CommandBus
@@ -37,10 +39,10 @@ export class AuthController {
         @Request() req,
         @Res() res: Response
     ) {
-        const device = await this.commandBus.execute(new CreateDeviceCommand(req.user.id, req.ip, req.headers['user-agent']))
+        const deviceId = await this.commandBus.execute(new CreateDeviceCommand(req.user.id, req.ip, req.headers['user-agent']))
 
         const token = await this.commandBus.execute(new LoginUserCommand(req.user.id))
-        const refreshToken = await this.commandBus.execute(new CreateRefreshTokenCommand(req.user.id, device.deviceId))
+        const refreshToken = await this.commandBus.execute(new CreateRefreshTokenCommand(req.user.id, deviceId))
 
         res
             .status(STATUS_CODE.OK)
@@ -53,8 +55,7 @@ export class AuthController {
     async getMe(
         @Request() req,
     ) {
-        const user = await this.userQueryRepository.findMeView(req.user.userId)
-        console.log(user)
+        const user = await this.userQueryRepositorySql.findMe(req.user)
         return user
     }
 
