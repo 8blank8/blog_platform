@@ -25,8 +25,8 @@ export class EmailConfirmationUseCase {
         const user = await this.userQueryRepositorySql.findConfirmationCodeUser(code.code)
         if (!user || user.isConfirmed === true) return false
 
-        user.confirmationEmail()
-        await this.userRepository.save(user)
+        // user.confirmationEmail()
+        // await this.userRepository.save(user)
         return true
     }
 }
