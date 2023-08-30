@@ -13,9 +13,9 @@ export class UserRepositorySql {
     async createUserForAdmin(user: CreateUserForSaSqlModel): Promise<boolean> {
         await this.dataSource.query(`
             INSERT INTO public."Users"(
-                "Id", "Login", "Email", "CreatedAt")
-            VALUES ($1, $2, $3, $4);
-        `, [user.id, user.login, user.email, user.createdAt])
+                "Id", "Login", "Email")
+            VALUES ($1, $2, $3);
+        `, [user.id, user.login, user.email])
 
         await this.dataSource.query(`
             INSERT INTO public."UsersPassword"(
@@ -38,9 +38,9 @@ export class UserRepositorySql {
 
         const createdUser = await this.dataSource.query(`
         INSERT INTO public."Users"(
-            "Login", "Email", "CreatedAt")
-        VALUES ($1, $2, $3) RETURNING "Id";
-        `, [login, email, createdAt])
+            "Login", "Email")
+        VALUES ($1, $2) RETURNING "Id";
+        `, [login, email])
 
         const userId = createdUser[0].Id
 
@@ -74,10 +74,29 @@ export class UserRepositorySql {
 
     async deleteUser(userId: string) {
         await this.dataSource.query(`
-        DELETE FROM public."Users"
-	    WHERE "Id" = $1;
+            DELETE FROM public."Users"
+	        WHERE "Id" = $1;
         `, [userId])
+
+        return true
     }
 
-    // TASK  сделать функцию обновления кода емейла юзера
+    async updateConfirmationEmail(isConfirmed: boolean, userId: string) {
+        await this.dataSource.query(`
+            UPDATE public."UsersConfirmationEmail"
+            SET "IsConfirmed"=$1
+            WHERE "UserId" = $2;
+        `, [isConfirmed, userId])
+
+        return true
+    }
+
+    async updateConfirmationCode(userId: string, code: string) {
+        await this.dataSource.query(`
+            UPDATE public."UsersConfirmationEmail"
+	        SET "Code"= $2
+	        WHERE "UserId" = $1;
+        `, [userId, code])
+    }
+
 }

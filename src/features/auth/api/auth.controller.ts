@@ -43,7 +43,7 @@ export class AuthController {
 
         const token = await this.commandBus.execute(new LoginUserCommand(req.user.id))
         const refreshToken = await this.commandBus.execute(new CreateRefreshTokenCommand(req.user.id, deviceId))
-
+        console.log(new Date('2023-08-29 23:07:47.762294').toISOString())
         res
             .status(STATUS_CODE.OK)
             .cookie('refreshToken', refreshToken, { httpOnly: true, secure: true })

@@ -39,7 +39,7 @@ export class UserController {
         @Query() queryParam: UserQueryParamType
     ) {
         // return await this.userQueryRepository.findAllUsers(queryParam)
-        return await this.userQueryRepositorySql.findAllUsers()
+        return await this.userQueryRepositorySql.findAllUsersForSa(queryParam)
     }
 
     @UseGuards(BasicAuthGuard)

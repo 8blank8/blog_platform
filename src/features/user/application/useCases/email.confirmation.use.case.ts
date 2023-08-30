@@ -3,6 +3,7 @@ import { ConfirmationCodeType } from "src/features/auth/models/confirmation.code
 import { UserRepository } from "../../infrastructure/user.repository";
 import { UserQueryRepository } from "../../infrastructure/user.query.repository";
 import { UserQueryRepositorySql } from "../../infrastructure/user.query.repository.sql";
+import { UserRepositorySql } from "../../infrastructure/user.repository.sql";
 
 export class EmailConfirmationCommand {
     constructor(
@@ -13,8 +14,9 @@ export class EmailConfirmationCommand {
 @CommandHandler(EmailConfirmationCommand)
 export class EmailConfirmationUseCase {
     constructor(
-        private userRepository: UserRepository,
+        // private userRepository: UserRepository,
         // private userQueryRepository: UserQueryRepository,
+        private userRepositorySql: UserRepositorySql,
         private userQueryRepositorySql: UserQueryRepositorySql
     ) { }
 
@@ -22,9 +24,10 @@ export class EmailConfirmationUseCase {
 
         const { code } = command
 
-        const user = await this.userQueryRepositorySql.findConfirmationCodeUser(code.code)
-        if (!user || user.isConfirmed === true) return false
+        const confirmationData = await this.userQueryRepositorySql.findConfirmationCodeUser(code.code)
+        if (!confirmationData || confirmationData.isConfirmed === true) return false
 
+        await this.userRepositorySql.updateConfirmationEmail(true, confirmationData.userId)
         // user.confirmationEmail()
         // await this.userRepository.save(user)
         return true

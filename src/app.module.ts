@@ -149,6 +149,7 @@ import { UserQueryRepositorySql } from './features/user/infrastructure/user.quer
 import { UserRepositorySql } from './features/user/infrastructure/user.repository.sql';
 import { SecurityQueryRepositorySql } from './features/security/infrastructure/security.query.repository.sql';
 import { SecurityRepositorySql } from './features/security/infrastructure/security.repository.sql';
+import { AuthRepositorySql } from './features/auth/infrastructure/auth.repository.sql';
 const saUseCase = [
   BindUserForBlogUseCase, BannedUserUseCase
 ]
@@ -212,6 +213,7 @@ const saUseCase = [
     UserBanBlogQueryRepository, BlogBanUseCase,
 
     UserQueryRepositorySql, UserRepositorySql, SecurityQueryRepositorySql, SecurityRepositorySql,
+    AuthRepositorySql,
     ...bloggerUseCase, ...commentUseCase, ...postUseCase, ...securityUseCase,
     ...userUseCase, ...authUseCase, ...saUseCase
   ],

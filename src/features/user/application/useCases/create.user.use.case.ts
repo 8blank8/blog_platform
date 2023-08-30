@@ -31,7 +31,7 @@ export class CreateUserUseCase {
             id: uuidv4(),
             login: user.login,
             email: user.email,
-            createdAt: new Date().toISOString(),
+            // createdAt: new Date().toISOString(),
             passwordHash: passwordHash,
             passwordSalt: passwordSalt
         }

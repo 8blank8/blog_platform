@@ -1,6 +1,8 @@
 import { CommandHandler } from "@nestjs/cqrs";
 import { AuthRepository } from "../../infrastructure/auth.repository";
 import { SecurityRepository } from "src/features/security/infrastructure/security.repository";
+import { AuthRepositorySql } from "../../infrastructure/auth.repository.sql";
+import { SecurityRepositorySql } from "src/features/security/infrastructure/security.repository.sql";
 
 
 export class AddRefreshTokenInBlackListCommand {
@@ -13,22 +15,24 @@ export class AddRefreshTokenInBlackListCommand {
 @CommandHandler(AddRefreshTokenInBlackListCommand)
 export class AddRefreshTokenInBlackListUseCase {
     constructor(
-        private authRepository: AuthRepository,
-        private securityRepository: SecurityRepository
+        // private authRepository: AuthRepository,
+        private authRepositorySql: AuthRepositorySql,
+        private securityRepositorySql: SecurityRepositorySql,
+        // private securityRepository: SecurityRepository
     ) { }
 
     async execute(command: AddRefreshTokenInBlackListCommand) {
 
         const { refreshToken, deviceId } = command
 
-        const token = await this.authRepository.postRefreshToken({ refreshToken })
+        await this.authRepositorySql.postRefreshTokenInBlackList(refreshToken)
 
         if (deviceId) {
-            const isDeleteDevice = await this.securityRepository.deleteDevice(deviceId)
+            const isDeleteDevice = await this.securityRepositorySql.deleteDeviceById(deviceId)
             return isDeleteDevice
         }
 
-        await this.authRepository.save(token)
-        return
+        // await this.authRepository.save(token)
+        return true
     }
 }

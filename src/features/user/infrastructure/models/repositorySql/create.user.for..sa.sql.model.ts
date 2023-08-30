@@ -3,7 +3,7 @@ export class CreateUserForSaSqlModel {
     id: string
     login: string
     email: string
-    createdAt: string
+    // createdAt: string
     passwordHash: string
     passwordSalt: string
 }

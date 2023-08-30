@@ -4,6 +4,8 @@ import { v4 as uuidv4 } from 'uuid'
 import { UserRepository } from "../../infrastructure/user.repository";
 import { UserQueryRepository } from "../../infrastructure/user.query.repository";
 import { EmailManager } from "src/entity/managers/email.manager";
+import { UserQueryRepositorySql } from "../../infrastructure/user.query.repository.sql";
+import { UserRepositorySql } from "../../infrastructure/user.repository.sql";
 
 
 export class ResendingConfirmationCodeCommand {
@@ -15,8 +17,10 @@ export class ResendingConfirmationCodeCommand {
 @CommandHandler(ResendingConfirmationCodeCommand)
 export class ResendingConfirmationCodeUseCase {
     constructor(
-        private userRepository: UserRepository,
-        private userQueryRepository: UserQueryRepository,
+        // private userRepository: UserRepository,
+        // private userQueryRepository: UserQueryRepository,
+        private userRepositorySql: UserRepositorySql,
+        private userQueryRepositorySql: UserQueryRepositorySql,
         private emailManager: EmailManager
     ) { }
 
@@ -24,14 +28,16 @@ export class ResendingConfirmationCodeUseCase {
 
         const { email } = command
 
-        const user = await this.userQueryRepository.findByEmail(email.email)
+        const user = await this.userQueryRepositorySql.findUserByEmailWithConfirmationEmail(email.email)
         if (!user || user.isConfirmed === true) return false
 
         const confirmationCode = uuidv4()
-        user.addConfirmationCode(confirmationCode)
-        await this.emailManager.sendEmailConfirmationMessage(user.email, confirmationCode)
 
-        this.userRepository.save(user)
+        await this.userRepositorySql.updateConfirmationCode(user.id, confirmationCode)
+        // user.addConfirmationCode(confirmationCode)
+        this.emailManager.sendEmailConfirmationMessage(user.email, confirmationCode)
+
+        // this.userRepository.save(user)
         return true
     }
 }

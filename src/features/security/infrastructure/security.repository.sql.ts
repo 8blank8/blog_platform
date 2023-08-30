@@ -13,9 +13,9 @@ export class SecurityRepositorySql {
         const { userId, title, lastActiveDate, ip } = device
 
         const deviceId = await this.dataSource.query(`
-        INSERT INTO public."Devices"(
-            "UserId", "LastActiveDate", "Ip", "Title")
-        VALUES ($1, $2, $3, $4) RETURNING "Id";
+            INSERT INTO public."Devices"(
+                "UserId", "LastActiveDate", "Ip", "Title")
+            VALUES ($1, $2, $3, $4) RETURNING "Id";
         `, [userId, lastActiveDate, ip, title])
 
         return deviceId[0].Id
@@ -23,12 +23,19 @@ export class SecurityRepositorySql {
 
     async updateLastActiveDate(lastActiveDate: string, deviceId: string) {
         const device = await this.dataSource.query(`
-        UPDATE public."Devices"
-	    SET "LastActiveDate"= $2
-	    WHERE "Id" = $1 
-        RETURNING "Id";
+            UPDATE public."Devices"
+	        SET "LastActiveDate"= $2
+	        WHERE "Id" = $1 
+            RETURNING "Id";
         `, [deviceId, lastActiveDate])
 
         return device[0].Id
+    }
+
+    async deleteDeviceById(deviceId: string) {
+        await this.dataSource.query(`
+            DELETE FROM public."Devices"
+	        WHERE "Id" = $1;
+        `, [deviceId])
     }
 }
