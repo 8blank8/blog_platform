@@ -59,7 +59,7 @@ export class UserRepositorySql {
         return true
     }
 
-    async updateBanUserForSa(banDto: UpdateBannedUserForSqlModel): Promise<boolean> {
+    async banUserByIdForSa(banDto: UpdateBannedUserForSqlModel): Promise<boolean> {
 
         const { userId, isBanned, banDate, banReason } = banDto
 
@@ -70,6 +70,14 @@ export class UserRepositorySql {
         `, [userId, banDate, banReason, isBanned])
 
         return true
+    }
+
+    async unbanUserByIdForSa(userId: string) {
+        await this.dataSource.query(`
+        UPDATE public."UsersBannedSa"
+	        SET "BanDate"=$2, "BanReason"= $2, "IsBanned"= $3
+	    WHERE "Id" = $1;
+        `, [userId, null, false])
     }
 
     async deleteUser(userId: string) {
@@ -97,6 +105,12 @@ export class UserRepositorySql {
 	        SET "Code"= $2
 	        WHERE "UserId" = $1;
         `, [userId, code])
+    }
+
+    async deleteAllData() {
+        await this.dataSource.query(`
+            DELETE FROM public."Users";
+        `)
     }
 
 }

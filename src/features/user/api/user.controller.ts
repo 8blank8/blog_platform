@@ -28,7 +28,7 @@ export class UserController {
         @Body() inputData: UserCreateType
     ) {
         const userId: string = await this.commandBus.execute(new CreateUserCommand(inputData))
-        const user = await this.userQueryRepository.findUserById(userId)
+        const user = await this.userQueryRepositorySql.findUserByIdForSa(userId)
 
         return user
     }

@@ -24,7 +24,7 @@ export class UserQueryRepositorySql {
         return users.map(this._mapUser)
     }
 
-    async findAllUsersForSa(queryParam: UserQueryParamType): Promise<UserViewForSaModel[]> {
+    async findAllUsersForSa(queryParam: UserQueryParamType) {
 
         const {
             sortBy = QUERY_PARAM_SQL.SORT_BY,
@@ -36,18 +36,50 @@ export class UserQueryRepositorySql {
             banStatus = QUERY_PARAM_SQL.BAN_STATUS_All
         } = queryParam
 
+        const page = (pageNumber - 1) * pageSize
+
+        const params = [
+            `%${searchLoginTerm}%`,
+            `%${searchEmailTerm}%`,
+            page,
+            pageSize
+        ]
+        console.log(params[0])
         const users = await this.dataSource.query(`
             SELECT u."Id", u."Login", u."Email", u."CreatedAt",
 		        ub."IsBanned", ub."BanDate", ub."BanReason"
 	        FROM public."Users" u
 	        LEFT JOIN "UsersBannedSa" ub
 	        ON u."Id" = ub."UserId"
-	        WHERE u."Login" LIKE '%' OR u."Email" LIKE '%'
+	        WHERE u."Login" LIKE $1 AND u."Email" LIKE $2
 	        ORDER BY u."${sortBy}" ${sortDirection}
-	        -- OFFSET 0 LIMIT 1
+	        OFFSET $3 LIMIT $4
+        `, params)
+
+        const totalCount = await this.dataSource.query(`
+            SELECT COUNT(*)	FROM public."Users";
         `)
 
-        return users.map(this._mapUserForSa)
+        return {
+            pagesCount: Math.ceil(totalCount[0].count / pageSize),
+            page: +pageSize,
+            pageSize: +pageSize,
+            totalCount: +totalCount[0].count,
+            items: users.map(this._mapUserForSa)
+        }
+    }
+
+    async findUserByIdForSa(userId: string): Promise<UserViewForSaModel> {
+        const user = await this.dataSource.query(`
+            SELECT u."Id", u."Login", u."Email", u."CreatedAt",
+		        ub."IsBanned", ub."BanDate", ub."BanReason"
+	        FROM public."Users" u
+	        LEFT JOIN "UsersBannedSa" ub
+	        ON u."Id" = ub."UserId"
+            WHERE u."Id" = $1
+        `, [userId])
+
+        return user.map(this._mapUserForSa)[0]
     }
 
     async findUser(userId: string): Promise<UserViewSqlModel> {
@@ -115,7 +147,7 @@ export class UserQueryRepositorySql {
             email: user.Email,
             createdAt: user.CreatedAt,
             banInfo: {
-                isBanned: user.IsBanned,
+                isBanned: user.IsBanned ?? false,
                 banDate: user.BanDate,
                 banReason: user.BanReason,
             }

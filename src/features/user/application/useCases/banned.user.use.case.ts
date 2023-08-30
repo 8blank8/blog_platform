@@ -44,7 +44,11 @@ export class BannedUserUseCase {
             banDate: new Date().toISOString()
         }
 
-        await this.userRepositorySql.updateBanUserForSa(banDto)
+        if (isBanned) {
+            await this.userRepositorySql.banUserByIdForSa(banDto)
+        }
+
+        await this.userRepositorySql.unbanUserByIdForSa(userId)
         // user.bannedUser(isBanned, banReason)
         // await this.commandBus.execute(new UpdateBanPostCommand(isBanned, user.id))
         // await this.commandBus.execute(new UpdateBanCommentCommand(isBanned, user.id))

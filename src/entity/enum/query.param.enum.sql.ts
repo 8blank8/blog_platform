@@ -1,5 +1,5 @@
 export enum QUERY_PARAM_SQL {
-    SEARCH_NAME_TERM = `%`,
+    SEARCH_NAME_TERM = '',
     SORT_BY = 'CreatedAt',
     SORT_DIRECTION_ASC = 'ASC',
     SORT_DIRECTION_DESC = 'DESC',
