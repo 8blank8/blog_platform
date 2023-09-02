@@ -34,7 +34,7 @@ export class UserRepositorySql {
 
     async createUserForRegistration(user: CreateUserForRegistrationSqlModel) {
 
-        const { login, email, createdAt, passwordHash, passwordSalt, confirmationCode } = user
+        const { login, email, passwordHash, passwordSalt, confirmationCode } = user
 
         const createdUser = await this.dataSource.query(`
         INSERT INTO public."Users"(
@@ -59,25 +59,41 @@ export class UserRepositorySql {
         return true
     }
 
-    async banUserByIdForSa(banDto: UpdateBannedUserForSqlModel): Promise<boolean> {
+    async createBanUserByIdForSa(banDto: UpdateBannedUserForSqlModel): Promise<boolean> {
 
-        const { userId, isBanned, banDate, banReason } = banDto
+        const { userId, isBanned, banReason } = banDto
 
         await this.dataSource.query(`
             INSERT INTO public."UsersBannedSa"(
-                "UserId", "BanDate", "BanReason", "IsBanned")
-            VALUES ($1, $2, $3, $4);
-        `, [userId, banDate, banReason, isBanned])
+                "UserId", "BanReason", "IsBanned")
+            VALUES ($1, $2, $3);
+        `, [userId, banReason, isBanned])
 
         return true
     }
 
-    async unbanUserByIdForSa(userId: string) {
+    async updateBanUserByIdForSa(banDto: UpdateBannedUserForSqlModel) {
+
+        const { userId, isBanned, banReason } = banDto
+
         await this.dataSource.query(`
         UPDATE public."UsersBannedSa"
-	        SET "BanDate"=$2, "BanReason"= $2, "IsBanned"= $3
-	    WHERE "Id" = $1;
-        `, [userId, null, false])
+	        SET "BanDate"= now(), "BanReason"= $3, "IsBanned"= $2
+	    WHERE "UserId" = $1;
+        `, [userId, isBanned, banReason])
+
+        return true
+    }
+
+    async updateUnbanUserByIdForSa(userId: string) {
+
+        await this.dataSource.query(`
+        UPDATE public."UsersBannedSa"
+	        SET "BanDate"= null, "BanReason"= null, "IsBanned"= false
+	    WHERE "UserId" = $1;
+        `, [userId])
+
+        return true
     }
 
     async deleteUser(userId: string) {

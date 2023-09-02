@@ -26,7 +26,7 @@ export class BannedUserUseCase {
         // private userRepository: UserRepository,
         private userQueryRepositorySql: UserQueryRepositorySql,
         private userRepositorySql: UserRepositorySql,
-        private commandBus: CommandBus
+        // private commandBus: CommandBus
     ) { }
 
     async execute(command: BannedUserCommand): Promise<boolean> {
@@ -41,14 +41,21 @@ export class BannedUserUseCase {
             userId: userId,
             isBanned: isBanned,
             banReason: banReason,
-            banDate: new Date().toISOString()
+        }
+
+        const userIsBanned = await this.userQueryRepositorySql.findBannedUserByIdForSa(userId)
+
+        if (!userIsBanned) {
+            await this.userRepositorySql.createBanUserByIdForSa(banDto)
+            return true
         }
 
         if (isBanned) {
-            await this.userRepositorySql.banUserByIdForSa(banDto)
+            await this.userRepositorySql.updateBanUserByIdForSa(banDto)
+            return true
         }
 
-        await this.userRepositorySql.unbanUserByIdForSa(userId)
+        await this.userRepositorySql.updateUnbanUserByIdForSa(userId)
         // user.bannedUser(isBanned, banReason)
         // await this.commandBus.execute(new UpdateBanPostCommand(isBanned, user.id))
         // await this.commandBus.execute(new UpdateBanCommentCommand(isBanned, user.id))

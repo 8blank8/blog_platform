@@ -10,6 +10,7 @@ import { UserWithConfirmationSqlModel } from "./models/queryRepositorySql/user.w
 import { UserQueryParamType } from "../models/user.query.param.type";
 import { QUERY_PARAM_SQL } from "../../../entity/enum/query.param.enum.sql";
 import { UserViewForSaModel } from "./models/queryRepositorySql/users.view.for.sa.model";
+import { UserBannedSqlModel } from "./models/queryRepositorySql/user.banned.sql.model";
 
 
 @Injectable()
@@ -38,13 +39,6 @@ export class UserQueryRepositorySql {
 
         const page = (pageNumber - 1) * pageSize
 
-        const params = [
-            `%${searchLoginTerm}%`,
-            `%${searchEmailTerm}%`,
-            page,
-            pageSize
-        ]
-        console.log(params[0])
         const users = await this.dataSource.query(`
             SELECT u."Id", u."Login", u."Email", u."CreatedAt",
 		        ub."IsBanned", ub."BanDate", ub."BanReason"
@@ -52,17 +46,31 @@ export class UserQueryRepositorySql {
 	        LEFT JOIN "UsersBannedSa" ub
 	        ON u."Id" = ub."UserId"
 	        WHERE u."Login" LIKE $1 AND u."Email" LIKE $2
+            ${banStatus === 'banned'
+                ? 'AND ub."IsBanned" = true'
+                : banStatus === 'notBanned'
+                    ? 'AND ub."IsBanned" is null'
+                    : ''}
 	        ORDER BY u."${sortBy}" ${sortDirection}
 	        OFFSET $3 LIMIT $4
-        `, params)
+        `, [`%${searchLoginTerm}%`, `%${searchEmailTerm}%`, page, pageSize])
 
         const totalCount = await this.dataSource.query(`
-            SELECT COUNT(*)	FROM public."Users";
-        `)
+            SELECT COUNT(*)
+            FROM public."Users" u
+            LEFT JOIN "UsersBannedSa" ub
+            ON u."Id" = ub."UserId"
+            WHERE u."Login" LIKE $1 AND u."Email" LIKE $2
+            ${banStatus === 'banned'
+                ? 'AND ub."IsBanned" = true'
+                : banStatus === 'notBanned'
+                    ? 'AND ub."IsBanned" is null'
+                    : ''}
+        `, [`%${searchLoginTerm}%`, `%${searchEmailTerm}%`])
 
         return {
             pagesCount: Math.ceil(totalCount[0].count / pageSize),
-            page: +pageSize,
+            page: +pageNumber,
             pageSize: +pageSize,
             totalCount: +totalCount[0].count,
             items: users.map(this._mapUserForSa)
@@ -140,7 +148,35 @@ export class UserQueryRepositorySql {
         return user.map(this._mapUserWithConfirmation)[0]
     }
 
+    async findBannedUserByIdForSa(userId: string): Promise<UserBannedSqlModel | null> {
+        const user = await this.dataSource.query(`
+            SELECT "Id", "UserId", "BanDate", "BanReason", "IsBanned"
+            FROM public."UsersBannedSa"
+            WHERE "UserId" = $1;
+        `, [userId])
+
+        if (!user[0]) return null
+
+        return user.map(this._mapBannedUser)
+    }
+
+    _mapBannedUser(user): UserBannedSqlModel {
+
+        const banDate = user.BanDate === null ? null : new Date(user.BanDate).toISOString()
+
+        return {
+            id: user.Id,
+            userId: user.UserId,
+            banDate: banDate,
+            banReason: user.BanReason,
+            isBanned: user.IsBanned ?? false,
+        }
+    }
+
     _mapUserForSa(user): UserViewForSaModel {
+
+        const banDate = user.BanDate === null ? null : new Date(user.BanDate).toISOString()
+
         return {
             id: user.Id,
             login: user.Login,
@@ -148,7 +184,7 @@ export class UserQueryRepositorySql {
             createdAt: user.CreatedAt,
             banInfo: {
                 isBanned: user.IsBanned ?? false,
-                banDate: user.BanDate,
+                banDate: banDate,
                 banReason: user.BanReason,
             }
         }
