@@ -1,8 +1,8 @@
 import { CommandHandler } from "@nestjs/cqrs";
 import { PostLikeStatusType } from "../../models/post.like.status.type";
-import { PostQueryRepository } from "../../infrastructure/post.query.repository";
+import { PostQueryRepository } from "../../infrastructure/mongo/post.query.repository";
 import { UserQueryRepository } from "src/features/user/infrastructure/user.query.repository";
-import { PostRepository } from "../../infrastructure/post.repository";
+import { PostRepository } from "../../infrastructure/mongo/post.repository";
 
 
 export class UpdateLikeStatusForPostCommand {

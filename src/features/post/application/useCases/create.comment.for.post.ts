@@ -1,10 +1,10 @@
 import { CommandHandler } from "@nestjs/cqrs";
 import { CommentDocument } from "src/features/comment/domain/comment.schema";
 import { CommentCreateType } from "src/features/comment/models/comment.create.type";
-import { PostQueryRepository } from "../../infrastructure/post.query.repository";
+import { PostQueryRepository } from "../../infrastructure/mongo/post.query.repository";
 import { UserQueryRepository } from "src/features/user/infrastructure/user.query.repository";
 import { CommentRepository } from "src/features/comment/infrastructure/comment.repository";
-import { UserBanBlogRepository } from "src/features/blog/infrastructure/user.ban.blog.repository";
+import { UserBanBlogRepository } from "src/features/blog/infrastructure/mongo/user.ban.blog.repository";
 import { ForbiddenException } from "@nestjs/common";
 
 

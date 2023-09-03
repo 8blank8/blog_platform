@@ -6,8 +6,8 @@ import { CommentQueryParam } from "../models/comment.query.param.type";
 import { QUERY_PARAM } from "src/entity/enum/query.param.enum";
 import { CommentLike, CommentLikeDocument } from "../domain/comment.like.schema";
 import { CommentViewType } from "../models/comment.view.type";
-import { PostQueryRepository } from "src/features/post/infrastructure/post.query.repository";
-import { BlogQueryRepository } from "src/features/blog/infrastructure/blog.query.repository";
+import { PostQueryRepository } from "src/features/post/infrastructure/mongo/post.query.repository";
+import { BlogQueryRepository } from "src/features/blog/infrastructure/mongo/blog.query.repository";
 import { log } from "console";
 
 

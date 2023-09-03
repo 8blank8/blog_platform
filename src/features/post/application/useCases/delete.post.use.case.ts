@@ -1,5 +1,5 @@
 import { CommandHandler } from "@nestjs/cqrs";
-import { PostRepository } from "../../infrastructure/post.repository";
+import { PostRepository } from "../../infrastructure/mongo/post.repository";
 
 
 export class DeletePostCommand {

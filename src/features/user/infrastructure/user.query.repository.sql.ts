@@ -27,7 +27,7 @@ export class UserQueryRepositorySql {
 
     async findAllUsersForSa(queryParam: UserQueryParamType) {
 
-        const {
+        let {
             sortBy = QUERY_PARAM_SQL.SORT_BY,
             sortDirection = QUERY_PARAM_SQL.SORT_DIRECTION_DESC,
             pageNumber = QUERY_PARAM_SQL.PAGE_NUMBER,
@@ -39,19 +39,24 @@ export class UserQueryRepositorySql {
 
         const page = (pageNumber - 1) * pageSize
 
+        if (sortBy) {
+            const [first, ...last] = sortBy.split('')
+            sortBy = first.toUpperCase() + last.join('')
+        }
+
         const users = await this.dataSource.query(`
             SELECT u."Id", u."Login", u."Email", u."CreatedAt",
 		        ub."IsBanned", ub."BanDate", ub."BanReason"
 	        FROM public."Users" u
 	        LEFT JOIN "UsersBannedSa" ub
 	        ON u."Id" = ub."UserId"
-	        WHERE u."Login" LIKE $1 AND u."Email" LIKE $2
+	        WHERE (u."Login" ILIKE $1 OR u."Email" ILIKE $2)
             ${banStatus === 'banned'
                 ? 'AND ub."IsBanned" = true'
                 : banStatus === 'notBanned'
                     ? 'AND ub."IsBanned" is null'
                     : ''}
-	        ORDER BY u."${sortBy}" ${sortDirection}
+	        ORDER BY  u."${sortBy}" ${sortBy !== 'CreatedAt' ? 'COLLATE "C"' : ''} ${sortDirection} 
 	        OFFSET $3 LIMIT $4
         `, [`%${searchLoginTerm}%`, `%${searchEmailTerm}%`, page, pageSize])
 
@@ -60,7 +65,7 @@ export class UserQueryRepositorySql {
             FROM public."Users" u
             LEFT JOIN "UsersBannedSa" ub
             ON u."Id" = ub."UserId"
-            WHERE u."Login" LIKE $1 AND u."Email" LIKE $2
+            WHERE (u."Login" ILIKE $1 OR u."Email" ILIKE $2)
             ${banStatus === 'banned'
                 ? 'AND ub."IsBanned" = true'
                 : banStatus === 'notBanned'

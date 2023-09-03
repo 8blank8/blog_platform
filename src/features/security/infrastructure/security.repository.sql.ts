@@ -37,5 +37,15 @@ export class SecurityRepositorySql {
             DELETE FROM public."Devices"
 	        WHERE "Id" = $1;
         `, [deviceId])
+
+        return true
+    }
+
+    async deleteAllDevicesByUserId(userId: string, deviceId: string) {
+        await this.dataSource.query(`
+            DELETE FROM public."Devices"
+	        WHERE "UserId" = $1 
+	        AND "Id" != $2;
+        `, [userId, deviceId])
     }
 }

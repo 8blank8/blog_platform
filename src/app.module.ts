@@ -7,16 +7,16 @@ import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { Blog, BlogSchema } from './features/blog/domain/blog.schema';
-import { BlogRepository } from './features/blog/infrastructure/blog.repository';
+import { BlogRepository } from './features/blog/infrastructure/mongo/blog.repository';
 import { BlogController } from './features/blog/api/blog.controller';
 import { BlogService } from './features/blog/application/blog.service';
-import { BlogQueryRepository } from './features/blog/infrastructure/blog.query.repository';
+import { BlogQueryRepository } from './features/blog/infrastructure/mongo/blog.query.repository';
 
 import { Post, PostSchema } from './features/post/domain/post.schema';
-import { PostQueryRepository } from './features/post/infrastructure/post.query.repository';
+import { PostQueryRepository } from './features/post/infrastructure/mongo/post.query.repository';
 import { PostControler } from './features/post/api/post.controller';
 import { PostService } from './features/post/application/post.service';
-import { PostRepository } from './features/post/infrastructure/post.repository';
+import { PostRepository } from './features/post/infrastructure/mongo/post.repository';
 
 import { UserController } from './features/user/api/user.controller';
 import { UserService } from './features/user/application/user.service';
@@ -139,10 +139,10 @@ import { BindUserForBlogUseCase } from './features/sa/application/useCases/bind.
 import { SaQueryRepository } from './features/sa/infrastructure/sa.query.repository';
 import { BannedUserUseCase } from './features/user/application/useCases/banned.user.use.case';
 import { UserBanBlog, UserBanBlogSchema } from './features/blog/domain/user.ban.blog.schema';
-import { UserBanBlogRepository } from './features/blog/infrastructure/user.ban.blog.repository';
+import { UserBanBlogRepository } from './features/blog/infrastructure/mongo/user.ban.blog.repository';
 import { BloggerUserController } from './features/blog/api/blogger.user.controller';
 import { BanUserForBlogUseCase } from './features/blog/application/useCases/ban.user.for.blog.use.case';
-import { UserBanBlogQueryRepository } from './features/blog/infrastructure/user.ban.blog.query.repository';
+import { UserBanBlogQueryRepository } from './features/blog/infrastructure/mongo/user.ban.blog.query.repository';
 import { BlogBanUseCase } from './features/sa/application/useCases/blog.ban.use.case';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserQueryRepositorySql } from './features/user/infrastructure/user.query.repository.sql';
@@ -150,6 +150,12 @@ import { UserRepositorySql } from './features/user/infrastructure/user.repositor
 import { SecurityQueryRepositorySql } from './features/security/infrastructure/security.query.repository.sql';
 import { SecurityRepositorySql } from './features/security/infrastructure/security.repository.sql';
 import { AuthRepositorySql } from './features/auth/infrastructure/auth.repository.sql';
+import { BlogRepositorySql } from './features/blog/infrastructure/sql/blog.repository.sql';
+import { BlogQueryRepositorySql } from './features/blog/infrastructure/sql/blog.query.repository.sql';
+import { PostRepositorySql } from './features/post/infrastructure/sql/post.repository.sql';
+import { PostQueryRepositorySql } from './features/post/infrastructure/sql/post.query.repository.sql';
+import { UserBanBlogQueryRepositorySql } from './features/blog/infrastructure/sql/user.ban.blog.query.repository.sql';
+import { UserBanBlogRepositorySql } from './features/blog/infrastructure/sql/user.ban.blog.repository.sql';
 const saUseCase = [
   BindUserForBlogUseCase, BannedUserUseCase
 ]
@@ -213,7 +219,8 @@ const saUseCase = [
     UserBanBlogQueryRepository, BlogBanUseCase,
 
     UserQueryRepositorySql, UserRepositorySql, SecurityQueryRepositorySql, SecurityRepositorySql,
-    AuthRepositorySql,
+    AuthRepositorySql, BlogRepositorySql, BlogQueryRepositorySql, PostRepositorySql,
+    PostQueryRepositorySql, UserBanBlogQueryRepositorySql, UserBanBlogRepositorySql,
     ...bloggerUseCase, ...commentUseCase, ...postUseCase, ...securityUseCase,
     ...userUseCase, ...authUseCase, ...saUseCase
   ],

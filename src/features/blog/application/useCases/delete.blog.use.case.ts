@@ -1,7 +1,9 @@
 import { CommandHandler } from "@nestjs/cqrs";
-import { BlogRepository } from "../../infrastructure/blog.repository";
-import { BlogQueryRepository } from "../../infrastructure/blog.query.repository";
+import { BlogRepository } from "../../infrastructure/mongo/blog.repository";
+import { BlogQueryRepository } from "../../infrastructure/mongo/blog.query.repository";
 import { ForbiddenException } from "@nestjs/common";
+import { BlogQueryRepositorySql } from "../../infrastructure/sql/blog.query.repository.sql";
+import { BlogRepositorySql } from "../../infrastructure/sql/blog.repository.sql";
 
 export class DeleteBlogCommand {
     constructor(
@@ -13,17 +15,22 @@ export class DeleteBlogCommand {
 @CommandHandler(DeleteBlogCommand)
 export class DeleteBlogUseCase {
     constructor(
-        private blogRepository: BlogRepository,
-        private blogQueryRepository: BlogQueryRepository
+        // private blogRepository: BlogRepository,
+        // private blogQueryRepository: BlogQueryRepository
+        private blogRepositorySql: BlogRepositorySql,
+        private blogQueryRepositorySql: BlogQueryRepositorySql
     ) { }
 
     async execute(command: DeleteBlogCommand): Promise<boolean> {
-        const blog = await this.blogQueryRepository.findBlogDocumentById(command.id)
+
+        const { id, userId } = command
+
+        const blog = await this.blogQueryRepositorySql.findBlogFullById(id)
         if (!blog) return false
 
-        if (blog.userId !== command.userId) throw new ForbiddenException()
+        if (blog.userId !== userId) throw new ForbiddenException()
 
-        const isDelete = await this.blogRepository.deleteBlog(blog.id)
+        const isDelete = await this.blogRepositorySql.deleteBlogById(blog.id)
         if (!isDelete) return false
 
         return true

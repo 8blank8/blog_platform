@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, Res, Request, UseGuards } from "@nestjs/common";
-import { PostQueryRepository } from "../infrastructure/post.query.repository";
+import { PostQueryRepository } from "../infrastructure/mongo/post.query.repository";
 import { PostCreateType } from "../models/post.create.type";
 import { Response } from "express";
 import { PostService } from "../application/post.service";
@@ -20,7 +20,7 @@ import { DeletePostCommand } from "../application/useCases/delete.post.use.case"
 import { CreateCommentForPostCommand } from "../application/useCases/create.comment.for.post";
 import { UpdateLikeStatusForPostCommand } from "../application/useCases/update.like.status.for.post";
 import { ConnectionStates } from "mongoose";
-import { BlogQueryRepository } from "src/features/blog/infrastructure/blog.query.repository";
+import { BlogQueryRepository } from "src/features/blog/infrastructure/mongo/blog.query.repository";
 
 
 @Controller('posts')
@@ -53,8 +53,8 @@ export class PostControler {
         const post = await this.postQueryRepository.findPost(id, req.user)
         if (!post) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
-        const blogIsBanned = await this.blogQueryRepository.findBannedBlog(post?.blogId)
-        if (blogIsBanned) return res.sendStatus(STATUS_CODE.NOT_FOUND)
+        // const blogIsBanned = await this.blogQueryRepository.findBannedBlog(post?.blogId)
+        // if (blogIsBanned) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         return res.status(STATUS_CODE.OK).send(post)
     }

@@ -1,7 +1,7 @@
 import { Controller, Delete, Res } from "@nestjs/common";
 import { Response } from "express";
-import { BlogRepository } from "../blog/infrastructure/blog.repository";
-import { PostRepository } from "../post/infrastructure/post.repository";
+import { BlogRepository } from "../blog/infrastructure/mongo/blog.repository";
+import { PostRepository } from "../post/infrastructure/mongo/post.repository";
 import { UserRepository } from "../user/infrastructure/user.repository";
 import { CommentRepository } from "../comment/infrastructure/comment.repository";
 import { STATUS_CODE } from "../../entity/enum/status.code";

@@ -1,6 +1,6 @@
 import { CommandHandler } from "@nestjs/cqrs";
-import { PostQueryRepository } from "../../infrastructure/post.query.repository";
-import { PostRepository } from "../../infrastructure/post.repository";
+import { PostQueryRepository } from "../../infrastructure/mongo/post.query.repository";
+import { PostRepository } from "../../infrastructure/mongo/post.repository";
 
 
 export class UpdateBanPostCommand {

@@ -1,11 +1,12 @@
 import { Controller, Get, Param, Query, Res, Request, UseGuards } from "@nestjs/common";
 import { Response } from "express";
-import { BlogQueryRepository } from "../infrastructure/blog.query.repository";
+import { BlogQueryRepository } from "../infrastructure/mongo/blog.query.repository";
 import { BlogQueryParamType } from "../models/blog.query.param.type";
-import { PostQueryRepository } from "../../post/infrastructure/post.query.repository";
+import { PostQueryRepository } from "../../post/infrastructure/mongo/post.query.repository";
 import { PostQueryParamType } from "../../post/models/post.query.param.type";
 import { JwtOrNotGuard } from "../../auth/guards/jwt.or.not.guard";
 import { STATUS_CODE } from "../../../entity/enum/status.code";
+import { BlogQueryRepositorySql } from "../infrastructure/sql/blog.query.repository.sql";
 
 
 
@@ -14,11 +15,12 @@ export class BlogController {
     constructor(
         private readonly blogQueryRepository: BlogQueryRepository,
         private readonly postQueryRepository: PostQueryRepository,
+        private blogQueryRepositorySql: BlogQueryRepositorySql
     ) { }
 
     @Get()
     async getBlogs(@Query() queryParam: BlogQueryParamType) {
-        return this.blogQueryRepository.findAllBlogs(queryParam)
+        return this.blogQueryRepositorySql.findAllBlogsView(queryParam)
     }
 
     @Get('/:id')
@@ -26,7 +28,7 @@ export class BlogController {
         @Param('id') id: string,
         @Res() res: Response
     ) {
-        const blog = await this.blogQueryRepository.findBlogById(id)
+        const blog = await this.blogQueryRepositorySql.findBlogViewById(id)
         if (!blog) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         return res.send(blog)

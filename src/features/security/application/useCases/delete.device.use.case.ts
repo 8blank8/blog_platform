@@ -2,6 +2,8 @@ import { CommandHandler } from "@nestjs/cqrs";
 import { SecurityRepository } from "../../infrastructure/security.repository";
 import { SecurityQueryRepository } from "../../infrastructure/security.query.repository";
 import { ForbiddenException } from "@nestjs/common";
+import { SecurityQueryRepositorySql } from "../../infrastructure/security.query.repository.sql";
+import { SecurityRepositorySql } from "../../infrastructure/security.repository.sql";
 
 
 export class DeleteDeviceCommand {
@@ -14,19 +16,21 @@ export class DeleteDeviceCommand {
 @CommandHandler(DeleteDeviceCommand)
 export class DeleteDeviceUseCase {
     constructor(
-        private securityRepository: SecurityRepository,
-        private securityQueryRepository: SecurityQueryRepository
+        // private securityRepository: SecurityRepository,
+        // private securityQueryRepository: SecurityQueryRepository
+        private securityRepositorySql: SecurityRepositorySql,
+        private securityQueryRepositorySql: SecurityQueryRepositorySql
     ) { }
 
     async execute(command: DeleteDeviceCommand): Promise<boolean> {
 
         const { deviceId, userId } = command
 
-        const device = await this.securityQueryRepository.findDeviceById(deviceId)
+        const device = await this.securityQueryRepositorySql.findDeviceById(deviceId)
         if (!device) return false
 
         if (device.userId !== userId) throw new ForbiddenException()
 
-        return await this.securityRepository.deleteDevice(device.deviceId)
+        return await this.securityRepositorySql.deleteDeviceById(device.id)
     }
 }

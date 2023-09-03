@@ -7,6 +7,7 @@ import { STATUS_CODE } from "../../../entity/enum/status.code";
 import { CommandBus } from "@nestjs/cqrs";
 import { DeleteDeviceCommand } from "../application/useCases/delete.device.use.case";
 import { DeleteAllDevicesCommand } from "../application/useCases/delete.all.device.use.case";
+import { SecurityQueryRepositorySql } from "../infrastructure/security.query.repository.sql";
 
 
 
@@ -14,8 +15,9 @@ import { DeleteAllDevicesCommand } from "../application/useCases/delete.all.devi
 export class SecurityController {
 
     constructor(
-        private readonly securityQueryRepository: SecurityQueryRepository,
-        private readonly securityService: SecurityService,
+        // private readonly securityQueryRepository: SecurityQueryRepository,
+        private securityQueryRepositorySql: SecurityQueryRepositorySql,
+        private securityService: SecurityService,
         private commandBus: CommandBus
     ) { }
 
@@ -24,7 +26,7 @@ export class SecurityController {
     async findDevices(
         @Request() req
     ) {
-        const devices = this.securityQueryRepository.findDevice(req.user.userId)
+        const devices = this.securityQueryRepositorySql.findDevicesUserByUserId(req.user.userId)
         return devices
     }
 

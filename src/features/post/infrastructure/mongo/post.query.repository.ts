@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { Post, PostDocument } from "../domain/post.schema";
-import { PostQueryParamType } from "../models/post.query.param.type";
-import { QUERY_PARAM } from "../../../entity/enum/query.param.enum";
-import { PostViewType } from "../models/post.view.type";
-import { PostLike, PostLikeDocument } from "../domain/post.like.schema";
-import { BlogQueryRepository } from "src/features/blog/infrastructure/blog.query.repository";
+import { Post, PostDocument } from "../../domain/post.schema";
+import { PostQueryParamType } from "../../models/post.query.param.type";
+import { QUERY_PARAM } from "../../../../entity/enum/query.param.enum";
+import { PostViewType } from "../../models/post.view.type";
+import { PostLike, PostLikeDocument } from "../../domain/post.like.schema";
+import { BlogQueryRepository } from "src/features/blog/infrastructure/mongo/blog.query.repository";
 import { UserQueryRepository } from "src/features/user/infrastructure/user.query.repository";
 
 
