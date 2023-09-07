@@ -8,7 +8,7 @@ import { BlogRepositorySql } from "../../infrastructure/sql/blog.repository.sql"
 export class DeleteBlogCommand {
     constructor(
         public id: string,
-        public userId: string
+        // public userId: string
     ) { }
 }
 
@@ -23,12 +23,12 @@ export class DeleteBlogUseCase {
 
     async execute(command: DeleteBlogCommand): Promise<boolean> {
 
-        const { id, userId } = command
+        const { id } = command
 
         const blog = await this.blogQueryRepositorySql.findBlogFullById(id)
         if (!blog) return false
 
-        if (blog.userId !== userId) throw new ForbiddenException()
+        // if (blog.userId !== userId) throw new ForbiddenException()
 
         const isDelete = await this.blogRepositorySql.deleteBlogById(blog.id)
         if (!isDelete) return false

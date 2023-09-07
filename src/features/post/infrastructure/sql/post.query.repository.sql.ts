@@ -3,13 +3,16 @@ import { InjectDataSource } from "@nestjs/typeorm";
 import { DataSource } from "typeorm";
 import { PostViewSqlModel } from "./models/post.view.sql.model";
 import { PostFullSqlModel } from "./models/post.full.sql.model";
+import { PostQueryParamType } from "../../models/post.query.param.type";
+import { QUERY_PARAM_SQL } from "src/entity/enum/query.param.enum.sql";
+import { PostLikeStatusViewSqlModel } from "./models/post.like.status.view.sql.model";
 
 
 @Injectable()
 export class PostQueryRepositorySql {
     constructor(@InjectDataSource() private dataSource: DataSource) { }
 
-    async findPostByBlogIfForBlogger(blogId: string): Promise<PostViewSqlModel[]> {
+    async findPostByBlogForBlogger(blogId: string): Promise<PostViewSqlModel[]> {
         const posts = await this.dataSource.query(`
             SELECT pt."Id", pt."Title", pt."ShortDescription", pt."Content", 
 		            pt."BlogId", pt."UserId", pt."CreatedAt", b."Name" as "BlogName"
@@ -31,15 +34,167 @@ export class PostQueryRepositorySql {
         return post.map(this._mapPostFull)[0]
     }
 
-    // async findPostsForPublic(postId: string) {
-    //     const posts = await this.dataSource.query(`
-    //         SELECT ps."Id", ps."Title", ps."ShortDescription", ps."Content", 
-    // 	        ps."BlogId", ps."UserId", ps."CreatedAt", ubb."IsBanned"
-    //         FROM public."Posts" as ps
-    //         LEFT JOIN "UsersBannedBlogger" as ubb ON ubb."BlogId" = ps."BlogId"
-    //         WHERE ubb."IsBanned" is null OR ubb."IsBanned" != true
-    //     `)
-    // }
+    async findPostsForPublic(queryParam: PostQueryParamType, userId?: string) {
+
+        let {
+            sortBy = QUERY_PARAM_SQL.SORT_BY,
+            sortDirection = QUERY_PARAM_SQL.SORT_DIRECTION_DESC,
+            pageNumber = QUERY_PARAM_SQL.PAGE_NUMBER,
+            pageSize = QUERY_PARAM_SQL.PAGE_SIZE
+        } = queryParam
+
+        const page = (pageNumber - 1) * pageSize
+
+        if (sortBy) {
+            const [first, ...last] = sortBy.split('')
+            sortBy = first.toUpperCase() + last.join('')
+        }
+
+        if (sortBy === 'BlogName') {
+            sortBy = "Name"
+        }
+
+        const posts = await this.dataSource.query(`
+            SELECT ps."Id", ps."Title", ps."ShortDescription", ps."Content", 
+    	        ps."BlogId", ps."UserId", ps."CreatedAt", b."Name" as "BlogName",
+                (
+                    SELECT COUNT(*) as "LikesCount" FROM "PostsLike"
+                    WHERE "LikeStatus" = 'Like' AND "PostId" = ps."Id"
+                ),
+                (
+                    SELECT COUNT(*) as "DislikesCount" FROM "PostsLike"
+                    WHERE "LikeStatus" = 'Dislike' AND "PostId" = ps."Id"
+                )
+                ${userId ?
+                `,(
+                    SELECT "LikeStatus" as "MyStatus"
+                    FROM "PostsLike"
+                    WHERE "UserId" = '${userId}' AND "PostId" = ps."Id"
+                )`
+                : ''
+            }
+            FROM public."Posts" as ps
+            LEFT JOIN "Blogs" as b ON ps."BlogId" = b."Id"
+            ORDER BY "${sortBy}" ${sortBy !== "CreatedAt" ? 'COLLATE "C"' : ''} ${sortDirection}
+            OFFSET $1 LIMIT $2;
+        `, [page, pageSize])
+
+        const totalCount = await this.dataSource.query(`
+                SELECT COUNT(*) FROM "Posts"
+            `)
+
+        return {
+            pagesCount: Math.ceil(totalCount[0].count / pageSize),
+            page: +pageNumber,
+            pageSize: +pageSize,
+            totalCount: +totalCount[0].count,
+            items: posts.map(this._mapPostForBlogger)
+        }
+    }
+
+    async findPostsByBlogId(queryParam: PostQueryParamType, blogId: string, userId?: string) {
+        let {
+            sortBy = QUERY_PARAM_SQL.SORT_BY,
+            sortDirection = QUERY_PARAM_SQL.SORT_DIRECTION_DESC,
+            pageNumber = QUERY_PARAM_SQL.PAGE_NUMBER,
+            pageSize = QUERY_PARAM_SQL.PAGE_SIZE
+        } = queryParam
+
+        const page = (pageNumber - 1) * pageSize
+
+        if (sortBy) {
+            const [first, ...last] = sortBy.split('')
+            sortBy = first.toUpperCase() + last.join('')
+        }
+
+        const posts = await this.dataSource.query(`
+            SELECT ps."Id", ps."Title", ps."ShortDescription", ps."Content", 
+    	        ps."BlogId", ps."UserId", ps."CreatedAt", b."Name" as "BlogName",
+                (
+                    SELECT COUNT(*) as "LikesCount" FROM "PostsLike"
+                    WHERE "LikeStatus" = 'Like' AND "PostId" = ps."Id"
+                ),
+                (
+                    SELECT COUNT(*) as "DislikesCount" FROM "PostsLike"
+                    WHERE "LikeStatus" = 'Dislike' AND "PostId" = ps."Id"
+                )
+                ${userId ?
+                `,(
+                    SELECT "LikeStatus" as "MyStatus"
+                    FROM "PostsLike"
+                    WHERE "UserId" = '${userId}' AND "PostId" = ps."Id"
+                )`
+                : ''
+            }
+            FROM public."Posts" as ps
+            LEFT JOIN "Blogs" as b ON ps."BlogId" = b."Id"
+            WHERE ps."BlogId" = $3
+            ORDER BY "${sortBy}" ${sortBy !== "CreatedAt" ? 'COLLATE "C"' : ''} ${sortDirection}
+            OFFSET $1 LIMIT $2;
+        `, [page, pageSize, blogId])
+
+        const totalCount = await this.dataSource.query(`
+                SELECT COUNT(*) FROM "Posts"
+                WHERE "BlogId" = $1;
+            `, [blogId])
+
+        return {
+            pagesCount: Math.ceil(totalCount[0].count / pageSize),
+            page: +pageNumber,
+            pageSize: +pageSize,
+            totalCount: +totalCount[0].count,
+            items: posts.map(this._mapPostForBlogger)
+        }
+
+    }
+
+    async findPostByIdForPublic(postId: string, userId?: string): Promise<PostViewSqlModel> {
+        const post = await this.dataSource.query(`
+            SELECT ps."Id", ps."Title", ps."ShortDescription", ps."Content", 
+    	        ps."BlogId", ps."UserId", ps."CreatedAt", b."Name" as "BlogName",
+                (
+                    SELECT COUNT(*) as "LikesCount" FROM "PostsLike"
+                    WHERE "LikeStatus" = 'Like' AND "PostId" = ps."Id"
+                ),
+                (
+                    SELECT COUNT(*) as "DislikesCount" FROM "PostsLike"
+                    WHERE "LikeStatus" = 'Dislike' AND "PostId" = ps."Id"
+                )
+                ${userId ?
+                `,(
+                    SELECT "LikeStatus" as "MyStatus"
+                    FROM "PostsLike"
+                    WHERE "UserId" = '${userId}' AND "PostId" = ps."Id"
+                )`
+                : ''
+            }
+            FROM public."Posts" as ps
+            LEFT JOIN "Blogs" as b ON ps."BlogId" = b."Id"
+            WHERE ps."Id" = $1
+        `, [postId])
+
+        return post.map(this._mapPostForBlogger)[0]
+    }
+
+    async findLikeStatusPost(userId: string, postId: string): Promise<PostLikeStatusViewSqlModel> {
+        const likeStatus = await this.dataSource.query(`
+            SELECT "Id", "UserId", "LikeStatus", "PostId", "AddedAt"
+            FROM public."PostsLike"
+            WHERE "UserId" = $1 AND "PostId" = $2;
+        `, [userId, postId])
+
+        return likeStatus.map(this._mapLikeStatusPost)[0]
+    }
+
+    _mapLikeStatusPost(postLikeStatus): PostLikeStatusViewSqlModel {
+        return {
+            id: postLikeStatus.Id,
+            userId: postLikeStatus.UserId,
+            likeStatus: postLikeStatus.LikeStatus,
+            postId: postLikeStatus.PostId,
+            addedAt: postLikeStatus.AddedAt
+        }
+    }
 
     _mapPostFull(post): PostFullSqlModel {
         return {
@@ -63,9 +218,9 @@ export class PostQueryRepositorySql {
             blogName: post.BlogName,
             createdAt: post.CreatedAt,
             extendedLikesInfo: {
-                likesCount: 0,
-                dislikesCount: 0,
-                myStatus: 'None',
+                likesCount: +post.LikesCount,
+                dislikesCount: +post.DislikesCount,
+                myStatus: post.MyStatus ?? 'None',
                 newestLikes: []
             }
         }

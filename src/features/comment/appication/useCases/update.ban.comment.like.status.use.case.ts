@@ -1,5 +1,5 @@
 import { CommandHandler } from "@nestjs/cqrs";
-import { CommentRepository } from "../../infrastructure/comment.repository";
+import { CommentRepository } from "../../infrastructure/mongo/comment.repository";
 
 
 export class UpdateBanCommentLikeStatusCommand {

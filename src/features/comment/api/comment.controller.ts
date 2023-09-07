@@ -4,7 +4,7 @@ import { JwtAuthGuard } from "../../auth/guards/jwt.guard";
 import { Response } from "express";
 import { CommentService } from "../appication/comment.service";
 import { CommentLikeStatusType } from "../models/comment.like.status";
-import { CommentQueryRepository } from "../infrastructure/comment.query.repository";
+import { CommentQueryRepository } from "../infrastructure/mongo/comment.query.repository";
 import { JwtOrNotGuard } from "../../auth/guards/jwt.or.not.guard";
 import { STATUS_CODE } from "../../../entity/enum/status.code";
 import { CommandBus } from "@nestjs/cqrs";

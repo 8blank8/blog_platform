@@ -11,13 +11,13 @@ export class BlogRepositorySql {
     constructor(@InjectDataSource() private dataSource: DataSource) { }
 
     async createBlog(blog: BlogCreateSqlModel) {
-        const { name, description, websiteUrl, userId } = blog
+        const { name, description, websiteUrl } = blog
 
         const blogId = await this.dataSource.query(`
             INSERT INTO public."Blogs"(
-                "Name", "Description", "WebsiteUrl", "UserId")
-            VALUES ($1, $2, $3, $4) RETURNING "Id";
-        `, [name, description, websiteUrl, userId])
+                "Name", "Description", "WebsiteUrl")
+            VALUES ($1, $2, $3) RETURNING "Id";
+        `, [name, description, websiteUrl])
 
         return blogId[0].Id
     }
@@ -78,5 +78,11 @@ export class BlogRepositorySql {
         `, [isBanned, blogId])
 
         return true
+    }
+
+    async deleteAllBlogs() {
+        await this.dataSource.query(`
+            DELETE FROM "Blogs"
+        `)
     }
 }

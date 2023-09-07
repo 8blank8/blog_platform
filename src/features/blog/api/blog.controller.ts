@@ -7,6 +7,7 @@ import { PostQueryParamType } from "../../post/models/post.query.param.type";
 import { JwtOrNotGuard } from "../../auth/guards/jwt.or.not.guard";
 import { STATUS_CODE } from "../../../entity/enum/status.code";
 import { BlogQueryRepositorySql } from "../infrastructure/sql/blog.query.repository.sql";
+import { PostQueryRepositorySql } from "src/features/post/infrastructure/sql/post.query.repository.sql";
 
 
 
@@ -15,7 +16,8 @@ export class BlogController {
     constructor(
         private readonly blogQueryRepository: BlogQueryRepository,
         private readonly postQueryRepository: PostQueryRepository,
-        private blogQueryRepositorySql: BlogQueryRepositorySql
+        private blogQueryRepositorySql: BlogQueryRepositorySql,
+        private postQueryRepositorySql: PostQueryRepositorySql
     ) { }
 
     @Get()
@@ -42,10 +44,14 @@ export class BlogController {
         @Query() queryParam: PostQueryParamType,
         @Request() req
     ) {
-        const blog = await this.blogQueryRepository.findBlogById(id)
+        // const blog = await this.blogQueryRepository.findBlogById(id)
+        const userId = req.user
+
+        const blog = await this.blogQueryRepositorySql.findBlogFullById(id)
         if (!blog) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
-        const posts = await this.postQueryRepository.findPosts(queryParam, req.user, id)
+        // const posts = await this.postQueryRepository.findPosts(queryParam, req.user, id)
+        const posts = await this.postQueryRepositorySql.findPostsByBlogId(queryParam, id, userId)
 
         return res.status(STATUS_CODE.OK).send(posts)
     }

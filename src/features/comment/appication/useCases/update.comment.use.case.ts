@@ -1,8 +1,8 @@
 import { CommandHandler } from "@nestjs/cqrs";
 import { CommentCreateType } from "../../models/comment.create.type";
 import { ForbiddenException } from "@nestjs/common";
-import { CommentQueryRepository } from "../../infrastructure/comment.query.repository";
-import { CommentRepository } from "../../infrastructure/comment.repository";
+import { CommentQueryRepository } from "../../infrastructure/mongo/comment.query.repository";
+import { CommentRepository } from "../../infrastructure/mongo/comment.repository";
 
 
 export class UpdateCommetCommand {

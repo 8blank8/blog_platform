@@ -17,13 +17,14 @@ import { PostUpdateByIdModel } from "../models/post.update.by.id";
 import { UpdatePostByBlogIdCommand } from "../application/useCases/update.post.by.blog.id.use.case";
 import { DeleteBlogCommand } from "../application/useCases/delete.blog.use.case";
 import { DeletePostByBlogIdCommand } from "../application/useCases/delete.post.by.blog.id.use.case";
-import { CommentQueryRepository } from "src/features/comment/infrastructure/comment.query.repository";
+import { CommentQueryRepository } from "src/features/comment/infrastructure/mongo/comment.query.repository";
 import { CommentQueryParam } from "src/features/comment/models/comment.query.param.type";
 import { BlogQueryRepositorySql } from "../infrastructure/sql/blog.query.repository.sql";
 import { PostQueryRepositorySql } from "src/features/post/infrastructure/sql/post.query.repository.sql";
+import { BasicAuthGuard } from "src/features/auth/guards/basic.guard";
 
 
-@Controller('blogger/blogs')
+@Controller('sa/blogs')
 export class BloggerController {
     constructor(
         private commandBus: CommandBus,
@@ -34,40 +35,33 @@ export class BloggerController {
         private postQueryRepositorySql: PostQueryRepositorySql
     ) { }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(BasicAuthGuard)
     @Post()
     async createBlog(
         @Body() blog: BlogCreateType,
-        @Request() req
     ) {
-        const userId = req.user
-
         const blogId: string = await this.commandBus.execute(
-            new CreateBlogCommand(blog, userId)
+            new CreateBlogCommand(blog)
         )
 
         return this.blogQueryRepositorySql.findBlogViewById(blogId)
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(BasicAuthGuard)
     @Post('/:id/posts')
     async createPostByBlogId(
         @Param('id') id: string,
         @Body() inputData: PostCreateByIdType,
         @Res() res: Response,
-        @Request() req
     ) {
-
-        const userId = req.user
-
-        const postId = await this.commandBus.execute(new CreatePostByBlogIdCommand(inputData, id, userId))
+        const postId = await this.commandBus.execute(new CreatePostByBlogIdCommand(inputData, id))
         if (!postId) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
-        const post = await this.postQueryRepository.findPost(postId)
+        const post = await this.postQueryRepositorySql.findPostByIdForPublic(postId)
         return res.status(STATUS_CODE.CREATED).send(post)
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(BasicAuthGuard)
     @Get()
     async getBlogs(
         @Query() queryParam: BlogQueryParamType,
@@ -78,42 +72,42 @@ export class BloggerController {
         return this.blogQueryRepositorySql.findAllBlogsView(queryParam)
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(BasicAuthGuard)
     @Get('/:id/posts')
     async getPostByBlogId(
         @Param('id') id: string,
         @Res() res: Response,
         @Query() queryParam: PostQueryParamType,
-        @Request() req
+        // @Request() req
     ) {
         const blog = await this.blogQueryRepositorySql.findBlogViewById(id)
         if (!blog) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
-        const posts = await this.postQueryRepositorySql.findPostByBlogIfForBlogger(id)
+        const posts = await this.postQueryRepositorySql.findPostByBlogForBlogger(id)
 
         return res.status(STATUS_CODE.OK).send(posts)
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(BasicAuthGuard)
     @Put('/:id')
     async updateBlog(
         @Param('id') id: string,
         @Body() updateData: BlogUpdateType,
         @Res() res: Response,
-        @Request() req
+        // @Request() req
     ) {
 
-        const userId = req.user
+        // const userId = req.user
 
         const isUpdate = await this.commandBus.execute(
-            new UpdateBlogCommand(updateData, id, userId)
+            new UpdateBlogCommand(updateData, id)
         )
         if (!isUpdate) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         return res.sendStatus(STATUS_CODE.NO_CONTENT)
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(BasicAuthGuard)
     @Put('/:blogId/posts/:postId')
     async updatePostById(
         @Param() param,
@@ -121,12 +115,12 @@ export class BloggerController {
         @Res() res: Response,
         @Request() req
     ) {
-        const userId = req.user
+        // const userId = req.user
         const blogId = param.blogId
         const postId = param.postId
 
         const isUpdate = await this.commandBus.execute(
-            new UpdatePostByBlogIdCommand(userId, postId, blogId, inputData)
+            new UpdatePostByBlogIdCommand(postId, blogId, inputData)
         )
 
         if (!isUpdate) return res.sendStatus(STATUS_CODE.NOT_FOUND)
@@ -134,35 +128,35 @@ export class BloggerController {
         return res.sendStatus(STATUS_CODE.NO_CONTENT)
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(BasicAuthGuard)
     @Delete('/:id')
     async deleteBlog(
         @Param('id') id: string,
         @Res() res: Response,
-        @Request() req
+        // @Request() req
     ) {
 
-        const userId = req.user
+        // const userId = req.user
 
-        const isDelete = await this.commandBus.execute(new DeleteBlogCommand(id, userId))
+        const isDelete = await this.commandBus.execute(new DeleteBlogCommand(id))
         if (!isDelete) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         return res.sendStatus(STATUS_CODE.NO_CONTENT)
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(BasicAuthGuard)
     @Delete(':blogId/posts/:postId')
     async deletePostByBlogId(
         @Param() param,
-        @Request() req,
+        // @Request() req,
         @Res() res: Response
     ) {
-        const userId = req.user
+        // const userId = req.user
         const postId = param.postId
         const blogId = param.blogId
 
         const isDelete = await this.commandBus.execute(
-            new DeletePostByBlogIdCommand(userId, postId, blogId)
+            new DeletePostByBlogIdCommand(postId, blogId)
         )
 
         if (!isDelete) return res.sendStatus(STATUS_CODE.NOT_FOUND)

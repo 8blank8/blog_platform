@@ -11,13 +11,13 @@ export class PostRepositorySql {
 
     async createPost(inputData: PostCreateSqlModel) {
 
-        const { title, shortDescription, content, blogId, userId } = inputData
+        const { title, shortDescription, content, blogId } = inputData
 
         const postId = await this.dataSource.query(`
             INSERT INTO public."Posts"(
-            "Title", "ShortDescription", "Content", "BlogId", "UserId")
-            VALUES ($1, $2, $3, $4, $5) RETURNING "Id";
-        `, [title, shortDescription, content, blogId, userId])
+            "Title", "ShortDescription", "Content", "BlogId")
+            VALUES ($1, $2, $3, $4) RETURNING "Id";
+        `, [title, shortDescription, content, blogId])
 
         return postId[0].Id
     }
@@ -38,8 +38,34 @@ export class PostRepositorySql {
     async deletePostById(postId: string) {
         await this.dataSource.query(`
             DELETE FROM public."Posts"
-	        HERE "Id" = $1;
+	        WHERE "Id" = $1;
         `, [postId])
+
+        return true
+    }
+
+    async deleteAllPosts() {
+        await this.dataSource.query(`
+            DELETE FROM "Posts";
+        `)
+    }
+
+    async createLikeStatus(userId: string, postId: string, likeStatus: string) {
+        await this.dataSource.query(`
+            INSERT INTO public."PostsLike"(
+                "UserId", "LikeStatus", "PostId")
+            VALUES ( $1, $2, $3);
+        `, [userId, likeStatus, postId])
+
+        return true
+    }
+
+    async updateLikeStatus(userId: string, postId: string, likeStatus: string) {
+        await this.dataSource.query(`
+            UPDATE public."PostsLike"
+            SET "LikeStatus"= $1
+            WHERE "UserId" = $2 AND "PostId" = $3;
+        `, [likeStatus, userId, postId])
 
         return true
     }

@@ -12,7 +12,7 @@ import { PostRepositorySql } from "src/features/post/infrastructure/sql/post.rep
 
 export class UpdatePostByBlogIdCommand {
     constructor(
-        public userId: string,
+        // public userId: string,
         public postId: string,
         public blogId: string,
         public inputData: PostUpdateByIdModel
@@ -32,12 +32,12 @@ export class UpdatePostByBlogIdUseCase {
 
     async execute(command: UpdatePostByBlogIdCommand): Promise<boolean> {
 
-        const { userId, postId, blogId, inputData } = command
+        const { postId, blogId, inputData } = command
 
         const blog = await this.blogQueryRepositorySql.findBlogFullById(blogId)
         const post = await this.postQueryRepositorySql.findPostFullById(postId)
         if (!blog || !post) return false
-        if (blog.userId !== userId) throw new ForbiddenException()
+        // if (blog.userId !== userId) throw new ForbiddenException()
 
         const postUpdate: PostUpdateSqlModel = {
             ...inputData,

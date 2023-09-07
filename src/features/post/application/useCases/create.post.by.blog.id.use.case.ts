@@ -14,7 +14,6 @@ export class CreatePostByBlogIdCommand {
     constructor(
         public inputPostData: PostCreateByIdType,
         public blogId: string,
-        public userId: string
     ) { }
 }
 
@@ -31,20 +30,20 @@ export class CreatePostByBlogIdUseCase {
 
     async execute(command: CreatePostByBlogIdCommand) {
 
-        const { inputPostData, blogId, userId } = command
+        const { inputPostData, blogId } = command
 
-        const user = await this.userQueryRepositorySql.findUser(userId)
-        if (!user) return null
+        // const user = await this.userQueryRepositorySql.findUser(userId)
+        // if (!user) return null
 
         const blog = await this.blogQueryRepositorySql.findBlogFullById(blogId)
         if (!blog) return null
 
-        if (user.id !== blog.userId) throw new ForbiddenException()
+        // if (user.id !== blog.userId) throw new ForbiddenException()
 
         const post: PostCreateSqlModel = {
             ...inputPostData,
             blogId: blogId,
-            userId: userId
+            // userId: userId
         }
 
         const postId = await this.postRepositorySql.createPost(post)

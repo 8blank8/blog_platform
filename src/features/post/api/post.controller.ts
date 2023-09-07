@@ -8,7 +8,7 @@ import { PostUpdateType } from "../models/post.update.type";
 import { CommentCreateType } from "../../comment/models/comment.create.type";
 import { JwtAuthGuard } from "../../auth/guards/jwt.guard";
 import { CommentQueryParam } from "../../comment/models/comment.query.param.type";
-import { CommentQueryRepository } from "../../comment/infrastructure/comment.query.repository";
+import { CommentQueryRepository } from "../../comment/infrastructure/mongo/comment.query.repository";
 import { PostLikeStatusType } from "../models/post.like.status.type";
 import { JwtOrNotGuard } from "../../auth/guards/jwt.or.not.guard";
 import { BasicAuthGuard } from "../../auth/guards/basic.guard";
@@ -21,6 +21,8 @@ import { CreateCommentForPostCommand } from "../application/useCases/create.comm
 import { UpdateLikeStatusForPostCommand } from "../application/useCases/update.like.status.for.post";
 import { ConnectionStates } from "mongoose";
 import { BlogQueryRepository } from "src/features/blog/infrastructure/mongo/blog.query.repository";
+import { PostQueryRepositorySql } from "../infrastructure/sql/post.query.repository.sql";
+import { CommentQueryRepositorySql } from "src/features/comment/infrastructure/sql/comment.query.repository";
 
 
 @Controller('posts')
@@ -28,9 +30,11 @@ export class PostControler {
 
     constructor(
         private postQueryRepository: PostQueryRepository,
+        private postQueryRepositorySql: PostQueryRepositorySql,
         private commentQueryRepository: CommentQueryRepository,
         private commandBus: CommandBus,
-        private blogQueryRepository: BlogQueryRepository
+        private blogQueryRepository: BlogQueryRepository,
+        private commentQueryRepositorySql: CommentQueryRepositorySql
     ) { }
 
     @UseGuards(JwtOrNotGuard)
@@ -39,7 +43,9 @@ export class PostControler {
         @Query() queryParam: PostQueryParamType,
         @Request() req
     ) {
-        const posts = await this.postQueryRepository.findPosts(queryParam, req.user)
+        const userId = req.user
+
+        const posts = await this.postQueryRepositorySql.findPostsForPublic(queryParam, userId)
         return posts
     }
 
@@ -50,7 +56,8 @@ export class PostControler {
         @Res() res: Response,
         @Request() req
     ) {
-        const post = await this.postQueryRepository.findPost(id, req.user)
+        const userId = req.user
+        const post = await this.postQueryRepositorySql.findPostByIdForPublic(id, userId)
         if (!post) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         // const blogIsBanned = await this.blogQueryRepository.findBannedBlog(post?.blogId)
@@ -105,10 +112,10 @@ export class PostControler {
         @Request() req,
         @Res() res: Response
     ) {
-        const newComment = await this.commandBus.execute(new CreateCommentForPostCommand(id, inputData, req.user))
-        if (!newComment) return res.sendStatus(STATUS_CODE.NOT_FOUND)
+        const commentId = await this.commandBus.execute(new CreateCommentForPostCommand(id, inputData, req.user))
+        if (!commentId) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
-        const comment = await this.commentQueryRepository.findCommentViewById(newComment.id, req.user)
+        const comment = await this.commentQueryRepositorySql.findCommentViewById(commentId)
 
         return res.status(STATUS_CODE.CREATED).send(comment)
     }

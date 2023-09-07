@@ -1,6 +1,6 @@
 import { CommandHandler } from "@nestjs/cqrs";
-import { CommentQueryRepository } from "../../infrastructure/comment.query.repository";
-import { CommentRepository } from "../../infrastructure/comment.repository";
+import { CommentQueryRepository } from "../../infrastructure/mongo/comment.query.repository";
+import { CommentRepository } from "../../infrastructure/mongo/comment.repository";
 import { ForbiddenException } from "@nestjs/common";
 
 export class DeleteCommentCommand {

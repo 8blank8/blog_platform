@@ -42,8 +42,8 @@ import { UserExistLogin } from './entity/custom-validation/user.exist.login';
 import { UserExistEmail } from './entity/custom-validation/user.exist.email';
 import { EmailCodeResend } from './entity/custom-validation/email.code.resend';
 import { CommentController } from './features/comment/api/comment.controller';
-import { CommentRepository } from './features/comment/infrastructure/comment.repository';
-import { CommentQueryRepository } from './features/comment/infrastructure/comment.query.repository';
+import { CommentRepository } from './features/comment/infrastructure/mongo/comment.repository';
+import { CommentQueryRepository } from './features/comment/infrastructure/mongo/comment.query.repository';
 import { Comment, CommentSchema } from './features/comment/domain/comment.schema';
 import { CommentService } from './features/comment/appication/comment.service';
 import { CommentLike, CommentLikeSchema } from './features/comment/domain/comment.like.schema';
@@ -156,6 +156,8 @@ import { PostRepositorySql } from './features/post/infrastructure/sql/post.repos
 import { PostQueryRepositorySql } from './features/post/infrastructure/sql/post.query.repository.sql';
 import { UserBanBlogQueryRepositorySql } from './features/blog/infrastructure/sql/user.ban.blog.query.repository.sql';
 import { UserBanBlogRepositorySql } from './features/blog/infrastructure/sql/user.ban.blog.repository.sql';
+import { CommentRepositorySql } from './features/comment/infrastructure/sql/comment.repository.sql';
+import { CommentQueryRepositorySql } from './features/comment/infrastructure/sql/comment.query.repository';
 const saUseCase = [
   BindUserForBlogUseCase, BannedUserUseCase
 ]
@@ -221,6 +223,7 @@ const saUseCase = [
     UserQueryRepositorySql, UserRepositorySql, SecurityQueryRepositorySql, SecurityRepositorySql,
     AuthRepositorySql, BlogRepositorySql, BlogQueryRepositorySql, PostRepositorySql,
     PostQueryRepositorySql, UserBanBlogQueryRepositorySql, UserBanBlogRepositorySql,
+    CommentRepositorySql, CommentQueryRepositorySql,
     ...bloggerUseCase, ...commentUseCase, ...postUseCase, ...securityUseCase,
     ...userUseCase, ...authUseCase, ...saUseCase
   ],

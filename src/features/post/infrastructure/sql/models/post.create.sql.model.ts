@@ -3,5 +3,5 @@ export class PostCreateSqlModel {
     shortDescription: string
     content: string
     blogId: string
-    userId: string
+    // userId: string
 }

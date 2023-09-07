@@ -11,7 +11,7 @@ export class UpdateBlogCommand {
     constructor(
         public updateData: BlogUpdateType,
         public id: string,
-        public userId: string
+        // public userId: string
     ) { }
 }
 
@@ -27,12 +27,12 @@ export class UpdateBlogUseCase {
 
     async execute(command: UpdateBlogCommand) {
 
-        const { updateData, id, userId } = command
+        const { updateData, id } = command
 
         const blog = await this.blogQueryRepositorySql.findBlogFullById(id)
         if (!blog) return false
 
-        if (blog.userId !== userId) throw new ForbiddenException()
+        // if (blog.userId !== userId) throw new ForbiddenException()
 
         const updatedBlog: BlogUpdateSqlModel = {
             name: updateData.name,

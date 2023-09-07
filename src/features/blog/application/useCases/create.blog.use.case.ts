@@ -8,7 +8,6 @@ import { BlogRepositorySql } from "../../infrastructure/sql/blog.repository.sql"
 export class CreateBlogCommand {
     constructor(
         public blog: BlogCreateType,
-        public userId: string
     ) { }
 }
 
@@ -22,15 +21,14 @@ export class CreateBlogUseCase {
 
     async execute(command: CreateBlogCommand): Promise<string> {
 
-        const { blog, userId } = command
+        const { blog } = command
 
-        const createdBlog: BlogCreateSqlModel = {
-            ...blog,
-            userId: userId
-        }
+        // const createdBlog: BlogCreateSqlModel = {
+        //     ...blog,
+        //     userId: userId
+        // }
 
-        const blogId = await this.blogRepositorySql.createBlog(createdBlog)
-        console.log(blogId)
+        const blogId = await this.blogRepositorySql.createBlog(blog)
         // newBlog.addId()
         // newBlog.addCreatedAt()
         // newBlog.setUserId(userId)

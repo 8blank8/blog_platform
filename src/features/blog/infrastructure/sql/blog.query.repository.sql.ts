@@ -14,7 +14,7 @@ export class BlogQueryRepositorySql {
 
     async findAllBlogsView(queryParam: BlogQueryParamModel) {
 
-        const {
+        let {
             searchNameTerm = QUERY_PARAM_SQL.SEARCH_NAME_TERM,
             sortBy = QUERY_PARAM_SQL.SORT_BY,
             sortDirection = QUERY_PARAM_SQL.SORT_DIRECTION_DESC,
@@ -23,6 +23,11 @@ export class BlogQueryRepositorySql {
         } = queryParam
 
         const page = (pageNumber - 1) * pageSize
+
+        if (sortBy) {
+            const [first, ...last] = sortBy.split('')
+            sortBy = first.toUpperCase() + last.join('')
+        }
 
         const blogs = await this.dataSource.query(`
             SELECT "Id", "Name", "Description", "WebsiteUrl", "CreatedAt", "IsMembership"
@@ -39,8 +44,8 @@ export class BlogQueryRepositorySql {
 
         return {
             pagesCount: Math.ceil(totalCount[0].count / pageSize),
-            page: pageNumber,
-            pageSize: pageSize,
+            page: +pageNumber,
+            pageSize: +pageSize,
             totalCount: +totalCount[0].count,
             items: blogs.map(this._mapBlogView)
         }
