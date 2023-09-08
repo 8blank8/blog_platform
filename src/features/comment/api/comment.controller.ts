@@ -11,13 +11,15 @@ import { CommandBus } from "@nestjs/cqrs";
 import { UpdateCommetCommand } from "../appication/useCases/update.comment.use.case";
 import { DeleteCommentCommand } from "../appication/useCases/delete.comment.use.case";
 import { UpdateLikeStatusCommentCommand } from "../appication/useCases/update.like.status.comment.use.case";
+import { CommentQueryRepositorySql } from "../infrastructure/sql/comment.query.repository";
 
 @Controller('/comments')
 export class CommentController {
 
     constructor(
-        private readonly commentService: CommentService,
-        private readonly commentQueryRepository: CommentQueryRepository,
+        // private readonly commentService: CommentService,
+        // private readonly commentQueryRepository: CommentQueryRepository,
+        private commentQueryRepositorySql: CommentQueryRepositorySql,
         private commandBus: CommandBus
     ) { }
 
@@ -28,7 +30,7 @@ export class CommentController {
         @Request() req,
         @Res() res: Response
     ) {
-        const comment = await this.commentQueryRepository.findCommentViewById(id, req.user)
+        const comment = await this.commentQueryRepositorySql.findCommentViewById(id, req.user)
         if (!comment) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         return res.status(STATUS_CODE.OK).send(comment)

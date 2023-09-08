@@ -129,10 +129,10 @@ export class PostControler {
         @Request() req,
         @Res() res: Response
     ) {
-        const post = await this.postQueryRepository.findPost(id)
+        const post = await this.postQueryRepositorySql.findPostFullById(id)
         if (!post) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
-        const comments = await this.commentQueryRepository.findCommentsByPostId(queryParam, id, req.user)
+        const comments = await this.commentQueryRepositorySql.findCommentsViewByPostId(queryParam, id, req.user)
         return res.status(STATUS_CODE.OK).send(comments)
     }
 

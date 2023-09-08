@@ -187,11 +187,11 @@ export class UserQueryRepositorySql {
             login: user.Login,
             email: user.Email,
             createdAt: user.CreatedAt,
-            banInfo: {
-                isBanned: user.IsBanned ?? false,
-                banDate: banDate,
-                banReason: user.BanReason,
-            }
+            // banInfo: {
+            //     isBanned: user.IsBanned ?? false,
+            //     banDate: banDate,
+            //     banReason: user.BanReason,
+            // }
         }
     }
 
