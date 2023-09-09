@@ -42,13 +42,13 @@ export class CommentRepositorySql {
 
     async createCommentLike(inputData: CommentCreateLikeSqlModel): Promise<string> {
 
-        const { userId, likeStatus, commentId } = inputData
+        const { userId, likeStatus, commentId, postId } = inputData
 
         const commentLikeId = await this.dataSource.query(`
             INSERT INTO public."PostCommentLike"(
-                "UserId", "LikeStatus", "CommentId")
-            VALUES ($1, $2, $3) RETURNING "Id";
-        `, [userId, likeStatus, commentId])
+                "UserId", "LikeStatus", "CommentId", "PostId")
+            VALUES ($1, $2, $3, $4) RETURNING "Id";
+        `, [userId, likeStatus, commentId, postId])
 
         return commentLikeId[0].Id
     }

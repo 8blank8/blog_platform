@@ -64,7 +64,20 @@ export class PostQueryRepositorySql {
                 (
                     SELECT COUNT(*) as "DislikesCount" FROM "PostsLike"
                     WHERE "LikeStatus" = 'Dislike' AND "PostId" = ps."Id"
-                )
+                ),
+                ARRAY(
+                    SELECT json_build_object(
+                        'addedAt', pl."AddedAt",
+                        'userId', pl."UserId",
+                        'login', (
+                            SELECT u."Login" FROM "Users" as u
+                            WHERE u."Id" = pl."UserId"
+                                 )
+                    ) FROM "PostsLike" as pl
+                    WHERE ps."Id" = pl."PostId" AND pl."LikeStatus" = 'Like'
+                    ORDER BY pl."AddedAt" DESC
+                    LIMIT 3
+                ) as "NewestLikes"
                 ${userId ?
                 `,(
                     SELECT "LikeStatus" as "MyStatus"
@@ -117,7 +130,20 @@ export class PostQueryRepositorySql {
                 (
                     SELECT COUNT(*) as "DislikesCount" FROM "PostsLike"
                     WHERE "LikeStatus" = 'Dislike' AND "PostId" = ps."Id"
-                )
+                ),
+                ARRAY(
+                    SELECT json_build_object(
+                        'addedAt', pl."AddedAt",
+                        'userId', pl."UserId",
+                        'login', (
+                            SELECT u."Login" FROM "Users" as u
+                            WHERE u."Id" = pl."UserId"
+                                 )
+                    ) FROM "PostsLike" as pl
+                    WHERE ps."Id" = pl."PostId" AND pl."LikeStatus" = 'Like'
+                    ORDER BY pl."AddedAt" DESC
+                    LIMIT 3
+                ) as "NewestLikes"
                 ${userId ?
                 `,(
                     SELECT "LikeStatus" as "MyStatus"
@@ -159,7 +185,20 @@ export class PostQueryRepositorySql {
                 (
                     SELECT COUNT(*) as "DislikesCount" FROM "PostsLike"
                     WHERE "LikeStatus" = 'Dislike' AND "PostId" = ps."Id"
-                )
+                ),
+                ARRAY(
+                    SELECT json_build_object(
+                        'addedAt', pl."AddedAt",
+                        'userId', pl."UserId",
+                        'login', (
+                            SELECT u."Login" FROM "Users" as u
+                            WHERE u."Id" = pl."UserId"
+                                 )
+                    ) FROM "PostsLike" as pl
+                    WHERE ps."Id" = pl."PostId" AND pl."LikeStatus" = 'Like'
+                    ORDER BY pl."AddedAt" DESC
+                    LIMIT 3
+                ) as "NewestLikes"
                 ${userId ?
                 `,(
                     SELECT "LikeStatus" as "MyStatus"
@@ -209,6 +248,19 @@ export class PostQueryRepositorySql {
     }
 
     _mapPostForBlogger(post): PostViewSqlModel {
+
+        let newestLikes = []
+
+        if (post.NewestLikes.length !== 0) {
+            newestLikes = post.NewestLikes.map(item => {
+                return {
+                    addedAt: new Date(item.addedAt).toISOString(),
+                    userId: item.userId,
+                    login: item.login
+                }
+            })
+        }
+
         return {
             id: post.Id,
             title: post.Title,
@@ -221,7 +273,7 @@ export class PostQueryRepositorySql {
                 likesCount: +post.LikesCount,
                 dislikesCount: +post.DislikesCount,
                 myStatus: post.MyStatus ?? 'None',
-                newestLikes: []
+                newestLikes: newestLikes
             }
         }
     }

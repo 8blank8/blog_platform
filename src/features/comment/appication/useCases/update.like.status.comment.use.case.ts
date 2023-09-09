@@ -31,7 +31,7 @@ export class UpdateLikeStatusCommentUseCase {
 
         const { id, inputData, userId } = command
 
-        const comment = await this.commentQueryRepositorySql.findCommentViewById(id)
+        const comment = await this.commentQueryRepositorySql.findCommentFullById(id)
         if (!comment) return false
 
         const user = await this.userQueryRepositorySql.findUser(userId)
@@ -44,7 +44,8 @@ export class UpdateLikeStatusCommentUseCase {
         const createdComentLike: CommentCreateLikeSqlModel = {
             userId: user.id,
             likeStatus: inputData.likeStatus,
-            commentId: comment.id
+            commentId: comment.id,
+            postId: comment.postId
         }
 
         if (!like) {
