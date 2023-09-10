@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { UserBanBlog, UserBanBlogDocument } from "../../domain/user.ban.blog.schema";
+import { UserBanBlog, UserBanBlogDocument } from "../../domain/mongoose/user.ban.blog.schema";
 import { Model } from "mongoose";
 
 

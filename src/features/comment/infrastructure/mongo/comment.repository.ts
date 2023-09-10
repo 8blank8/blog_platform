@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { CommentDocument, Comment } from "../../domain/comment.schema";
+import { CommentDocument, Comment } from "../../domain/mongoose/comment.schema";
 import { Model } from "mongoose";
 import { CommentCreateType } from "../../models/comment.create.type";
-import { CommentLike, CommentLikeDocument } from "../../domain/comment.like.schema";
+import { CommentLike, CommentLikeDocument } from "../../domain/mongoose/comment.like.schema";
 import { CommentLikeStatusType } from "../../models/comment.like.status";
 
 

@@ -1,5 +1,5 @@
 import { CommandHandler } from "@nestjs/cqrs";
-import { DeviceDocument } from "../../domain/device.schema";
+import { DeviceDocument } from "../../domain/mongoose/device.schema";
 import { SecurityRepository } from "../../infrastructure/security.repository";
 import { SecurityRepositorySql } from "../../infrastructure/security.repository.sql";
 import { CreateDeviceForSqlModel } from "../../infrastructure/models/create.device.for.sql.model";

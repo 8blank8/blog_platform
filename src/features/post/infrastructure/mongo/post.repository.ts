@@ -2,8 +2,8 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { PostCreateType } from "../../models/post.create.type";
-import { Post, PostDocument } from "../../domain/post.schema";
-import { PostLike, PostLikeDocument } from "../../domain/post.like.schema";
+import { Post, PostDocument } from "../../domain/mongoose/post.schema";
+import { PostLike, PostLikeDocument } from "../../domain/mongoose/post.like.schema";
 import { PostLikeStatusType } from "../../models/post.like.status.type";
 
 @Injectable()

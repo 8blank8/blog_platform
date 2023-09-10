@@ -49,7 +49,7 @@ export class UpdateLikeStatusCommentUseCase {
         }
 
         if (!like) {
-            const createdCommentLikeId = await this.commentRepositorySql.createCommentLike(createdComentLike)
+            await this.commentRepositorySql.createCommentLike(createdComentLike)
             return true
             // like.updateLikeStatus(inputData.likeStatus)
             // await this.commentRepository.saveCommentLike(like)

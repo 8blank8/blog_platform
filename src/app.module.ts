@@ -6,13 +6,13 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 
-import { Blog, BlogSchema } from './features/blog/domain/blog.schema';
+import { Blog, BlogSchema } from './features/blog/domain/mongoose/blog.schema';
 import { BlogRepository } from './features/blog/infrastructure/mongo/blog.repository';
 import { BlogController } from './features/blog/api/blog.controller';
 import { BlogService } from './features/blog/application/blog.service';
 import { BlogQueryRepository } from './features/blog/infrastructure/mongo/blog.query.repository';
 
-import { Post, PostSchema } from './features/post/domain/post.schema';
+import { Post, PostSchema } from './features/post/domain/mongoose/post.schema';
 import { PostQueryRepository } from './features/post/infrastructure/mongo/post.query.repository';
 import { PostControler } from './features/post/api/post.controller';
 import { PostService } from './features/post/application/post.service';
@@ -24,7 +24,7 @@ import { UserRepository } from './features/user/infrastructure/user.repository';
 import { UserQueryRepository } from './features/user/infrastructure/user.query.repository';
 
 import { TestingController } from './features/testing/testing.controller';
-import { User, UserSchema } from './features/user/domain/user.schema';
+import { User, UserSchema } from './features/user/domain/mongoose/user.schema';
 
 import { AuthController } from './features/auth/api/auth.controller';
 import { AuthService } from './features/auth/application/auth.service';
@@ -44,14 +44,14 @@ import { EmailCodeResend } from './entity/custom-validation/email.code.resend';
 import { CommentController } from './features/comment/api/comment.controller';
 import { CommentRepository } from './features/comment/infrastructure/mongo/comment.repository';
 import { CommentQueryRepository } from './features/comment/infrastructure/mongo/comment.query.repository';
-import { Comment, CommentSchema } from './features/comment/domain/comment.schema';
+import { Comment, CommentSchema } from './features/comment/domain/mongoose/comment.schema';
 import { CommentService } from './features/comment/appication/comment.service';
-import { CommentLike, CommentLikeSchema } from './features/comment/domain/comment.like.schema';
-import { PostLike, PostLikeSchema } from './features/post/domain/post.like.schema';
+import { CommentLike, CommentLikeSchema } from './features/comment/domain/mongoose/comment.like.schema';
+import { PostLike, PostLikeSchema } from './features/post/domain/mongoose/post.like.schema';
 import { CheckBlogId } from './entity/custom-validation/check.blogId';
 import { IsNotBlank } from './entity/custom-validation/is.not.blank';
 import { LikeStatus } from './entity/custom-validation/like.status';
-import { Device, DeviceSchema } from './features/security/domain/device.schema';
+import { Device, DeviceSchema } from './features/security/domain/mongoose/device.schema';
 import { SecurityController } from './features/security/api/security.controller';
 import { SecurityQueryRepository } from './features/security/infrastructure/security.query.repository';
 import { SecurityService } from './features/security/application/security.service';
@@ -59,7 +59,7 @@ import { SecurityRepository } from './features/security/infrastructure/security.
 import { JwtRefreshTokenStrategy } from './features/auth/strategies/jwt.refresh.token.straregy';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { setting_env } from './setting.env';
-import { Auth, AuthSchema } from './features/auth/domain/auth.schema';
+import { Auth, AuthSchema } from './features/auth/domain/mongoose/auth.schema';
 import { AuthRepository } from './features/auth/infrastructure/auth.repository';
 import { AuthQueryRepository } from './features/auth/infrastructure/auth.query.repository';
 
@@ -138,7 +138,7 @@ const bloggerUseCase = [
 import { BindUserForBlogUseCase } from './features/sa/application/useCases/bind.user.for.blog.use.case';
 import { SaQueryRepository } from './features/sa/infrastructure/sa.query.repository';
 import { BannedUserUseCase } from './features/user/application/useCases/banned.user.use.case';
-import { UserBanBlog, UserBanBlogSchema } from './features/blog/domain/user.ban.blog.schema';
+import { UserBanBlog, UserBanBlogSchema } from './features/blog/domain/mongoose/user.ban.blog.schema';
 import { UserBanBlogRepository } from './features/blog/infrastructure/mongo/user.ban.blog.repository';
 import { BloggerUserController } from './features/blog/api/blogger.user.controller';
 import { BanUserForBlogUseCase } from './features/blog/application/useCases/ban.user.for.blog.use.case';
@@ -158,6 +158,16 @@ import { UserBanBlogQueryRepositorySql } from './features/blog/infrastructure/sq
 import { UserBanBlogRepositorySql } from './features/blog/infrastructure/sql/user.ban.blog.repository.sql';
 import { CommentRepositorySql } from './features/comment/infrastructure/sql/comment.repository.sql';
 import { CommentQueryRepositorySql } from './features/comment/infrastructure/sql/comment.query.repository';
+import { BlackListRefreshToken } from './features/auth/domain/typeorm/auth.entity';
+import { Users } from './features/user/domain/typeorm/user.entity';
+import { Blogs } from './features/blog/domain/typeorm/blog.entity';
+import { Posts } from './features/post/domain/typeorm/post.entity';
+import { PostLikes } from './features/post/domain/typeorm/post.like.entity';
+import { PostComments } from './features/comment/domain/typeorm/comment.entitty';
+import { PostCommentLike } from './features/comment/domain/typeorm/comment.like.entity';
+import { Devices } from './features/security/domain/typeorm/devices.entity';
+import { UsersConfirmationEmail } from './features/user/domain/typeorm/user.confirmation.email.entity';
+import { UsersPassword } from './features/user/domain/typeorm/user.password.entity';
 const saUseCase = [
   BindUserForBlogUseCase, BannedUserUseCase
 ]
@@ -175,8 +185,14 @@ const saUseCase = [
       password: 'blank',
       database: 'BlogPlatform',
       entities: [],
-      synchronize: false,
+      autoLoadEntities: true,
+      synchronize: true,
     }),
+    // TypeOrmModule.forFeature([
+    //   BlackListRefreshToken, Users, Blogs, Posts, PostLikes,
+    //   PostComments, PostCommentLike, Devices, UsersConfirmationEmail,
+    //   UsersPassword
+    // ]),
     MongooseModule.forRoot(setting_env.MONGO_URL),
     MongooseModule.forFeature([
       { name: Blog.name, schema: BlogSchema },

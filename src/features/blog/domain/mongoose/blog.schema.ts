@@ -1,7 +1,7 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose'
 import { HydratedDocument } from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
-import { BlogUpdateType } from '../models/blog.update.type'
+import { BlogUpdateType } from '../../models/blog.update.type'
 
 
 @Schema()

@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { FilterQuery, Model } from "mongoose";
-import { Comment, CommentDocument } from "../../domain/comment.schema";
+import { Comment, CommentDocument } from "../../domain/mongoose/comment.schema";
 import { CommentQueryParam } from "../../models/comment.query.param.type";
 import { QUERY_PARAM } from "../../../../entity/enum/query.param.enum";
-import { CommentLike, CommentLikeDocument } from "../../domain/comment.like.schema";
+import { CommentLike, CommentLikeDocument } from "../../domain/mongoose/comment.like.schema";
 import { CommentViewType } from "../../models/comment.view.type";
 import { PostQueryRepository } from "../../../../features/post/infrastructure/mongo/post.query.repository";
 import { BlogQueryRepository } from "../../../../features/blog/infrastructure/mongo/blog.query.repository";

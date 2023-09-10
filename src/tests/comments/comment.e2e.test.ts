@@ -172,10 +172,92 @@ describe('Comments', () => {
             }
         })
 
-        // it('like comments /posts/:postId/comments', async () => {
-        //     await request(app.getHttpServer())
-        //         .put(`/posts/:postId/comments`)
-        // })
+        it('like comments /comments/:id/like-status', async () => {
+            await request(app.getHttpServer())
+                .put(`/comments/${createdComments[0].id}/like-status`)
+                .set("Authorization", `Bearer ${tokens[0]}`)
+                .send({ likeStatus: 'Like' })
+                .expect(204)
+
+            await request(app.getHttpServer())
+                .put(`/comments/${createdComments[0].id}/like-status`)
+                .set("Authorization", `Bearer ${tokens[1]}`)
+                .send({ likeStatus: 'Like' })
+                .expect(204)
+
+            await request(app.getHttpServer())
+                .put(`/comments/${createdComments[1].id}/like-status`)
+                .set("Authorization", `Bearer ${tokens[1]}`)
+                .send({ likeStatus: 'Like' })
+                .expect(204)
+
+            await request(app.getHttpServer())
+                .put(`/comments/${createdComments[1].id}/like-status`)
+                .set("Authorization", `Bearer ${tokens[2]}`)
+                .send({ likeStatus: 'Like' })
+                .expect(204)
+
+            await request(app.getHttpServer())
+                .put(`/comments/${createdComments[2].id}/like-status`)
+                .set("Authorization", `Bearer ${tokens[0]}`)
+                .send({ likeStatus: 'Dislike' })
+                .expect(204)
+
+            await request(app.getHttpServer())
+                .put(`/comments/${createdComments[3].id}/like-status`)
+                .set("Authorization", `Bearer ${tokens[0]}`)
+                .send({ likeStatus: 'Like' })
+                .expect(204)
+
+            await request(app.getHttpServer())
+                .put(`/comments/${createdComments[3].id}/like-status`)
+                .set("Authorization", `Bearer ${tokens[3]}`)
+                .send({ likeStatus: 'Like' })
+                .expect(204)
+
+            await request(app.getHttpServer())
+                .put(`/comments/${createdComments[3].id}/like-status`)
+                .set("Authorization", `Bearer ${tokens[1]}`)
+                .send({ likeStatus: 'Like' })
+                .expect(204)
+
+            await request(app.getHttpServer())
+                .put(`/comments/${createdComments[3].id}/like-status`)
+                .set("Authorization", `Bearer ${tokens[2]}`)
+                .send({ likeStatus: 'Like' })
+                .expect(204)
+
+            await request(app.getHttpServer())
+                .put(`/comments/${createdComments[4].id}/like-status`)
+                .set("Authorization", `Bearer ${tokens[1]}`)
+                .send({ likeStatus: 'Like' })
+                .expect(204)
+
+            await request(app.getHttpServer())
+                .put(`/comments/${createdComments[4].id}/like-status`)
+                .set("Authorization", `Bearer ${tokens[2]}`)
+                .send({ likeStatus: 'Dislike' })
+                .expect(204)
+
+            await request(app.getHttpServer())
+                .put(`/comments/${createdComments[5].id}/like-status`)
+                .set("Authorization", `Bearer ${tokens[0]}`)
+                .send({ likeStatus: 'Like' })
+                .expect(204)
+
+            await request(app.getHttpServer())
+                .put(`/comments/${createdComments[5].id}/like-status`)
+                .set("Authorization", `Bearer ${tokens[1]}`)
+                .send({ likeStatus: 'Dislike' })
+                .expect(204)
+        })
+
+        it('find all comments post by user1 /posts/:postId/comments', async () => {
+            const comments = await request(app.getHttpServer())
+                .get(`/posts/${createdPost.id}/comments`)
+                .set('Authorization', `Bearer ${tokens[0]}`)
+                .expect(200)
+        })
     })
 
     afterAll(async () => {

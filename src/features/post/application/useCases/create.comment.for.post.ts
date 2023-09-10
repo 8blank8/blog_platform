@@ -1,5 +1,5 @@
 import { CommandHandler } from "@nestjs/cqrs";
-import { CommentDocument } from "../../../../features/comment/domain/comment.schema";
+import { CommentDocument } from "../../../comment/domain/mongoose/comment.schema";
 import { CommentCreateType } from "../../../../features/comment/models/comment.create.type";
 import { PostQueryRepository } from "../../infrastructure/mongo/post.query.repository";
 import { UserQueryRepository } from "../../../../features/user/infrastructure/user.query.repository";

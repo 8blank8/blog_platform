@@ -39,7 +39,7 @@ export class CommentQueryRepositorySql {
                 `,(
                             SELECT "LikeStatus" as "MyStatus"
                             FROM "PostCommentLike"
-                            WHERE "UserId" = '${userId}' AND "PostId" = pc."PostId"
+                            WHERE "UserId" = '${userId}' AND "CommentId" = pc."Id"
                         )`
                 : ''
             }
@@ -67,6 +67,7 @@ export class CommentQueryRepositorySql {
             sortBy = first.toUpperCase() + last.join('')
         }
 
+
         const comments = await this.dataSource.query(`
             SELECT pc."Id", pc."UserId", pc."Content", pc."PostId", pc."CreatedAt", 
                 pc."BlogId", u."Login" as "UserLogin",
@@ -82,14 +83,14 @@ export class CommentQueryRepositorySql {
                 `,(
                         SELECT "LikeStatus" as "MyStatus"
                         FROM "PostCommentLike"
-                        WHERE "UserId" = '${userId}' AND "PostId" = pc."PostId"
+                        WHERE "UserId" = '${userId}' AND "CommentId" = pc."Id"
                     )`
                 : ''
             }
             FROM public."PostComments" as pc
             LEFT JOIN "Users" as u ON pc."UserId" = u."Id"
             WHERE pc."PostId" = $3
-            ORDER BY "${sortBy}" ${sortBy === 'CreatedAt' ? '' : 'COLLATE "C"'} ${sortDirection} 
+            ORDER BY pc."${sortBy}" ${sortBy === 'CreatedAt' ? '' : 'COLLATE "C"'} ${sortDirection} 
             OFFSET $1 LIMIT $2;
         `, [page, pageSize, postId])
 
