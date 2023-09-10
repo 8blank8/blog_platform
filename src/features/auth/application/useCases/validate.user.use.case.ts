@@ -1,7 +1,7 @@
 import { CommandHandler } from "@nestjs/cqrs";
-import { UserQueryRepository } from "src/features/user/infrastructure/user.query.repository";
+// import { UserQueryRepository } from "src/features/user/infrastructure/user.query.repository";
 import bcrypt from 'bcrypt'
-import { UserQueryRepositorySql } from "src/features/user/infrastructure/user.query.repository.sql";
+import { UserQueryRepositorySql } from "../../../../features/user/infrastructure/user.query.repository.sql";
 
 
 export class ValidateUserCommand {

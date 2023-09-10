@@ -1,8 +1,8 @@
 import { CommandHandler } from "@nestjs/cqrs";
-import { AuthRepository } from "../../infrastructure/auth.repository";
-import { SecurityRepository } from "src/features/security/infrastructure/security.repository";
+// import { AuthRepository } from "../../infrastructure/auth.repository";
+// import { SecurityRepository } from "src/features/security/infrastructure/security.repository";
 import { AuthRepositorySql } from "../../infrastructure/auth.repository.sql";
-import { SecurityRepositorySql } from "src/features/security/infrastructure/security.repository.sql";
+import { SecurityRepositorySql } from "../../../../features/security/infrastructure/security.repository.sql";
 
 
 export class AddRefreshTokenInBlackListCommand {

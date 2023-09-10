@@ -3,7 +3,7 @@ import { InjectDataSource } from "@nestjs/typeorm";
 import { DataSource } from "typeorm";
 import { CommentViewSqlModel } from "./models/comment.view.sql.model";
 import { CommentQueryParam } from "../../models/comment.query.param.type";
-import { QUERY_PARAM_SQL } from "src/entity/enum/query.param.enum.sql";
+import { QUERY_PARAM_SQL } from "../../../../entity/enum/query.param.enum.sql";
 import { CommentLikeViewSqlModel } from "./models/comment.like.view.sql.model";
 import { CommentFullSqlModel } from "./models/comment.full.sql.model";
 

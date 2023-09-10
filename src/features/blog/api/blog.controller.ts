@@ -7,7 +7,7 @@ import { PostQueryParamType } from "../../post/models/post.query.param.type";
 import { JwtOrNotGuard } from "../../auth/guards/jwt.or.not.guard";
 import { STATUS_CODE } from "../../../entity/enum/status.code";
 import { BlogQueryRepositorySql } from "../infrastructure/sql/blog.query.repository.sql";
-import { PostQueryRepositorySql } from "src/features/post/infrastructure/sql/post.query.repository.sql";
+import { PostQueryRepositorySql } from "../../../features/post/infrastructure/sql/post.query.repository.sql";
 
 
 

@@ -1,6 +1,6 @@
 import { CommandHandler } from "@nestjs/cqrs";
 import { JwtService } from "@nestjs/jwt";
-import { setting_env } from "src/setting.env";
+import { setting_env } from "../../../../setting.env";
 
 
 export class LoginUserCommand {

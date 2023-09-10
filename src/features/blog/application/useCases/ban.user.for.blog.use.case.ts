@@ -1,11 +1,11 @@
 import { CommandHandler } from "@nestjs/cqrs";
 import { BanUserForBlogModel } from "../../models/ban.user.for.blog.model";
-import { UserQueryRepository } from "src/features/user/infrastructure/user.query.repository";
-import { BlogQueryRepository } from "../../infrastructure/mongo/blog.query.repository";
-import { UserBanBlogRepository } from "../../infrastructure/mongo/user.ban.blog.repository";
+// import { UserQueryRepository } from "src/features/user/infrastructure/user.query.repository";
+// import { BlogQueryRepository } from "../../infrastructure/mongo/blog.query.repository";
+// import { UserBanBlogRepository } from "../../infrastructure/mongo/user.ban.blog.repository";
 import { ForbiddenException } from "@nestjs/common";
-import { UserBanBlogQueryRepository } from "../../infrastructure/mongo/user.ban.blog.query.repository";
-import { UserQueryRepositorySql } from "src/features/user/infrastructure/user.query.repository.sql";
+// import { UserBanBlogQueryRepository } from "../../infrastructure/mongo/user.ban.blog.query.repository";
+import { UserQueryRepositorySql } from "../../../../features/user/infrastructure/user.query.repository.sql";
 import { BlogQueryRepositorySql } from "../../infrastructure/sql/blog.query.repository.sql";
 import { UserBanBlogQueryRepositorySql } from "../../infrastructure/sql/user.ban.blog.query.repository.sql";
 import { UserBanBlogRepositorySql } from "../../infrastructure/sql/user.ban.blog.repository.sql";

@@ -1,10 +1,10 @@
 import { CommandHandler } from "@nestjs/cqrs";
-import { BlogQueryRepository } from "../../infrastructure/mongo/blog.query.repository";
-import { ForbiddenException } from "@nestjs/common";
-import { PostRepository } from "src/features/post/infrastructure/mongo/post.repository";
+// import { BlogQueryRepository } from "../../infrastructure/mongo/blog.query.repository";
+// import { ForbiddenException } from "@nestjs/common";
+// import { PostRepository } from "src/features/post/infrastructure/mongo/post.repository";
 import { BlogQueryRepositorySql } from "../../infrastructure/sql/blog.query.repository.sql";
-import { PostRepositorySql } from "src/features/post/infrastructure/sql/post.repository.sql";
-import { PostQueryRepositorySql } from "src/features/post/infrastructure/sql/post.query.repository.sql";
+import { PostRepositorySql } from "../../../../features/post/infrastructure/sql/post.repository.sql";
+import { PostQueryRepositorySql } from "../../../../features/post/infrastructure/sql/post.query.repository.sql";
 
 
 export class DeletePostByBlogIdCommand {

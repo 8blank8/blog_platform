@@ -1,9 +1,9 @@
 import { Body, Controller, Param, Put, UseGuards, Request, Res, Get, Query, ForbiddenException } from "@nestjs/common";
 import { CommandBus } from "@nestjs/cqrs";
-import { JwtAuthGuard } from "src/features/auth/guards/jwt.guard";
+import { JwtAuthGuard } from "../../../features/auth/guards/jwt.guard";
 import { BanUserForBlogModel } from "../models/ban.user.for.blog.model";
 import { Response } from 'express'
-import { STATUS_CODE } from "src/entity/enum/status.code";
+import { STATUS_CODE } from "../../../entity/enum/status.code";
 import { BanUserForBlogCommand } from "../application/useCases/ban.user.for.blog.use.case";
 import { UsersBanQueryParamModel } from "../models/users.ban.query.param.model";
 import { UserBanBlogQueryRepository } from "../infrastructure/mongo/user.ban.blog.query.repository";

@@ -1,8 +1,8 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
-import { setting_env } from 'src/setting.env';
-import { UserQueryRepository } from 'src/features/user/infrastructure/user.query.repository';
+import { setting_env } from '../../../setting.env';
+// import { UserQueryRepository } from 'src/features/user/infrastructure/user.query.repository';
 
 
 @Injectable()

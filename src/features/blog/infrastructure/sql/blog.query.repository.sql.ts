@@ -3,8 +3,8 @@ import { InjectDataSource } from "@nestjs/typeorm";
 import { DataSource } from "typeorm";
 import { BlogViewSqlModel } from "./models/blog.view.sql.model";
 import { BlogFullSqlModel } from "./models/blog.full.sql.model";
-import { BlogQueryParamModel } from "src/features/sa/infrastructure/models/blog.query.param";
-import { QUERY_PARAM_SQL } from "src/entity/enum/query.param.enum.sql";
+import { BlogQueryParamModel } from "../../../../features/sa/infrastructure/models/blog.query.param";
+import { QUERY_PARAM_SQL } from "../../../../entity/enum/query.param.enum.sql";
 import { BannedBlogViewSqlModel } from "./models/banned.blog.view.sql.model";
 
 

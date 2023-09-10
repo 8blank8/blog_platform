@@ -3,7 +3,7 @@ import { JwtAuthGuard } from "../../auth/guards/jwt.guard";
 import { BlogCreateType } from "../models/blog.create.type";
 import { CommandBus } from "@nestjs/cqrs";
 import { CreateBlogCommand } from "../application/useCases/create.blog.use.case";
-import { BlogQueryRepository } from "../infrastructure/mongo/blog.query.repository";
+// import { BlogQueryRepository } from "../infrastructure/mongo/blog.query.repository";
 import { PostCreateByIdType } from "../models/post.create.by.id.type";
 import { CreatePostByBlogIdCommand } from "../../post/application/useCases/create.post.by.blog.id.use.case";
 import { STATUS_CODE } from "../../../entity/enum/status.code";
@@ -17,11 +17,11 @@ import { PostUpdateByIdModel } from "../models/post.update.by.id";
 import { UpdatePostByBlogIdCommand } from "../application/useCases/update.post.by.blog.id.use.case";
 import { DeleteBlogCommand } from "../application/useCases/delete.blog.use.case";
 import { DeletePostByBlogIdCommand } from "../application/useCases/delete.post.by.blog.id.use.case";
-import { CommentQueryRepository } from "src/features/comment/infrastructure/mongo/comment.query.repository";
-import { CommentQueryParam } from "src/features/comment/models/comment.query.param.type";
+import { CommentQueryRepository } from "../../../features/comment/infrastructure/mongo/comment.query.repository";
+import { CommentQueryParam } from "../../../features/comment/models/comment.query.param.type";
 import { BlogQueryRepositorySql } from "../infrastructure/sql/blog.query.repository.sql";
-import { PostQueryRepositorySql } from "src/features/post/infrastructure/sql/post.query.repository.sql";
-import { BasicAuthGuard } from "src/features/auth/guards/basic.guard";
+import { PostQueryRepositorySql } from "../../../features/post/infrastructure/sql/post.query.repository.sql";
+import { BasicAuthGuard } from "../../../features/auth/guards/basic.guard";
 
 
 @Controller('sa/blogs')

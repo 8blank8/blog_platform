@@ -1,10 +1,10 @@
 import { CommandHandler } from "@nestjs/cqrs";
-import { BlogQueryRepository } from "src/features/blog/infrastructure/mongo/blog.query.repository";
-import { BlogRepository } from "src/features/blog/infrastructure/mongo/blog.repository";
-import { BlogQueryRepositorySql } from "src/features/blog/infrastructure/sql/blog.query.repository.sql";
-import { BlogRepositorySql } from "src/features/blog/infrastructure/sql/blog.repository.sql";
-import { UserQueryRepository } from "src/features/user/infrastructure/user.query.repository";
-import { UserQueryRepositorySql } from "src/features/user/infrastructure/user.query.repository.sql";
+// import { BlogQueryRepository } from "src/features/blog/infrastructure/mongo/blog.query.repository";
+// import { BlogRepository } from "src/features/blog/infrastructure/mongo/blog.repository";
+import { BlogQueryRepositorySql } from "../../../../features/blog/infrastructure/sql/blog.query.repository.sql";
+import { BlogRepositorySql } from "../../../../features/blog/infrastructure/sql/blog.repository.sql";
+// import { UserQueryRepository } from "src/features/user/infrastructure/user.query.repository";
+import { UserQueryRepositorySql } from "../../../../features/user/infrastructure/user.query.repository.sql";
 
 
 export class BindUserForBlogCommand {

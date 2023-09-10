@@ -20,7 +20,7 @@ import { ResendingConfirmationCodeCommand } from "../../user/application/useCase
 import { LoginUserCommand } from "../application/useCases/login.user.use.case";
 import { CreateRefreshTokenCommand } from "../application/useCases/create.refresh.token.use.case";
 import { AddRefreshTokenInBlackListCommand } from "../application/useCases/add.refresh.token.in.black.list.use.case";
-import { UserQueryRepositorySql } from "src/features/user/infrastructure/user.query.repository.sql";
+import { UserQueryRepositorySql } from "../../../features/user/infrastructure/user.query.repository.sql";
 
 @Controller('/auth')
 export class AuthController {

@@ -20,9 +20,9 @@ import { DeletePostCommand } from "../application/useCases/delete.post.use.case"
 import { CreateCommentForPostCommand } from "../application/useCases/create.comment.for.post";
 import { UpdateLikeStatusForPostCommand } from "../application/useCases/update.like.status.for.post";
 import { ConnectionStates } from "mongoose";
-import { BlogQueryRepository } from "src/features/blog/infrastructure/mongo/blog.query.repository";
+import { BlogQueryRepository } from "../../../features/blog/infrastructure/mongo/blog.query.repository";
 import { PostQueryRepositorySql } from "../infrastructure/sql/post.query.repository.sql";
-import { CommentQueryRepositorySql } from "src/features/comment/infrastructure/sql/comment.query.repository";
+import { CommentQueryRepositorySql } from "../../../features/comment/infrastructure/sql/comment.query.repository";
 
 
 @Controller('posts')

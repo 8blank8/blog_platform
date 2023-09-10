@@ -1,11 +1,11 @@
 import { CommandHandler } from "@nestjs/cqrs";
 import { BlogBanInputDataModel } from "../../api/models/blog.ban.input.data.model";
 
-import { BlogQueryRepository } from "src/features/blog/infrastructure/mongo/blog.query.repository";
-import { BlogRepository } from "src/features/blog/infrastructure/mongo/blog.repository";
-import { BlogQueryRepositorySql } from "src/features/blog/infrastructure/sql/blog.query.repository.sql";
-import { BannedBlogCreateSqlModel } from "src/features/blog/infrastructure/sql/models/banned.blog.create.sql.model";
-import { BlogRepositorySql } from "src/features/blog/infrastructure/sql/blog.repository.sql";
+// import { BlogQueryRepository } from "src/features/blog/infrastructure/mongo/blog.query.repository";
+// import { BlogRepository } from "src/features/blog/infrastructure/mongo/blog.repository";
+import { BlogQueryRepositorySql } from "../../../../features/blog/infrastructure/sql/blog.query.repository.sql";
+import { BannedBlogCreateSqlModel } from "../../../../features/blog/infrastructure/sql/models/banned.blog.create.sql.model";
+import { BlogRepositorySql } from "../../../../features/blog/infrastructure/sql/blog.repository.sql";
 
 
 export class BlogBanCommand {
