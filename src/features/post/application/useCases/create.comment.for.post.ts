@@ -2,12 +2,12 @@ import { CommandHandler } from "@nestjs/cqrs";
 import { CommentDocument } from "../../../comment/domain/mongoose/comment.schema";
 import { CommentCreateType } from "../../../../features/comment/models/comment.create.type";
 import { PostQueryRepository } from "../../infrastructure/mongo/post.query.repository";
-import { UserQueryRepository } from "../../../../features/user/infrastructure/user.query.repository";
+import { UserQueryRepository } from "../../../user/infrastructure/mongo/user.query.repository";
 import { CommentRepository } from "../../../../features/comment/infrastructure/mongo/comment.repository";
 import { UserBanBlogRepository } from "../../../../features/blog/infrastructure/mongo/user.ban.blog.repository";
 import { ForbiddenException } from "@nestjs/common";
 import { PostQueryRepositorySql } from "../../infrastructure/sql/post.query.repository.sql";
-import { UserQueryRepositorySql } from "../../../../features/user/infrastructure/user.query.repository.sql";
+import { UserQueryRepositorySql } from "../../../user/infrastructure/sql/user.query.repository.sql";
 import { CommentCreateSqlModel } from "../../../../features/comment/infrastructure/sql/models/comment.create.sql.model";
 import { CommentRepositorySql } from "../../../../features/comment/infrastructure/sql/comment.repository.sql";
 

@@ -1,10 +1,14 @@
 import { CommandHandler } from "@nestjs/cqrs";
 import { UserCreateType } from "../../models/user.create.type";
 import { v4 as uuidv4 } from 'uuid'
-import { UserRepository } from "../../infrastructure/user.repository";
-import { UserRepositorySql } from "../../infrastructure/user.repository.sql";
+import { UserRepository } from "../../infrastructure/mongo/user.repository";
+import { UserRepositorySql } from "../../infrastructure/sql/user.repository.sql";
 import { CreateUserForSaSqlModel } from "../../infrastructure/models/repositorySql/create.user.for..sa.sql.model";
 import bcrypt from 'bcrypt'
+import { Users } from "../../domain/typeorm/user.entity";
+import { UsersPassword } from "../../domain/typeorm/user.password.entity";
+import { UsersConfirmationEmail } from "../../domain/typeorm/user.confirmation.email.entity";
+import { UserRepositoryTypeorm } from "../../infrastructure/typeorm/user.repository.typeorm";
 
 
 export class CreateUserCommand {
@@ -16,7 +20,7 @@ export class CreateUserCommand {
 @CommandHandler(CreateUserCommand)
 export class CreateUserUseCase {
     constructor(
-        private userRepository: UserRepository,
+        private userRepository: UserRepositoryTypeorm,
         private userRepositorySql: UserRepositorySql
     ) { }
 
@@ -27,17 +31,40 @@ export class CreateUserUseCase {
         const passwordSalt = await bcrypt.genSalt(10)
         const passwordHash = await bcrypt.hash(user.password, passwordSalt)
 
-        const createdUser: CreateUserForSaSqlModel = {
-            id: uuidv4(),
-            login: user.login,
-            email: user.email,
-            // createdAt: new Date().toISOString(),
-            passwordHash: passwordHash,
-            passwordSalt: passwordSalt
-        }
+        // const createdUser: CreateUserForSaSqlModel = {
+        //     id: uuidv4(),
+        //     login: user.login,
+        //     email: user.email,
+        //     // createdAt: new Date().toISOString(),
+        //     passwordHash: passwordHash,
+        //     passwordSalt: passwordSalt
+        // }
 
-        await this.userRepositorySql.createUserForAdmin(createdUser)
+        // await this.userRepositorySql.createUserForAdmin(createdUser)
+        // return createdUser.id
+
+        const createdUser = new Users()
+        createdUser.login = user.login
+        createdUser.email = user.email
+
+        const passwordUser = new UsersPassword()
+        passwordUser.passwordHash = passwordHash
+        passwordUser.passwordSalt = passwordSalt
+        passwordUser.user = createdUser
+
+        const confirmationUser = new UsersConfirmationEmail()
+        confirmationUser.code = uuidv4()
+        confirmationUser.isConfirmed = true
+        confirmationUser.user = createdUser
+
+        await this.userRepository.saveUser(createdUser)
+        await this.userRepository.saveUserPassword(passwordUser)
+        await this.userRepository.saveUserConfirmation(confirmationUser)
+
         return createdUser.id
+
+
+
         // const newUser = await this.userRepository.createUser(user)
         // newUser.addId()
         // newUser.addCreatedAt()

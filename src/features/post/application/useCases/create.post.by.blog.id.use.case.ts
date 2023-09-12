@@ -4,7 +4,7 @@ import { CommandHandler } from "@nestjs/cqrs";
 import { PostCreateByIdType } from "../../../../features/blog/models/post.create.by.id.type";
 // import { UserQueryRepository } from "src/features/user/infrastructure/user.query.repository";
 // import { ForbiddenException } from "@nestjs/common";
-import { UserQueryRepositorySql } from "../../../../features/user/infrastructure/user.query.repository.sql";
+import { UserQueryRepositorySql } from "../../../user/infrastructure/sql/user.query.repository.sql";
 import { BlogQueryRepositorySql } from "../../../../features/blog/infrastructure/sql/blog.query.repository.sql";
 import { PostCreateSqlModel } from "../../infrastructure/sql/models/post.create.sql.model";
 import { PostRepositorySql } from "../../infrastructure/sql/post.repository.sql";

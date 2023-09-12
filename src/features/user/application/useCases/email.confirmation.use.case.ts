@@ -1,9 +1,9 @@
 import { CommandHandler } from "@nestjs/cqrs";
 import { ConfirmationCodeType } from "src/features/auth/models/confirmation.code.type";
-import { UserRepository } from "../../infrastructure/user.repository";
-import { UserQueryRepository } from "../../infrastructure/user.query.repository";
-import { UserQueryRepositorySql } from "../../infrastructure/user.query.repository.sql";
-import { UserRepositorySql } from "../../infrastructure/user.repository.sql";
+import { UserRepository } from "../../infrastructure/mongo/user.repository";
+import { UserQueryRepository } from "../../infrastructure/mongo/user.query.repository";
+import { UserQueryRepositorySql } from "../../infrastructure/sql/user.query.repository.sql";
+import { UserRepositorySql } from "../../infrastructure/sql/user.repository.sql";
 
 export class EmailConfirmationCommand {
     constructor(

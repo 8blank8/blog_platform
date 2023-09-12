@@ -3,7 +3,7 @@ import { Response } from "express";
 import { AuthService } from "../application/auth.service";
 import { LocalAuthGuard } from "../guards/local.guard";
 import { JwtAuthGuard } from "../guards/jwt.guard";
-import { UserQueryRepository } from "../../user/infrastructure/user.query.repository";
+import { UserQueryRepository } from "../../user/infrastructure/mongo/user.query.repository";
 import { UserCreateType } from "../../user/models/user.create.type";
 import { UserService } from "../../user/application/user.service";
 import { ConfirmationCodeType } from "../models/confirmation.code.type";
@@ -20,7 +20,7 @@ import { ResendingConfirmationCodeCommand } from "../../user/application/useCase
 import { LoginUserCommand } from "../application/useCases/login.user.use.case";
 import { CreateRefreshTokenCommand } from "../application/useCases/create.refresh.token.use.case";
 import { AddRefreshTokenInBlackListCommand } from "../application/useCases/add.refresh.token.in.black.list.use.case";
-import { UserQueryRepositorySql } from "../../../features/user/infrastructure/user.query.repository.sql";
+import { UserQueryRepositorySql } from "../../user/infrastructure/sql/user.query.repository.sql";
 
 @Controller('/auth')
 export class AuthController {

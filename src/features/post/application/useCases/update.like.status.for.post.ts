@@ -1,10 +1,10 @@
 import { CommandHandler } from "@nestjs/cqrs";
 import { PostLikeStatusType } from "../../models/post.like.status.type";
 import { PostQueryRepository } from "../../infrastructure/mongo/post.query.repository";
-import { UserQueryRepository } from "../../../../features/user/infrastructure/user.query.repository";
+import { UserQueryRepository } from "../../../user/infrastructure/mongo/user.query.repository";
 import { PostRepository } from "../../infrastructure/mongo/post.repository";
 import { PostQueryRepositorySql } from "../../infrastructure/sql/post.query.repository.sql";
-import { UserQueryRepositorySql } from "../../../../features/user/infrastructure/user.query.repository.sql";
+import { UserQueryRepositorySql } from "../../../user/infrastructure/sql/user.query.repository.sql";
 import { PostRepositorySql } from "../../infrastructure/sql/post.repository.sql";
 
 

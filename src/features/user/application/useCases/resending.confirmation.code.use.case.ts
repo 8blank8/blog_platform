@@ -4,8 +4,8 @@ import { v4 as uuidv4 } from 'uuid'
 // import { UserRepository } from "../../infrastructure/user.repository";
 // import { UserQueryRepository } from "../../infrastructure/user.query.repository";
 import { EmailManager } from "../../../../entity/managers/email.manager";
-import { UserQueryRepositorySql } from "../../infrastructure/user.query.repository.sql";
-import { UserRepositorySql } from "../../infrastructure/user.repository.sql";
+import { UserQueryRepositorySql } from "../../infrastructure/sql/user.query.repository.sql";
+import { UserRepositorySql } from "../../infrastructure/sql/user.repository.sql";
 
 
 export class ResendingConfirmationCodeCommand {

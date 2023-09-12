@@ -14,6 +14,6 @@ export class UsersConfirmationEmail {
     @Column()
     code: string
 
-    @ManyToOne(() => Users, user => user.id)
+    @ManyToOne(() => Users, user => user.id, { onDelete: "CASCADE" })
     user: Users
 }

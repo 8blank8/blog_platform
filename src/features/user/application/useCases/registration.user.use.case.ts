@@ -3,7 +3,7 @@ import { UserCreateType } from "../../models/user.create.type";
 import { v4 as uuidv4 } from 'uuid'
 // import { UserRepository } from "../../infrastructure/user.repository";
 import { EmailManager } from "../../../../entity/managers/email.manager";
-import { UserRepositorySql } from "../../infrastructure/user.repository.sql";
+import { UserRepositorySql } from "../../infrastructure/sql/user.repository.sql";
 import { CreateUserForRegistrationSqlModel } from "../../infrastructure/models/repositorySql/create.user.for.registration.sql.model";
 import bcrypt from 'bcrypt'
 

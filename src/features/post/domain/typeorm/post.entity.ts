@@ -1,7 +1,7 @@
-import { Blogs } from "src/features/blog/domain/typeorm/blog.entity";
+import { Blogs } from "../../../../features/blog/domain/typeorm/blog.entity";
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { PostLikes } from "./post.like.entity";
-import { PostComments } from "src/features/comment/domain/typeorm/comment.entitty";
+import { PostComments } from "../../../../features/comment/domain/typeorm/comment.entitty";
 
 
 @Entity()

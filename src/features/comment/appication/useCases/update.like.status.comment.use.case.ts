@@ -5,7 +5,7 @@ import { CommentLikeStatusType } from "../../models/comment.like.status";
 // import { UserQueryRepository } from "src/features/user/infrastructure/user.query.repository";
 import { CommentQueryRepositorySql } from "../../infrastructure/sql/comment.query.repository";
 import { CommentRepositorySql } from "../../infrastructure/sql/comment.repository.sql";
-import { UserQueryRepositorySql } from "../../../../features/user/infrastructure/user.query.repository.sql";
+import { UserQueryRepositorySql } from "../../../user/infrastructure/sql/user.query.repository.sql";
 import { CommentCreateLikeSqlModel } from "../../infrastructure/sql/models/comment.create.like.sql.model";
 
 export class UpdateLikeStatusCommentCommand {

@@ -1,6 +1,6 @@
-import { Blogs } from "src/features/blog/domain/typeorm/blog.entity";
-import { Posts } from "src/features/post/domain/typeorm/post.entity";
-import { Users } from "src/features/user/domain/typeorm/user.entity";
+import { Blogs } from "../../../../features/blog/domain/typeorm/blog.entity";
+import { Posts } from "../../../../features/post/domain/typeorm/post.entity";
+import { Users } from "../../../../features/user/domain/typeorm/user.entity";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 

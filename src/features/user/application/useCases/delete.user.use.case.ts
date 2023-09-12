@@ -1,7 +1,9 @@
 import { CommandHandler } from "@nestjs/cqrs";
-import { UserRepository } from "../../infrastructure/user.repository";
-import { UserRepositorySql } from "../../infrastructure/user.repository.sql";
-import { UserQueryRepositorySql } from "../../infrastructure/user.query.repository.sql";
+import { UserRepository } from "../../infrastructure/mongo/user.repository";
+import { UserRepositorySql } from "../../infrastructure/sql/user.repository.sql";
+import { UserQueryRepositorySql } from "../../infrastructure/sql/user.query.repository.sql";
+import { UserRepositoryTypeorm } from "../../infrastructure/typeorm/user.repository.typeorm";
+import { UserQueryRepositoryTypeorm } from "../../infrastructure/typeorm/user.query.repository.typeorm";
 
 
 export class DeleteUserCommand {
@@ -14,17 +16,18 @@ export class DeleteUserCommand {
 export class DeleteUserUseCase {
     constructor(
         // private userRepository: UserRepository,
-        private userRepositorySql: UserRepositorySql,
-        private userQueryRepositorySql: UserQueryRepositorySql
+        private userRepository: UserRepositoryTypeorm,
+        private userQueryRepository: UserQueryRepositoryTypeorm
     ) { }
 
     async execute(command: DeleteUserCommand) {
 
         const { id } = command
-        const user = await this.userQueryRepositorySql.findUser(id)
+        console.log(id)
+        const user = await this.userQueryRepository.findUserByIdForSa(id)
         if (!user) return false
 
-        await this.userRepositorySql.deleteUser(id)
+        await this.userRepository.deleteUser(id)
         return true
     }
 }

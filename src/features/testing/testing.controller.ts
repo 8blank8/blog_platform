@@ -2,10 +2,10 @@ import { Controller, Delete, Res } from "@nestjs/common";
 import { Response } from "express";
 import { BlogRepository } from "../blog/infrastructure/mongo/blog.repository";
 import { PostRepository } from "../post/infrastructure/mongo/post.repository";
-import { UserRepository } from "../user/infrastructure/user.repository";
+import { UserRepository } from "../user/infrastructure/mongo/user.repository";
 import { CommentRepository } from "../comment/infrastructure/mongo/comment.repository";
 import { STATUS_CODE } from "../../entity/enum/status.code";
-import { UserRepositorySql } from "../user/infrastructure/user.repository.sql";
+import { UserRepositorySql } from "../user/infrastructure/sql/user.repository.sql";
 import { BlogRepositorySql } from "../blog/infrastructure/sql/blog.repository.sql";
 import { PostRepositorySql } from "../post/infrastructure/sql/post.repository.sql";
 

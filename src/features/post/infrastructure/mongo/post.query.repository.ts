@@ -7,7 +7,7 @@ import { QUERY_PARAM } from "../../../../entity/enum/query.param.enum";
 import { PostViewType } from "../../models/post.view.type";
 import { PostLike, PostLikeDocument } from "../../domain/mongoose/post.like.schema";
 import { BlogQueryRepository } from "src/features/blog/infrastructure/mongo/blog.query.repository";
-import { UserQueryRepository } from "src/features/user/infrastructure/user.query.repository";
+import { UserQueryRepository } from "src/features/user/infrastructure/mongo/user.query.repository";
 
 
 @Injectable()

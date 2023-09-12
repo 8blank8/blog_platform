@@ -1,0 +1,70 @@
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Users } from "../../domain/typeorm/user.entity";
+import { Brackets, Repository } from "typeorm";
+import { UserViewSqlModel } from "../models/queryRepositorySql/user.view.sql.model";
+import { UserViewForSaModel } from "../models/queryRepositorySql/users.view.for.sa.model";
+import { UserQueryParamType } from "../../models/user.query.param.type";
+import { QUERY_PARAM } from "../../../../entity/enum/query.param.enum";
+import { QUERY_PARAM_SQL } from "../../../../entity/enum/query.param.enum.sql";
+
+
+
+@Injectable()
+export class UserQueryRepositoryTypeorm {
+    constructor(@InjectRepository(Users) private userQueryRepository: Repository<Users>) { }
+
+    async findUserByLoginOrEmail(loginOrEmail: string): Promise<UserViewSqlModel | null> {
+        const user = await this.userQueryRepository.createQueryBuilder('u')
+            .where("u.email ilike :email", { email: loginOrEmail })
+            .orWhere('u.login ilike :login', { login: loginOrEmail })
+            .getOne()
+
+        return user
+    }
+
+    async findUserByIdForSa(userId: string): Promise<UserViewForSaModel | null> {
+        const user = await this.userQueryRepository.createQueryBuilder('u')
+            .where('u.id = :userId', { userId: userId })
+            .getOne()
+
+        return user
+    }
+
+    async findAllUsers(queryParam: UserQueryParamType) {
+
+        const sortDirection = queryParam.sortDirection === 'asc' ? QUERY_PARAM_SQL.SORT_DIRECTION_ASC : QUERY_PARAM_SQL.SORT_DIRECTION_DESC
+        const searchLoginTerm = queryParam.searchLoginTerm !== undefined ? `%${queryParam.searchLoginTerm}%` : `%${QUERY_PARAM.SEARCH_NAME_TERM}%`
+        const searchEmailTerm = queryParam.searchEmailTerm !== undefined ? `%${queryParam.searchEmailTerm}%` : `%${QUERY_PARAM.SEARCH_NAME_TERM}%`
+        const sortBy = queryParam.sortBy !== undefined ? queryParam.sortBy : QUERY_PARAM.SORT_BY
+        const pageSize = queryParam.pageSize ?? QUERY_PARAM.PAGE_SIZE
+        const offset = queryParam.pageNumber !== undefined ? ((queryParam.pageNumber - 1) * pageSize) : ((QUERY_PARAM.PAGE_NUMBER - 1) * pageSize)
+        const pageNumber = queryParam.pageNumber ?? QUERY_PARAM.PAGE_NUMBER
+
+        const queryBuilderUser = this.userQueryRepository.createQueryBuilder('u')
+        const queryBuilderTotalCount = this.userQueryRepository.createQueryBuilder('u')
+
+        const totalCount = await queryBuilderTotalCount
+            .where('u.login ILIKE :searchLoginTerm', { searchLoginTerm })
+            .orWhere('u.email ILIKE :searchEmailTerm', { searchEmailTerm })
+            .getCount()
+
+
+        const users = await queryBuilderUser
+            .where('u.login ILIKE :searchLoginTerm OR u.email ILIKE :searchEmailTerm', { searchLoginTerm, searchEmailTerm })
+            .orderBy(`"${sortBy}"`, `${sortDirection}`)
+            .offset(+offset)
+            .limit(+pageSize)
+            .getMany()
+
+
+        return {
+            pagesCount: Math.ceil(totalCount / pageSize),
+            page: +pageNumber,
+            pageSize: +pageSize,
+            totalCount: +totalCount,
+            items: users
+        }
+
+    }
+}

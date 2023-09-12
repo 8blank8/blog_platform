@@ -20,8 +20,8 @@ import { PostRepository } from './features/post/infrastructure/mongo/post.reposi
 
 import { UserController } from './features/user/api/user.controller';
 import { UserService } from './features/user/application/user.service';
-import { UserRepository } from './features/user/infrastructure/user.repository';
-import { UserQueryRepository } from './features/user/infrastructure/user.query.repository';
+import { UserRepository } from './features/user/infrastructure/mongo/user.repository';
+import { UserQueryRepository } from './features/user/infrastructure/mongo/user.query.repository';
 
 import { TestingController } from './features/testing/testing.controller';
 import { User, UserSchema } from './features/user/domain/mongoose/user.schema';
@@ -145,8 +145,8 @@ import { BanUserForBlogUseCase } from './features/blog/application/useCases/ban.
 import { UserBanBlogQueryRepository } from './features/blog/infrastructure/mongo/user.ban.blog.query.repository';
 import { BlogBanUseCase } from './features/sa/application/useCases/blog.ban.use.case';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserQueryRepositorySql } from './features/user/infrastructure/user.query.repository.sql';
-import { UserRepositorySql } from './features/user/infrastructure/user.repository.sql';
+import { UserQueryRepositorySql } from './features/user/infrastructure/sql/user.query.repository.sql';
+import { UserRepositorySql } from './features/user/infrastructure/sql/user.repository.sql';
 import { SecurityQueryRepositorySql } from './features/security/infrastructure/security.query.repository.sql';
 import { SecurityRepositorySql } from './features/security/infrastructure/security.repository.sql';
 import { AuthRepositorySql } from './features/auth/infrastructure/auth.repository.sql';
@@ -168,6 +168,8 @@ import { PostCommentLike } from './features/comment/domain/typeorm/comment.like.
 import { Devices } from './features/security/domain/typeorm/devices.entity';
 import { UsersConfirmationEmail } from './features/user/domain/typeorm/user.confirmation.email.entity';
 import { UsersPassword } from './features/user/domain/typeorm/user.password.entity';
+import { UserRepositoryTypeorm } from './features/user/infrastructure/typeorm/user.repository.typeorm';
+import { UserQueryRepositoryTypeorm } from './features/user/infrastructure/typeorm/user.query.repository.typeorm';
 const saUseCase = [
   BindUserForBlogUseCase, BannedUserUseCase
 ]
@@ -183,16 +185,16 @@ const saUseCase = [
       port: 5432,
       username: 'blank',
       password: 'blank',
-      database: 'BlogPlatform',
+      database: 'Blog_Platform',
       entities: [],
       autoLoadEntities: true,
       synchronize: true,
     }),
-    // TypeOrmModule.forFeature([
-    //   BlackListRefreshToken, Users, Blogs, Posts, PostLikes,
-    //   PostComments, PostCommentLike, Devices, UsersConfirmationEmail,
-    //   UsersPassword
-    // ]),
+    TypeOrmModule.forFeature([
+      BlackListRefreshToken, Users, Blogs, Posts, PostLikes,
+      PostComments, PostCommentLike, Devices, UsersConfirmationEmail,
+      UsersPassword
+    ]),
     MongooseModule.forRoot(setting_env.MONGO_URL),
     MongooseModule.forFeature([
       { name: Blog.name, schema: BlogSchema },
@@ -240,6 +242,8 @@ const saUseCase = [
     AuthRepositorySql, BlogRepositorySql, BlogQueryRepositorySql, PostRepositorySql,
     PostQueryRepositorySql, UserBanBlogQueryRepositorySql, UserBanBlogRepositorySql,
     CommentRepositorySql, CommentQueryRepositorySql,
+
+    UserRepositoryTypeorm, UserQueryRepositoryTypeorm,
     ...bloggerUseCase, ...commentUseCase, ...postUseCase, ...securityUseCase,
     ...userUseCase, ...authUseCase, ...saUseCase
   ],

@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { ValidatorConstraint, ValidatorConstraintInterface } from "class-validator";
 // import { UserQueryRepository } from "src/features/user/infrastructure/user.query.repository";
-import { UserQueryRepositorySql } from "../../features/user/infrastructure/user.query.repository.sql";
+import { UserQueryRepositorySql } from "../../features/user/infrastructure/sql/user.query.repository.sql";
 
 
 @ValidatorConstraint({ name: 'EmailCodeResend', async: true })

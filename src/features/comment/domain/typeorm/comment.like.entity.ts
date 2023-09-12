@@ -1,7 +1,7 @@
-import { Users } from "src/features/user/domain/typeorm/user.entity";
+import { Users } from "../../../../features/user/domain/typeorm/user.entity";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { PostComments } from "./comment.entitty";
-import { Posts } from "src/features/post/domain/typeorm/post.entity";
+import { Posts } from "../../../../features/post/domain/typeorm/post.entity";
 
 
 @Entity()

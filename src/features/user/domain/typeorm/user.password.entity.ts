@@ -14,7 +14,7 @@ export class UsersPassword {
     @Column({ nullable: false })
     passwordSalt: string
 
-    @ManyToOne(() => Users, user => user.id)
+    @ManyToOne(() => Users, user => user.id, { onDelete: "CASCADE" })
     user: Users
 
 }

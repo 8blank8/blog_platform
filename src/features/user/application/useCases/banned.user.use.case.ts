@@ -1,14 +1,14 @@
 import { CommandBus, CommandHandler } from "@nestjs/cqrs";
 import { UserBanModel } from "../../models/user.ban.model";
-import { UserQueryRepository } from "../../infrastructure/user.query.repository";
-import { UserRepository } from "../../infrastructure/user.repository";
+import { UserQueryRepository } from "../../infrastructure/mongo/user.query.repository";
+import { UserRepository } from "../../infrastructure/mongo/user.repository";
 import { DeleteDeviceForBannedCommand } from "src/features/security/application/useCases/delete.device.for.banned.use.case";
 import { UpdateBanPostCommand } from "src/features/post/application/useCases/update.ban.post.use.case";
 import { UpdateBanCommentCommand } from "src/features/comment/appication/useCases/update.ban.comment.use.case";
 import { UpdateBanCommentLikeStatusCommand } from "src/features/comment/appication/useCases/update.ban.comment.like.status.use.case";
 import { UpdateBanPostLikeStatusCommand } from "src/features/post/application/useCases/update.ban.post.like.status.use.case";
-import { UserQueryRepositorySql } from "../../infrastructure/user.query.repository.sql";
-import { UserRepositorySql } from "../../infrastructure/user.repository.sql";
+import { UserQueryRepositorySql } from "../../infrastructure/sql/user.query.repository.sql";
+import { UserRepositorySql } from "../../infrastructure/sql/user.repository.sql";
 import { UpdateBannedUserForSqlModel } from "../../infrastructure/models/repositorySql/update.banned.user.for.sql.model";
 
 

@@ -1,7 +1,7 @@
 import { CommandHandler } from "@nestjs/cqrs"
 import { BlogRepository } from "../../infrastructure/mongo/blog.repository"
 import { BlogCreateType } from "../../models/blog.create.type"
-import { UserQueryRepository } from "src/features/user/infrastructure/user.query.repository"
+import { UserQueryRepository } from "src/features/user/infrastructure/mongo/user.query.repository"
 import { BlogCreateSqlModel } from "../../infrastructure/sql/models/blog.create.sql.model"
 import { BlogRepositorySql } from "../../infrastructure/sql/blog.repository.sql"
 

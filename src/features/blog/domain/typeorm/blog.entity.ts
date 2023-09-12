@@ -1,4 +1,4 @@
-import { Posts } from "src/features/post/domain/typeorm/post.entity";
+import { Posts } from "../../../../features/post/domain/typeorm/post.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 

@@ -1,5 +1,5 @@
 import { PostComments } from "src/features/comment/domain/typeorm/comment.entitty";
-import { PostLikes } from "src/features/post/domain/typeorm/post.like.entity";
+import { PostLikes } from "../../../../features/post/domain/typeorm/post.like.entity";
 import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { UsersPassword } from "./user.password.entity";
 
@@ -18,6 +18,6 @@ export class Users {
     @Column('timestamp without time zone', { nullable: false, default: () => 'now()' })
     createdAt: string
 
-    @OneToMany(() => PostLikes, postLikes => postLikes.user)
+    @OneToMany(() => PostLikes, postLikes => postLikes.user, { onDelete: "CASCADE" })
     postLikes: PostLikes[]
 }

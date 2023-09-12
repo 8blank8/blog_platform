@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, Res, UseGuards } from "@nestjs/common";
 import { Response } from 'express';
 import { UserCreateType } from "../models/user.create.type";
-import { UserQueryRepository } from "../infrastructure/user.query.repository";
+import { UserQueryRepository } from "../infrastructure/mongo/user.query.repository";
 import { UserQueryParamType } from "../models/user.query.param.type";
 import { BasicAuthGuard } from "../../auth/guards/basic.guard";
 import { CommandBus } from "@nestjs/cqrs";
@@ -10,16 +10,17 @@ import { DeleteUserCommand } from "../application/useCases/delete.user.use.case"
 import { STATUS_CODE } from "../../../entity/enum/status.code";
 import { UserBanModel } from "../models/user.ban.model";
 import { BannedUserCommand } from "../application/useCases/banned.user.use.case";
-import { UserQueryRepositorySql } from "../infrastructure/user.query.repository.sql";
+import { UserQueryRepositorySql } from "../infrastructure/sql/user.query.repository.sql";
+import { UserQueryRepositoryTypeorm } from "../infrastructure/typeorm/user.query.repository.typeorm";
 
 
 @Controller('sa/users')
 export class UserController {
 
     constructor(
-        private userQueryRepository: UserQueryRepository,
+        // private userQueryRepository: UserQueryRepository,
         private commandBus: CommandBus,
-        private userQueryRepositorySql: UserQueryRepositorySql
+        private userQueryRepository: UserQueryRepositoryTypeorm
     ) { }
 
     @UseGuards(BasicAuthGuard)
@@ -28,7 +29,7 @@ export class UserController {
         @Body() inputData: UserCreateType
     ) {
         const userId: string = await this.commandBus.execute(new CreateUserCommand(inputData))
-        const user = await this.userQueryRepositorySql.findUserByIdForSa(userId)
+        const user = await this.userQueryRepository.findUserByIdForSa(userId)
 
         return user
     }
@@ -38,8 +39,8 @@ export class UserController {
     async getUsers(
         @Query() queryParam: UserQueryParamType
     ) {
-        // return await this.userQueryRepository.findAllUsers(queryParam)
-        return await this.userQueryRepositorySql.findAllUsersForSa(queryParam)
+        return await this.userQueryRepository.findAllUsers(queryParam)
+        // return await this.userQueryRepository.findAllUsersForSa(queryParam)
     }
 
     @UseGuards(BasicAuthGuard)

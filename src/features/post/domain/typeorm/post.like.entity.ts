@@ -1,4 +1,4 @@
-import { Users } from "src/features/user/domain/typeorm/user.entity";
+import { Users } from "../../../../features/user/domain/typeorm/user.entity";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Posts } from "./post.entity";
 
