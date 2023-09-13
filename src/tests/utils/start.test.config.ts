@@ -5,13 +5,21 @@ import cookieParser from 'cookie-parser'
 import { useContainer } from 'class-validator'
 import { AppModule } from '../../app.module';
 import { HttpExceptionFilter } from '../../exception.filter';
+import { EmailManager } from '../../entity/managers/email.manager';
 
 export const startTestConfig = async () => {
     let app: INestApplication;
 
     const moduleRef = await Test.createTestingModule({
         imports: [AppModule],
-    }).compile()
+    })
+        .overrideProvider(EmailManager)
+        .useValue({
+            sendEmailConfirmationMessage: () => {
+                console.log('email manages ');
+            }
+        })
+        .compile()
 
     app = moduleRef.createNestApplication();
     app.use(cookieParser())

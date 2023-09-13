@@ -6,6 +6,10 @@ import { EmailManager } from "../../../../entity/managers/email.manager";
 import { UserRepositorySql } from "../../infrastructure/sql/user.repository.sql";
 import { CreateUserForRegistrationSqlModel } from "../../infrastructure/models/repositorySql/create.user.for.registration.sql.model";
 import bcrypt from 'bcrypt'
+import { UserRepositoryTypeorm } from "../../infrastructure/typeorm/user.repository.typeorm";
+import { Users } from "../../domain/typeorm/user.entity";
+import { UsersPassword } from "../../domain/typeorm/user.password.entity";
+import { UsersConfirmationEmail } from "../../domain/typeorm/user.confirmation.email.entity";
 
 
 export class RegistrationUserCommand {
@@ -18,7 +22,7 @@ export class RegistrationUserCommand {
 export class RegistrationUserUseCase {
     constructor(
         // private userRepository: UserRepository,
-        private userRepositorySql: UserRepositorySql,
+        private userRepository: UserRepositoryTypeorm,
         private emailManager: EmailManager
     ) { }
 
@@ -31,16 +35,35 @@ export class RegistrationUserUseCase {
 
         const confirmationCode: string = uuidv4()
 
-        const createdUser: CreateUserForRegistrationSqlModel = {
-            login: user.login,
-            email: user.email,
-            createdAt: new Date().toISOString(),
-            passwordHash: passwordHash,
-            passwordSalt: passwordSalt,
-            confirmationCode: confirmationCode
-        }
+        // const createdUser: CreateUserForRegistrationSqlModel = {
+        //     login: user.login,
+        //     email: user.email,
+        //     createdAt: new Date().toISOString(),
+        //     passwordHash: passwordHash,
+        //     passwordSalt: passwordSalt,
+        //     confirmationCode: confirmationCode
+        // }
 
-        await this.userRepositorySql.createUserForRegistration(createdUser)
+        const createdUser = new Users()
+        createdUser.login = user.login
+        createdUser.email = user.email
+
+        const createdUserPassword = new UsersPassword()
+        createdUserPassword.passwordHash = passwordHash
+        createdUserPassword.passwordSalt = passwordSalt
+        createdUserPassword.user = createdUser
+
+        const createdConfirmationEmail = new UsersConfirmationEmail()
+        createdConfirmationEmail.isConfirmed = false
+        createdConfirmationEmail.code = confirmationCode
+        createdConfirmationEmail.user = createdUser
+
+        await this.userRepository.saveUser(createdUser)
+        await this.userRepository.saveUserConfirmation(createdConfirmationEmail)
+        await this.userRepository.saveUserPassword(createdUserPassword)
+
+
+        // await this.userRepositorySql.createUserForRegistration(createdUser)
         this.emailManager.sendEmailConfirmationMessage(user.email, confirmationCode)
 
         return true

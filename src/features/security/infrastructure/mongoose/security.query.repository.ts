@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Device, DeviceDocument } from "../domain/mongoose/device.schema";
+import { Device, DeviceDocument } from "../../domain/mongoose/device.schema";
 import { Model } from "mongoose";
-import { DeviceViewType } from "../models/device.view.type";
+import { DeviceViewType } from "../../models/device.view.type";
 
 
 @Injectable()

@@ -32,26 +32,48 @@ describe('auth', () => {
     })
 
     const user1 = createUserDto(1)
-    it('registration user 201', async () => {
+    it('registration user 204', async () => {
 
         await request(app.getHttpServer())
             .post('/auth/registration')
             .send(user1)
-            .expect(201)
+            .expect(204)
     })
 
-    it('login user invalid login 400', async () => {
+    it('email-resending invalid email', async () => {
+        await request(app.getHttpServer())
+            .post('/auth/registration-email-resending')
+            .send({ email: 'asda' })
+            .expect(400)
+    })
+
+    it('email-resending no content', async () => {
+
+        const user2 = createUserDto(2)
+
+        await request(app.getHttpServer())
+            .post('/auth/registration')
+            .send(user2)
+            .expect(204)
+
+        await request(app.getHttpServer())
+            .post('/auth/registration-email-resending')
+            .send({ email: user2.email })
+            .expect(204)
+    })
+
+    it('login user invalid login 401', async () => {
         await request(app.getHttpServer())
             .post('/auth/login')
             .send({ loginOrEmail: '', password: user1.password })
-            .expect(400)
+            .expect(401)
     })
 
-    it('login user invalid password 400', async () => {
+    it('login user invalid password 401', async () => {
         await request(app.getHttpServer())
             .post('/auth/login')
             .send({ loginOrEmail: user1.login, password: '' })
-            .expect(400)
+            .expect(401)
     })
 
     it('login user ok', async () => {

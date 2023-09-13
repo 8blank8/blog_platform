@@ -7,25 +7,46 @@ import { UserViewForSaModel } from "../models/queryRepositorySql/users.view.for.
 import { UserQueryParamType } from "../../models/user.query.param.type";
 import { QUERY_PARAM } from "../../../../entity/enum/query.param.enum";
 import { QUERY_PARAM_SQL } from "../../../../entity/enum/query.param.enum.sql";
+import { UsersConfirmationEmail } from "../../domain/typeorm/user.confirmation.email.entity";
 
 
 
 @Injectable()
 export class UserQueryRepositoryTypeorm {
-    constructor(@InjectRepository(Users) private userQueryRepository: Repository<Users>) { }
+    constructor(
+        @InjectRepository(Users) private userQueryRepository: Repository<Users>,
+        @InjectRepository(UsersConfirmationEmail) private userConfirmationEmailRepository: Repository<UsersConfirmationEmail>,
+    ) { }
 
-    async findUserByLoginOrEmail(loginOrEmail: string): Promise<UserViewSqlModel | null> {
+    async findUserByLoginOrEmail(loginOrEmail: string): Promise<Users | null> {
         const user = await this.userQueryRepository.createQueryBuilder('u')
             .where("u.email ilike :email", { email: loginOrEmail })
             .orWhere('u.login ilike :login', { login: loginOrEmail })
+            .leftJoinAndSelect('u.password', 'p')
             .getOne()
 
         return user
     }
 
-    async findUserByIdForSa(userId: string): Promise<UserViewForSaModel | null> {
+    async findUserByIdForSa(userId: string): Promise<Users | null> {
         const user = await this.userQueryRepository.createQueryBuilder('u')
             .where('u.id = :userId', { userId: userId })
+            .getOne()
+
+        return user
+    }
+
+    async findUserByEmailWithConfirmationEmail(email: string): Promise<Users | null> {
+        const user = await this.userQueryRepository.createQueryBuilder('u')
+            .where('email = :email', { email })
+            .leftJoinAndSelect('u.confirmationInfo', 'ci')
+            .getOne()
+        return user
+    }
+
+    async findConfirmationCodeUser(code: string): Promise<UsersConfirmationEmail | null> {
+        const user = await this.userConfirmationEmailRepository.createQueryBuilder('c')
+            .where('code = :code', { code })
             .getOne()
 
         return user
@@ -52,7 +73,7 @@ export class UserQueryRepositoryTypeorm {
 
         const users = await queryBuilderUser
             .where('u.login ILIKE :searchLoginTerm OR u.email ILIKE :searchEmailTerm', { searchLoginTerm, searchEmailTerm })
-            .orderBy(`"${sortBy}"`, `${sortDirection}`)
+            .orderBy(`"${sortBy}" ${sortBy === 'createdAt' ? '' : 'COLLATE "C"'}`, `${sortDirection}`)
             .offset(+offset)
             .limit(+pageSize)
             .getMany()

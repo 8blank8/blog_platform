@@ -1,6 +1,6 @@
 import { CommandHandler } from "@nestjs/cqrs";
-import { SecurityRepository } from "../../infrastructure/security.repository";
-import { SecurityRepositorySql } from "../../infrastructure/security.repository.sql";
+import { SecurityRepository } from "../../infrastructure/mongoose/security.repository";
+import { SecurityRepositorySql } from "../../infrastructure/sql/security.repository.sql";
 
 
 export class DeleteAllDevicesCommand {

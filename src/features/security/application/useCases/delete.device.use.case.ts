@@ -1,9 +1,9 @@
 import { CommandHandler } from "@nestjs/cqrs";
-import { SecurityRepository } from "../../infrastructure/security.repository";
-import { SecurityQueryRepository } from "../../infrastructure/security.query.repository";
+import { SecurityRepository } from "../../infrastructure/mongoose/security.repository";
+import { SecurityQueryRepository } from "../../infrastructure/mongoose/security.query.repository";
 import { ForbiddenException } from "@nestjs/common";
-import { SecurityQueryRepositorySql } from "../../infrastructure/security.query.repository.sql";
-import { SecurityRepositorySql } from "../../infrastructure/security.repository.sql";
+import { SecurityQueryRepositorySql } from "../../infrastructure/sql/security.query.repository.sql";
+import { SecurityRepositorySql } from "../../infrastructure/sql/security.repository.sql";
 
 
 export class DeleteDeviceCommand {

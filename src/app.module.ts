@@ -53,9 +53,9 @@ import { IsNotBlank } from './entity/custom-validation/is.not.blank';
 import { LikeStatus } from './entity/custom-validation/like.status';
 import { Device, DeviceSchema } from './features/security/domain/mongoose/device.schema';
 import { SecurityController } from './features/security/api/security.controller';
-import { SecurityQueryRepository } from './features/security/infrastructure/security.query.repository';
+import { SecurityQueryRepository } from './features/security/infrastructure/mongoose/security.query.repository';
 import { SecurityService } from './features/security/application/security.service';
-import { SecurityRepository } from './features/security/infrastructure/security.repository';
+import { SecurityRepository } from './features/security/infrastructure/mongoose/security.repository';
 import { JwtRefreshTokenStrategy } from './features/auth/strategies/jwt.refresh.token.straregy';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { setting_env } from './setting.env';
@@ -147,8 +147,8 @@ import { BlogBanUseCase } from './features/sa/application/useCases/blog.ban.use.
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserQueryRepositorySql } from './features/user/infrastructure/sql/user.query.repository.sql';
 import { UserRepositorySql } from './features/user/infrastructure/sql/user.repository.sql';
-import { SecurityQueryRepositorySql } from './features/security/infrastructure/security.query.repository.sql';
-import { SecurityRepositorySql } from './features/security/infrastructure/security.repository.sql';
+import { SecurityQueryRepositorySql } from './features/security/infrastructure/sql/security.query.repository.sql';
+import { SecurityRepositorySql } from './features/security/infrastructure/sql/security.repository.sql';
 import { AuthRepositorySql } from './features/auth/infrastructure/auth.repository.sql';
 import { BlogRepositorySql } from './features/blog/infrastructure/sql/blog.repository.sql';
 import { BlogQueryRepositorySql } from './features/blog/infrastructure/sql/blog.query.repository.sql';
@@ -170,6 +170,8 @@ import { UsersConfirmationEmail } from './features/user/domain/typeorm/user.conf
 import { UsersPassword } from './features/user/domain/typeorm/user.password.entity';
 import { UserRepositoryTypeorm } from './features/user/infrastructure/typeorm/user.repository.typeorm';
 import { UserQueryRepositoryTypeorm } from './features/user/infrastructure/typeorm/user.query.repository.typeorm';
+import { SecurityRepositoryTypeorm } from './features/security/infrastructure/typeorm/security.repository.typeorm';
+import { SecurityQueryRepositoryTypeorm } from './features/security/infrastructure/typeorm/secutity.query.repository.typeorm';
 const saUseCase = [
   BindUserForBlogUseCase, BannedUserUseCase
 ]
@@ -243,7 +245,7 @@ const saUseCase = [
     PostQueryRepositorySql, UserBanBlogQueryRepositorySql, UserBanBlogRepositorySql,
     CommentRepositorySql, CommentQueryRepositorySql,
 
-    UserRepositoryTypeorm, UserQueryRepositoryTypeorm,
+    UserRepositoryTypeorm, UserQueryRepositoryTypeorm, SecurityRepositoryTypeorm, SecurityQueryRepositoryTypeorm,
     ...bloggerUseCase, ...commentUseCase, ...postUseCase, ...securityUseCase,
     ...userUseCase, ...authUseCase, ...saUseCase
   ],

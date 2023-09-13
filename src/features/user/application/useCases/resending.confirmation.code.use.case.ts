@@ -6,6 +6,8 @@ import { v4 as uuidv4 } from 'uuid'
 import { EmailManager } from "../../../../entity/managers/email.manager";
 import { UserQueryRepositorySql } from "../../infrastructure/sql/user.query.repository.sql";
 import { UserRepositorySql } from "../../infrastructure/sql/user.repository.sql";
+import { UserRepositoryTypeorm } from "../../infrastructure/typeorm/user.repository.typeorm";
+import { UserQueryRepositoryTypeorm } from "../../infrastructure/typeorm/user.query.repository.typeorm";
 
 
 export class ResendingConfirmationCodeCommand {
@@ -19,8 +21,8 @@ export class ResendingConfirmationCodeUseCase {
     constructor(
         // private userRepository: UserRepository,
         // private userQueryRepository: UserQueryRepository,
-        private userRepositorySql: UserRepositorySql,
-        private userQueryRepositorySql: UserQueryRepositorySql,
+        private userRepository: UserRepositoryTypeorm,
+        private userQueryRepository: UserQueryRepositoryTypeorm,
         private emailManager: EmailManager
     ) { }
 
@@ -28,12 +30,19 @@ export class ResendingConfirmationCodeUseCase {
 
         const { email } = command
 
-        const user = await this.userQueryRepositorySql.findUserByEmailWithConfirmationEmail(email.email)
-        if (!user || user.isConfirmed === true) return false
+        const user = await this.userQueryRepository.findUserByEmailWithConfirmationEmail(email.email)
+        if (!user || user.confirmationInfo.isConfirmed === true) return false
 
         const confirmationCode = uuidv4()
+        // TODO: обновить код в базе
+        // await this.userRepositorySql.updateConfirmationCode(user.id, confirmationCode)
 
-        await this.userRepositorySql.updateConfirmationCode(user.id, confirmationCode)
+        const userConfirmation = await this.userQueryRepository.findConfirmationCodeUser(user.confirmationInfo.code)
+        if (!userConfirmation) return false
+
+        userConfirmation.code = confirmationCode
+        await this.userRepository.saveUserConfirmation(userConfirmation)
+
         // user.addConfirmationCode(confirmationCode)
         this.emailManager.sendEmailConfirmationMessage(user.email, confirmationCode)
 
