@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectDataSource } from "@nestjs/typeorm";
 import { DataSource } from "typeorm";
-import { AuthRefershTokenViewSqlModel } from "./models/repositorySql/auth.refresh.token.view.sql.model";
+import { AuthRefershTokenViewSqlModel } from "../models/repositorySql/auth.refresh.token.view.sql.model";
 
 
 @Injectable()

@@ -5,7 +5,8 @@ import { Request } from 'express';
 // import { AuthQueryRepository } from '../infrastructure/auth.query.repository';
 // import { AuthRepository } from '../infrastructure/auth.repository';
 import { setting_env } from '../../../setting.env';
-import { AuthRepositorySql } from '../infrastructure/auth.repository.sql';
+import { AuthRepositorySql } from '../infrastructure/sql/auth.repository.sql';
+import { AuthRepositoryTypeorm } from '../infrastructure/typeorm/auth.repository.typeorm';
 
 
 @Injectable()
@@ -17,7 +18,7 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(
     constructor(
         // private readonly authQueryRepository: AuthQueryRepository,
         // private readonly authRepository: AuthRepository
-        private authRepositorySql: AuthRepositorySql
+        private authRepository: AuthRepositoryTypeorm
     ) {
         super({
             jwtFromRequest: ExtractJwt.fromExtractors([(req: Request) => {
@@ -37,7 +38,7 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(
 
         const refreshToken = req.cookies.refreshToken
 
-        const isToken = await this.authRepositorySql.findRefreshTokenInBlackList(refreshToken)
+        const isToken = await this.authRepository.findRefreshTokenInBlackList(refreshToken)
         if (!isToken) {
             return { userId: payload.userId, deviceId: payload.deviceId };
         }

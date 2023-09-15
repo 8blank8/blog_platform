@@ -1,8 +1,11 @@
 import { CommandHandler } from "@nestjs/cqrs";
 // import { AuthRepository } from "../../infrastructure/auth.repository";
 // import { SecurityRepository } from "src/features/security/infrastructure/security.repository";
-import { AuthRepositorySql } from "../../infrastructure/auth.repository.sql";
+import { AuthRepositorySql } from "../../infrastructure/sql/auth.repository.sql";
 import { SecurityRepositorySql } from "../../../security/infrastructure/sql/security.repository.sql";
+import { AuthRepositoryTypeorm } from "../../infrastructure/typeorm/auth.repository.typeorm";
+import { SecurityRepositoryTypeorm } from "../../../../features/security/infrastructure/typeorm/security.repository.typeorm";
+import { BlackListRefreshToken } from "../../domain/typeorm/auth.entity";
 
 
 export class AddRefreshTokenInBlackListCommand {
@@ -16,8 +19,8 @@ export class AddRefreshTokenInBlackListCommand {
 export class AddRefreshTokenInBlackListUseCase {
     constructor(
         // private authRepository: AuthRepository,
-        private authRepositorySql: AuthRepositorySql,
-        private securityRepositorySql: SecurityRepositorySql,
+        private authRepository: AuthRepositoryTypeorm,
+        private securityRepository: SecurityRepositoryTypeorm,
         // private securityRepository: SecurityRepository
     ) { }
 
@@ -25,10 +28,13 @@ export class AddRefreshTokenInBlackListUseCase {
 
         const { refreshToken, deviceId } = command
 
-        await this.authRepositorySql.postRefreshTokenInBlackList(refreshToken)
+        const createdRefreshToken = new BlackListRefreshToken()
+        createdRefreshToken.refreshToken = refreshToken
+
+        await this.authRepository.saveToken(createdRefreshToken)
 
         if (deviceId) {
-            const isDeleteDevice = await this.securityRepositorySql.deleteDeviceById(deviceId)
+            const isDeleteDevice = await this.securityRepository.deleteDeviceById(deviceId)
             return isDeleteDevice
         }
 

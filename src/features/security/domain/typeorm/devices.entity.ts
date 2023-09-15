@@ -14,7 +14,7 @@ export class Devices {
     @Column({ nullable: false })
     ip: string
 
-    @Column({ nullable: true })
+    @Column({ nullable: false, default: '' })
     title: string
 
     @ManyToOne(() => Users, user => user.id)

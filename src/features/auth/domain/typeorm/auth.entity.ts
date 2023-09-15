@@ -7,5 +7,5 @@ export class BlackListRefreshToken {
     Id: string
 
     @Column()
-    RefreshToken: string
+    refreshToken: string
 }

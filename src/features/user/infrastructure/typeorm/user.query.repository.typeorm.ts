@@ -52,6 +52,16 @@ export class UserQueryRepositoryTypeorm {
         return user
     }
 
+    async findMe(userId: string) {
+        const user = await this.userQueryRepository.createQueryBuilder('u')
+            .where('id = :userId', { userId })
+            .getOne()
+
+        if (!user) return null
+
+        return this._mapUserViewByMe(user)
+    }
+
     async findAllUsers(queryParam: UserQueryParamType) {
 
         const sortDirection = queryParam.sortDirection === 'asc' ? QUERY_PARAM_SQL.SORT_DIRECTION_ASC : QUERY_PARAM_SQL.SORT_DIRECTION_DESC
@@ -87,5 +97,13 @@ export class UserQueryRepositoryTypeorm {
             items: users
         }
 
+    }
+
+    private _mapUserViewByMe(user: Users) {
+        return {
+            userId: user.id,
+            login: user.login,
+            email: user.email
+        }
     }
 }

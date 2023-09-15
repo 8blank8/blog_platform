@@ -8,6 +8,7 @@ import { CommandBus } from "@nestjs/cqrs";
 import { DeleteDeviceCommand } from "../application/useCases/delete.device.use.case";
 import { DeleteAllDevicesCommand } from "../application/useCases/delete.all.device.use.case";
 import { SecurityQueryRepositorySql } from "../infrastructure/sql/security.query.repository.sql";
+import { SecurityQueryRepositoryTypeorm } from "../infrastructure/typeorm/secutity.query.repository.typeorm";
 
 
 
@@ -16,7 +17,7 @@ export class SecurityController {
 
     constructor(
         // private readonly securityQueryRepository: SecurityQueryRepository,
-        private securityQueryRepositorySql: SecurityQueryRepositorySql,
+        private securityQueryRepository: SecurityQueryRepositoryTypeorm,
         private securityService: SecurityService,
         private commandBus: CommandBus
     ) { }
@@ -26,7 +27,7 @@ export class SecurityController {
     async findDevices(
         @Request() req
     ) {
-        const devices = this.securityQueryRepositorySql.findDevicesUserByUserId(req.user.userId)
+        const devices = this.securityQueryRepository.findDevicesUserByUserId(req.user.userId)
         return devices
     }
 

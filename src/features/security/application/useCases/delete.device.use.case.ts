@@ -4,6 +4,8 @@ import { SecurityQueryRepository } from "../../infrastructure/mongoose/security.
 import { ForbiddenException } from "@nestjs/common";
 import { SecurityQueryRepositorySql } from "../../infrastructure/sql/security.query.repository.sql";
 import { SecurityRepositorySql } from "../../infrastructure/sql/security.repository.sql";
+import { SecurityRepositoryTypeorm } from "../../infrastructure/typeorm/security.repository.typeorm";
+import { SecurityQueryRepositoryTypeorm } from "../../infrastructure/typeorm/secutity.query.repository.typeorm";
 
 
 export class DeleteDeviceCommand {
@@ -18,19 +20,21 @@ export class DeleteDeviceUseCase {
     constructor(
         // private securityRepository: SecurityRepository,
         // private securityQueryRepository: SecurityQueryRepository
-        private securityRepositorySql: SecurityRepositorySql,
-        private securityQueryRepositorySql: SecurityQueryRepositorySql
+        private securityRepository: SecurityRepositoryTypeorm,
+        private securityQueryRepository: SecurityQueryRepositoryTypeorm
     ) { }
 
     async execute(command: DeleteDeviceCommand): Promise<boolean> {
 
         const { deviceId, userId } = command
 
-        const device = await this.securityQueryRepositorySql.findDeviceById(deviceId)
+        const device = await this.securityQueryRepository.findDeviceById(deviceId)
         if (!device) return false
 
-        if (device.userId !== userId) throw new ForbiddenException()
+        if (device.user.id !== userId) throw new ForbiddenException()
 
-        return await this.securityRepositorySql.deleteDeviceById(device.id)
+        await this.securityRepository.deleteDeviceById(device.id)
+
+        return true
     }
 }

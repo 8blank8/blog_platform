@@ -21,13 +21,14 @@ import { LoginUserCommand } from "../application/useCases/login.user.use.case";
 import { CreateRefreshTokenCommand } from "../application/useCases/create.refresh.token.use.case";
 import { AddRefreshTokenInBlackListCommand } from "../application/useCases/add.refresh.token.in.black.list.use.case";
 import { UserQueryRepositorySql } from "../../user/infrastructure/sql/user.query.repository.sql";
+import { UserQueryRepositoryTypeorm } from "../../../features/user/infrastructure/typeorm/user.query.repository.typeorm";
 
 @Controller('/auth')
 export class AuthController {
     constructor(
         private readonly authService: AuthService,
         // private readonly userQueryRepository: UserQueryRepository,
-        private userQueryRepositorySql: UserQueryRepositorySql,
+        private userQueryRepository: UserQueryRepositoryTypeorm,
         private readonly userService: UserService,
         private readonly securityService: SecurityService,
         private commandBus: CommandBus
@@ -55,7 +56,7 @@ export class AuthController {
     async getMe(
         @Request() req,
     ) {
-        const user = await this.userQueryRepositorySql.findMe(req.user)
+        const user = await this.userQueryRepository.findMe(req.user)
         return user
     }
 

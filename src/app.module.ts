@@ -60,8 +60,8 @@ import { JwtRefreshTokenStrategy } from './features/auth/strategies/jwt.refresh.
 import { ThrottlerModule } from '@nestjs/throttler';
 import { setting_env } from './setting.env';
 import { Auth, AuthSchema } from './features/auth/domain/mongoose/auth.schema';
-import { AuthRepository } from './features/auth/infrastructure/auth.repository';
-import { AuthQueryRepository } from './features/auth/infrastructure/auth.query.repository';
+import { AuthRepository } from './features/auth/infrastructure/mongoose/auth.repository';
+import { AuthQueryRepository } from './features/auth/infrastructure/mongoose/auth.query.repository';
 
 import { CqrsModule } from '@nestjs/cqrs/dist';
 
@@ -149,7 +149,7 @@ import { UserQueryRepositorySql } from './features/user/infrastructure/sql/user.
 import { UserRepositorySql } from './features/user/infrastructure/sql/user.repository.sql';
 import { SecurityQueryRepositorySql } from './features/security/infrastructure/sql/security.query.repository.sql';
 import { SecurityRepositorySql } from './features/security/infrastructure/sql/security.repository.sql';
-import { AuthRepositorySql } from './features/auth/infrastructure/auth.repository.sql';
+import { AuthRepositorySql } from './features/auth/infrastructure/sql/auth.repository.sql';
 import { BlogRepositorySql } from './features/blog/infrastructure/sql/blog.repository.sql';
 import { BlogQueryRepositorySql } from './features/blog/infrastructure/sql/blog.query.repository.sql';
 import { PostRepositorySql } from './features/post/infrastructure/sql/post.repository.sql';
@@ -172,6 +172,7 @@ import { UserRepositoryTypeorm } from './features/user/infrastructure/typeorm/us
 import { UserQueryRepositoryTypeorm } from './features/user/infrastructure/typeorm/user.query.repository.typeorm';
 import { SecurityRepositoryTypeorm } from './features/security/infrastructure/typeorm/security.repository.typeorm';
 import { SecurityQueryRepositoryTypeorm } from './features/security/infrastructure/typeorm/secutity.query.repository.typeorm';
+import { AuthRepositoryTypeorm } from './features/auth/infrastructure/typeorm/auth.repository.typeorm';
 const saUseCase = [
   BindUserForBlogUseCase, BannedUserUseCase
 ]
@@ -246,6 +247,7 @@ const saUseCase = [
     CommentRepositorySql, CommentQueryRepositorySql,
 
     UserRepositoryTypeorm, UserQueryRepositoryTypeorm, SecurityRepositoryTypeorm, SecurityQueryRepositoryTypeorm,
+    AuthRepositoryTypeorm,
     ...bloggerUseCase, ...commentUseCase, ...postUseCase, ...securityUseCase,
     ...userUseCase, ...authUseCase, ...saUseCase
   ],
