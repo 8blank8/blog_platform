@@ -44,15 +44,15 @@ export class UserQueryRepository {
 
         console.log(filter)
         const users = await this.userModel.find(filter)
-            .skip((pageNumber - 1) * pageSize)
-            .limit(pageSize)
+            .skip((+pageNumber - 1) * +pageSize)
+            .limit(+pageSize)
             .sort({ [sortBy]: sortDirection })
             .exec()
 
         const totalCount = await this.userModel.countDocuments(filter)
 
         return {
-            pagesCount: Math.ceil(totalCount / pageSize),
+            pagesCount: Math.ceil(totalCount / +pageSize),
             page: +pageNumber,
             pageSize: +pageSize,
             totalCount: totalCount,

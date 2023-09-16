@@ -42,7 +42,7 @@ export const startTestConfig = async () => {
     app.useGlobalFilters(new HttpExceptionFilter())
     await app.init();
 
-    // dropDataBase(app)
+    dropDataBase(app)
 
     return app
 

@@ -144,7 +144,8 @@ import { BloggerUserController } from './features/blog/api/blogger.user.controll
 import { BanUserForBlogUseCase } from './features/blog/application/useCases/ban.user.for.blog.use.case';
 import { UserBanBlogQueryRepository } from './features/blog/infrastructure/mongo/user.ban.blog.query.repository';
 import { BlogBanUseCase } from './features/sa/application/useCases/blog.ban.use.case';
-import { TypeOrmModule } from '@nestjs/typeorm';
+// import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm'
 import { UserQueryRepositorySql } from './features/user/infrastructure/sql/user.query.repository.sql';
 import { UserRepositorySql } from './features/user/infrastructure/sql/user.repository.sql';
 import { SecurityQueryRepositorySql } from './features/security/infrastructure/sql/security.query.repository.sql';
@@ -188,8 +189,8 @@ const saUseCase = [
       type: 'postgres',
       host: 'localhost',
       port: 5432,
-      username: 'blank',
-      password: 'blank',
+      username: 'postgres',
+      password: 'postgres',
       database: 'Blog_Platform',
       entities: [],
       autoLoadEntities: true,
@@ -250,6 +251,8 @@ const saUseCase = [
 
     UserRepositoryTypeorm, UserQueryRepositoryTypeorm, SecurityRepositoryTypeorm, SecurityQueryRepositoryTypeorm,
     AuthRepositoryTypeorm, BlogRepositoryTypeorm, BlogQueryRepositoryTypeorm,
+
+
     ...bloggerUseCase, ...commentUseCase, ...postUseCase, ...securityUseCase,
     ...userUseCase, ...authUseCase, ...saUseCase
   ],

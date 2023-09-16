@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { startTestConfig } from '../utils/start.test.config';
+import { dropDataBase, startTestConfig } from '../utils/start.test.config';
 import { INestApplication } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid'
 import { createUserDto } from '../utils/create.user.dto';
@@ -12,7 +12,6 @@ describe('users', () => {
     beforeAll(async () => {
         app = await startTestConfig()
     });
-
 
     it('create user not validation email 400', async () => {
 

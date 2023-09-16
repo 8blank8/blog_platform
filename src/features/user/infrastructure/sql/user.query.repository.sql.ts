@@ -37,7 +37,7 @@ export class UserQueryRepositorySql {
             banStatus = QUERY_PARAM_SQL.BAN_STATUS_All
         } = queryParam
 
-        const page = (pageNumber - 1) * pageSize
+        const page = (+pageNumber - 1) * +pageSize
 
         if (sortBy) {
             const [first, ...last] = sortBy.split('')
@@ -74,7 +74,7 @@ export class UserQueryRepositorySql {
         `, [`%${searchLoginTerm}%`, `%${searchEmailTerm}%`])
 
         return {
-            pagesCount: Math.ceil(totalCount[0].count / pageSize),
+            pagesCount: Math.ceil(totalCount[0].count / +pageSize),
             page: +pageNumber,
             pageSize: +pageSize,
             totalCount: +totalCount[0].count,
