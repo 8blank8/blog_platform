@@ -42,7 +42,7 @@ export const startTestConfig = async () => {
     app.useGlobalFilters(new HttpExceptionFilter())
     await app.init();
 
-    dropDataBase(app)
+    // dropDataBase(app)
 
     return app
 
@@ -66,6 +66,6 @@ export const dropDataBase = async (app) => {
     END;
     $$ LANGUAGE plpgsql;
 
-    SELECT truncate_tables('blank');
+    SELECT truncate_tables('postgres');
     `)
 }

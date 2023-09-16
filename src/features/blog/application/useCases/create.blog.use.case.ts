@@ -4,6 +4,8 @@ import { BlogCreateType } from "../../models/blog.create.type"
 import { UserQueryRepository } from "src/features/user/infrastructure/mongo/user.query.repository"
 import { BlogCreateSqlModel } from "../../infrastructure/sql/models/blog.create.sql.model"
 import { BlogRepositorySql } from "../../infrastructure/sql/blog.repository.sql"
+import { Blogs } from "../../domain/typeorm/blog.entity"
+import { BlogRepositoryTypeorm } from "../../infrastructure/typeorm/blog.repository.typeorm"
 
 export class CreateBlogCommand {
     constructor(
@@ -15,7 +17,7 @@ export class CreateBlogCommand {
 export class CreateBlogUseCase {
     constructor(
         // private blogRepository: BlogRepository,
-        private blogRepositorySql: BlogRepositorySql,
+        private blogRepository: BlogRepositoryTypeorm,
         // private userQueryRepository: UserQueryRepository
     ) { }
 
@@ -28,12 +30,20 @@ export class CreateBlogUseCase {
         //     userId: userId
         // }
 
-        const blogId = await this.blogRepositorySql.createBlog(blog)
+        const createdBlog = new Blogs()
+        createdBlog.name = blog.name
+        createdBlog.description = blog.description
+        createdBlog.websiteUrl = blog.websiteUrl
+
+        await this.blogRepository.saveBlog(createdBlog)
+
+        // const blogId = await this.blogRepository.createBlog(blog)
+
         // newBlog.addId()
         // newBlog.addCreatedAt()
         // newBlog.setUserId(userId)
 
         // await this.blogRepository.save(newBlog)
-        return blogId
+        return createdBlog.id
     }
 }

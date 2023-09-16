@@ -173,6 +173,8 @@ import { UserQueryRepositoryTypeorm } from './features/user/infrastructure/typeo
 import { SecurityRepositoryTypeorm } from './features/security/infrastructure/typeorm/security.repository.typeorm';
 import { SecurityQueryRepositoryTypeorm } from './features/security/infrastructure/typeorm/secutity.query.repository.typeorm';
 import { AuthRepositoryTypeorm } from './features/auth/infrastructure/typeorm/auth.repository.typeorm';
+import { BlogRepositoryTypeorm } from './features/blog/infrastructure/typeorm/blog.repository.typeorm';
+import { BlogQueryRepositoryTypeorm } from './features/blog/infrastructure/typeorm/blog.query.repository.typeorm';
 const saUseCase = [
   BindUserForBlogUseCase, BannedUserUseCase
 ]
@@ -247,7 +249,7 @@ const saUseCase = [
     CommentRepositorySql, CommentQueryRepositorySql,
 
     UserRepositoryTypeorm, UserQueryRepositoryTypeorm, SecurityRepositoryTypeorm, SecurityQueryRepositoryTypeorm,
-    AuthRepositoryTypeorm,
+    AuthRepositoryTypeorm, BlogRepositoryTypeorm, BlogQueryRepositoryTypeorm,
     ...bloggerUseCase, ...commentUseCase, ...postUseCase, ...securityUseCase,
     ...userUseCase, ...authUseCase, ...saUseCase
   ],

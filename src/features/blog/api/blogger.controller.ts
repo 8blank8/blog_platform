@@ -22,6 +22,7 @@ import { CommentQueryParam } from "../../../features/comment/models/comment.quer
 import { BlogQueryRepositorySql } from "../infrastructure/sql/blog.query.repository.sql";
 import { PostQueryRepositorySql } from "../../../features/post/infrastructure/sql/post.query.repository.sql";
 import { BasicAuthGuard } from "../../../features/auth/guards/basic.guard";
+import { BlogQueryRepositoryTypeorm } from "../infrastructure/typeorm/blog.query.repository.typeorm";
 
 
 @Controller('sa/blogs')
@@ -30,6 +31,7 @@ export class BloggerController {
         private commandBus: CommandBus,
         // private blogQueryRepository: BlogQueryRepository,
         private postQueryRepository: PostQueryRepository,
+        private blogQueryRepository: BlogQueryRepositoryTypeorm,
         private commentQueryRepository: CommentQueryRepository,
         private blogQueryRepositorySql: BlogQueryRepositorySql,
         private postQueryRepositorySql: PostQueryRepositorySql
@@ -44,7 +46,7 @@ export class BloggerController {
             new CreateBlogCommand(blog)
         )
 
-        return this.blogQueryRepositorySql.findBlogViewById(blogId)
+        return this.blogQueryRepository.findBlogViewById(blogId)
     }
 
     @UseGuards(BasicAuthGuard)

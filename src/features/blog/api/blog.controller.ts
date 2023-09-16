@@ -8,13 +8,14 @@ import { JwtOrNotGuard } from "../../auth/guards/jwt.or.not.guard";
 import { STATUS_CODE } from "../../../entity/enum/status.code";
 import { BlogQueryRepositorySql } from "../infrastructure/sql/blog.query.repository.sql";
 import { PostQueryRepositorySql } from "../../../features/post/infrastructure/sql/post.query.repository.sql";
+import { BlogQueryRepositoryTypeorm } from "../infrastructure/typeorm/blog.query.repository.typeorm";
 
 
 
 @Controller("blogs")
 export class BlogController {
     constructor(
-        private readonly blogQueryRepository: BlogQueryRepository,
+        private blogQueryRepository: BlogQueryRepositoryTypeorm,
         private readonly postQueryRepository: PostQueryRepository,
         private blogQueryRepositorySql: BlogQueryRepositorySql,
         private postQueryRepositorySql: PostQueryRepositorySql
@@ -30,7 +31,7 @@ export class BlogController {
         @Param('id') id: string,
         @Res() res: Response
     ) {
-        const blog = await this.blogQueryRepositorySql.findBlogViewById(id)
+        const blog = await this.blogQueryRepository.findBlogViewById(id)
         if (!blog) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         return res.send(blog)

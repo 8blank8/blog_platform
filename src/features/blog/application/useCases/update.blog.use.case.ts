@@ -6,6 +6,8 @@ import { ForbiddenException } from "@nestjs/common";
 import { BlogQueryRepositorySql } from "../../infrastructure/sql/blog.query.repository.sql";
 import { BlogRepositorySql } from "../../infrastructure/sql/blog.repository.sql";
 import { BlogUpdateSqlModel } from "../../infrastructure/sql/models/blog.update.sql.model";
+import { BlogRepositoryTypeorm } from "../../infrastructure/typeorm/blog.repository.typeorm";
+import { BlogQueryRepositoryTypeorm } from "../../infrastructure/typeorm/blog.query.repository.typeorm";
 
 export class UpdateBlogCommand {
     constructor(
@@ -21,27 +23,33 @@ export class UpdateBlogUseCase {
     constructor(
         // private blogRepository: BlogRepository,
         // private blogQueryRepository: BlogQueryRepository
-        private blogRepositorySql: BlogRepositorySql,
-        private blogQueryRepositorySql: BlogQueryRepositorySql
+        private blogRepository: BlogRepositoryTypeorm,
+        private blogQueryRepository: BlogQueryRepositoryTypeorm
     ) { }
 
     async execute(command: UpdateBlogCommand) {
 
         const { updateData, id } = command
 
-        const blog = await this.blogQueryRepositorySql.findBlogFullById(id)
+        const blog = await this.blogQueryRepository.findBlogViewById(id)
         if (!blog) return false
 
         // if (blog.userId !== userId) throw new ForbiddenException()
 
-        const updatedBlog: BlogUpdateSqlModel = {
-            name: updateData.name,
-            description: updateData.description,
-            websiteUrl: updateData.websiteUrl,
-            blogId: id
-        }
+        // const updatedBlog: BlogUpdateSqlModel = {
+        //     name: updateData.name,
+        //     description: updateData.description,
+        //     websiteUrl: updateData.websiteUrl,
+        //     blogId: id
+        // }
 
-        await this.blogRepositorySql.updateBlogById(updatedBlog)
+        blog.name = updateData.name
+        blog.description = updateData.description
+        blog.websiteUrl = updateData.websiteUrl
+
+        await this.blogRepository.saveBlog(blog)
+
+        // await this.blogRepositorySql.updateBlogById(updatedBlog)
 
         return true
         // blog.updateBlog(command.updateData)
