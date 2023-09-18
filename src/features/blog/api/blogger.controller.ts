@@ -24,6 +24,7 @@ import { PostQueryRepositorySql } from "../../../features/post/infrastructure/sq
 import { BasicAuthGuard } from "../../../features/auth/guards/basic.guard";
 import { BlogQueryRepositoryTypeorm } from "../infrastructure/typeorm/blog.query.repository.typeorm";
 import { BlogQueryParamModel } from "../../../features/sa/infrastructure/models/blog.query.param";
+import { PostQueryRepositoryTypeorm } from "../../../features/post/infrastructure/typeorm/post.query.repository.typeorm";
 
 
 @Controller('sa/blogs')
@@ -31,7 +32,7 @@ export class BloggerController {
     constructor(
         private commandBus: CommandBus,
         // private blogQueryRepository: BlogQueryRepository,
-        private postQueryRepository: PostQueryRepository,
+        private postQueryRepository: PostQueryRepositoryTypeorm,
         private blogQueryRepository: BlogQueryRepositoryTypeorm,
         private commentQueryRepository: CommentQueryRepository,
         private blogQueryRepositorySql: BlogQueryRepositorySql,
@@ -60,7 +61,7 @@ export class BloggerController {
         const postId = await this.commandBus.execute(new CreatePostByBlogIdCommand(inputData, id))
         if (!postId) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
-        const post = await this.postQueryRepositorySql.findPostByIdForPublic(postId)
+        const post = await this.postQueryRepository.findPostByIdForPublic(postId)
         return res.status(STATUS_CODE.CREATED).send(post)
     }
 
@@ -83,10 +84,10 @@ export class BloggerController {
         @Query() queryParam: PostQueryParamType,
         // @Request() req
     ) {
-        const blog = await this.blogQueryRepositorySql.findBlogViewById(id)
+        const blog = await this.blogQueryRepository.findBlogViewById(id)
         if (!blog) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
-        const posts = await this.postQueryRepositorySql.findPostByBlogForBlogger(id)
+        const posts = await this.postQueryRepository.findPostByBlogForBlogger(id, queryParam)
 
         return res.status(STATUS_CODE.OK).send(posts)
     }

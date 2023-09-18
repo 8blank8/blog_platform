@@ -5,6 +5,9 @@ import { CommandHandler } from "@nestjs/cqrs";
 import { BlogQueryRepositorySql } from "../../infrastructure/sql/blog.query.repository.sql";
 import { PostRepositorySql } from "../../../../features/post/infrastructure/sql/post.repository.sql";
 import { PostQueryRepositorySql } from "../../../../features/post/infrastructure/sql/post.query.repository.sql";
+import { BlogQueryRepositoryTypeorm } from "../../infrastructure/typeorm/blog.query.repository.typeorm";
+import { PostRepositoryTypeorm } from "src/features/post/infrastructure/typeorm/post.repository.typeorm";
+import { PostQueryRepositoryTypeorm } from "src/features/post/infrastructure/typeorm/post.query.repository.typeorm";
 
 
 export class DeletePostByBlogIdCommand {
@@ -19,9 +22,9 @@ export class DeletePostByBlogIdCommand {
 export class DeletePostByBlogIdUseCase {
     constructor(
         // private blogQueryRepository: BlogQueryRepository,
-        private blogQueryRepositorySql: BlogQueryRepositorySql,
-        private postRepositorySql: PostRepositorySql,
-        private postQueryrepositorySql: PostQueryRepositorySql
+        private blogQueryRepository: BlogQueryRepositoryTypeorm,
+        private postRepository: PostRepositoryTypeorm,
+        private postQueryrepository: PostQueryRepositoryTypeorm
         // private postRepository: PostRepository
     ) { }
 
@@ -29,12 +32,12 @@ export class DeletePostByBlogIdUseCase {
 
         const { postId, blogId } = command
 
-        const blog = await this.blogQueryRepositorySql.findBlogFullById(blogId)
-        const post = await this.postQueryrepositorySql.findPostFullById(postId)
+        const blog = await this.blogQueryRepository.findBlogViewById(blogId)
+        const post = await this.postQueryrepository.findFullPostById(postId)
         if (!blog || !post) return false
         // if (userId !== blog.userId) throw new ForbiddenException()
-
-        const isDelete = await this.postRepositorySql.deletePostById(postId)
-        return isDelete
+        await this.postRepository.deletePostById(post.id)
+        // const isDelete = await this.postRepositorySql.deletePostById(postId)
+        return true
     }
 } 

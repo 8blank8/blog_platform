@@ -8,6 +8,9 @@ import { BlogQueryRepositorySql } from "../../infrastructure/sql/blog.query.repo
 import { PostQueryRepositorySql } from "../../../../features/post/infrastructure/sql/post.query.repository.sql";
 import { PostUpdateSqlModel } from "../../../../features/post/infrastructure/sql/models/post.update.sql.model";
 import { PostRepositorySql } from "../../../../features/post/infrastructure/sql/post.repository.sql";
+import { BlogQueryRepositoryTypeorm } from "../../infrastructure/typeorm/blog.query.repository.typeorm";
+import { PostQueryRepositoryTypeorm } from "src/features/post/infrastructure/typeorm/post.query.repository.typeorm";
+import { PostRepositoryTypeorm } from "src/features/post/infrastructure/typeorm/post.repository.typeorm";
 
 
 export class UpdatePostByBlogIdCommand {
@@ -23,9 +26,9 @@ export class UpdatePostByBlogIdCommand {
 export class UpdatePostByBlogIdUseCase {
     constructor(
         // private blogQueryRepository: BlogQueryRepository,
-        private blogQueryRepositorySql: BlogQueryRepositorySql,
-        private postQueryRepositorySql: PostQueryRepositorySql,
-        private postRepositorySql: PostRepositorySql
+        private blogQueryRepository: BlogQueryRepositoryTypeorm,
+        private postQueryRepository: PostQueryRepositoryTypeorm,
+        private postRepository: PostRepositoryTypeorm
         // private postQueryRepository: PostQueryRepository,
         // private postRepository: PostRepository
     ) { }
@@ -34,18 +37,23 @@ export class UpdatePostByBlogIdUseCase {
 
         const { postId, blogId, inputData } = command
 
-        const blog = await this.blogQueryRepositorySql.findBlogFullById(blogId)
-        const post = await this.postQueryRepositorySql.findPostFullById(postId)
+        const blog = await this.blogQueryRepository.findBlogViewById(blogId)
+        const post = await this.postQueryRepository.findFullPostById(postId)
         if (!blog || !post) return false
         // if (blog.userId !== userId) throw new ForbiddenException()
 
-        const postUpdate: PostUpdateSqlModel = {
-            ...inputData,
-            blogId: blog.id,
-            postId: post.id
-        }
+        // const postUpdate: PostUpdateSqlModel = {
+        //     ...inputData,
+        //     blogId: blog.id,
+        //     postId: post.id
+        // }
 
-        await this.postRepositorySql.updatePostById(postUpdate)
+        post.title = inputData.title
+        post.content = inputData.content
+        post.shortDescription = inputData.shortDescription
+
+        await this.postRepository.savePost(post)
+        // await this.postRepositorySql.updatePostById(postUpdate)
 
         // post.updatePost(postUpdate)
         // await this.postRepository.savePost(post)

@@ -10,7 +10,6 @@ import { BlogViewSqlModel } from "src/features/blog/infrastructure/sql/models/bl
 
 describe('blog', () => {
     let app: INestApplication
-    const basicAuth: string = 'Basic YWRtaW46cXdlcnR5'
 
     beforeAll(async () => {
         app = await startTestConfig()
@@ -284,7 +283,6 @@ describe('blog', () => {
         })
 
         it('get blogs query param sortDirection=desc', async () => {
-
             await request(app.getHttpServer())
                 .get('/blogs')
                 .query({ sortDirection: 'desc' })

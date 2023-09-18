@@ -8,6 +8,10 @@ import { UserQueryRepositorySql } from "../../../user/infrastructure/sql/user.qu
 import { BlogQueryRepositorySql } from "../../../../features/blog/infrastructure/sql/blog.query.repository.sql";
 import { PostCreateSqlModel } from "../../infrastructure/sql/models/post.create.sql.model";
 import { PostRepositorySql } from "../../infrastructure/sql/post.repository.sql";
+import { PostRepositoryTypeorm } from "../../infrastructure/typeorm/post.repository.typeorm";
+import { BlogQueryRepositoryTypeorm } from "../../../../features/blog/infrastructure/typeorm/blog.query.repository.typeorm";
+import { UserQueryRepositoryTypeorm } from "../../../../features/user/infrastructure/typeorm/user.query.repository.typeorm";
+import { Posts } from "../../domain/typeorm/post.entity";
 
 
 export class CreatePostByBlogIdCommand {
@@ -23,9 +27,9 @@ export class CreatePostByBlogIdUseCase {
         // private postRepository: PostRepository,
         // private blogQueryRepository: BlogQueryRepository,
         // private userQueryRepository: UserQueryRepository
-        private postRepositorySql: PostRepositorySql,
-        private blogQueryRepositorySql: BlogQueryRepositorySql,
-        private userQueryRepositorySql: UserQueryRepositorySql
+        private postRepository: PostRepositoryTypeorm,
+        private blogQueryRepository: BlogQueryRepositoryTypeorm,
+        // private userQueryRepository: UserQueryRepositoryTypeorm
     ) { }
 
     async execute(command: CreatePostByBlogIdCommand) {
@@ -35,18 +39,27 @@ export class CreatePostByBlogIdUseCase {
         // const user = await this.userQueryRepositorySql.findUser(userId)
         // if (!user) return null
 
-        const blog = await this.blogQueryRepositorySql.findBlogFullById(blogId)
+        const blog = await this.blogQueryRepository.findBlogViewById(blogId)
         if (!blog) return null
+
+        const post = new Posts()
+        post.content = inputPostData.content
+        post.shortDescription = inputPostData.shortDescription
+        post.title = inputPostData.title
+        post.blog = blog
+
+        await this.postRepository.savePost(post)
+
 
         // if (user.id !== blog.userId) throw new ForbiddenException()
 
-        const post: PostCreateSqlModel = {
-            ...inputPostData,
-            blogId: blogId,
-            // userId: userId
-        }
+        // const post: PostCreateSqlModel = {
+        //     ...inputPostData,
+        //     blogId: blogId,
+        //     // userId: userId
+        // }
 
-        const postId = await this.postRepositorySql.createPost(post)
+        // const postId = await this.postRepositorySql.createPost(post)
         // newPost.addId()
         // newPost.addBlogName(blog.name)
         // newPost.addCreatedAt()
@@ -54,6 +67,6 @@ export class CreatePostByBlogIdUseCase {
 
         // await this.postRepository.savePost(newPost)
 
-        return postId
+        return post.id
     }
 }

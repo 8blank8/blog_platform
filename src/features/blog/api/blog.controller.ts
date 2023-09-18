@@ -10,6 +10,7 @@ import { BlogQueryRepositorySql } from "../infrastructure/sql/blog.query.reposit
 import { PostQueryRepositorySql } from "../../../features/post/infrastructure/sql/post.query.repository.sql";
 import { BlogQueryRepositoryTypeorm } from "../infrastructure/typeorm/blog.query.repository.typeorm";
 import { BlogQueryParamModel } from "../../../features/sa/infrastructure/models/blog.query.param";
+import { PostQueryRepositoryTypeorm } from "src/features/post/infrastructure/typeorm/post.query.repository.typeorm";
 
 
 
@@ -17,7 +18,7 @@ import { BlogQueryParamModel } from "../../../features/sa/infrastructure/models/
 export class BlogController {
     constructor(
         private blogQueryRepository: BlogQueryRepositoryTypeorm,
-        private readonly postQueryRepository: PostQueryRepository,
+        private readonly postQueryRepository: PostQueryRepositoryTypeorm,
         private blogQueryRepositorySql: BlogQueryRepositorySql,
         private postQueryRepositorySql: PostQueryRepositorySql
     ) { }
@@ -49,11 +50,11 @@ export class BlogController {
         // const blog = await this.blogQueryRepository.findBlogById(id)
         const userId = req.user
 
-        const blog = await this.blogQueryRepositorySql.findBlogFullById(id)
+        const blog = await this.blogQueryRepository.findBlogViewById(id)
         if (!blog) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         // const posts = await this.postQueryRepository.findPosts(queryParam, req.user, id)
-        const posts = await this.postQueryRepositorySql.findPostsByBlogId(queryParam, id, userId)
+        const posts = await this.postQueryRepository.findPostByBlogForBlogger(id, queryParam)
 
         return res.status(STATUS_CODE.OK).send(posts)
     }

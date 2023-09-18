@@ -23,13 +23,14 @@ import { ConnectionStates } from "mongoose";
 import { BlogQueryRepository } from "../../../features/blog/infrastructure/mongo/blog.query.repository";
 import { PostQueryRepositorySql } from "../infrastructure/sql/post.query.repository.sql";
 import { CommentQueryRepositorySql } from "../../../features/comment/infrastructure/sql/comment.query.repository";
+import { PostQueryRepositoryTypeorm } from "../infrastructure/typeorm/post.query.repository.typeorm";
 
 
 @Controller('posts')
 export class PostControler {
 
     constructor(
-        private postQueryRepository: PostQueryRepository,
+        private postQueryRepository: PostQueryRepositoryTypeorm,
         private postQueryRepositorySql: PostQueryRepositorySql,
         private commentQueryRepository: CommentQueryRepository,
         private commandBus: CommandBus,
@@ -45,7 +46,7 @@ export class PostControler {
     ) {
         const userId = req.user
 
-        const posts = await this.postQueryRepositorySql.findPostsForPublic(queryParam, userId)
+        const posts = await this.postQueryRepository.findPostsForPublic(queryParam)
         return posts
     }
 
@@ -57,7 +58,7 @@ export class PostControler {
         @Request() req
     ) {
         const userId = req.user
-        const post = await this.postQueryRepositorySql.findPostByIdForPublic(id, userId)
+        const post = await this.postQueryRepository.findPostByIdForPublic(id)
         if (!post) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         // const blogIsBanned = await this.blogQueryRepository.findBannedBlog(post?.blogId)
@@ -66,18 +67,18 @@ export class PostControler {
         return res.status(STATUS_CODE.OK).send(post)
     }
 
-    @UseGuards(BasicAuthGuard)
-    @Post()
-    async createPost(
-        @Body() inputPostData: PostCreateType,
-        @Res() res: Response
-    ) {
-        const postId = await this.commandBus.execute(new CreatePostCommand(inputPostData))
-        if (!postId) return res.sendStatus(STATUS_CODE.NOT_FOUND)
+    // @UseGuards(BasicAuthGuard)
+    // @Post()
+    // async createPost(
+    //     @Body() inputPostData: PostCreateType,
+    //     @Res() res: Response
+    // ) {
+    //     const postId = await this.commandBus.execute(new CreatePostCommand(inputPostData))
+    //     if (!postId) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
-        const post = await this.postQueryRepository.findPost(postId)
-        return res.status(STATUS_CODE.CREATED).send(post)
-    }
+    //     const post = await this.postQueryRepository.findPost(postId)
+    //     return res.status(STATUS_CODE.CREATED).send(post)
+    // }
 
     @UseGuards(BasicAuthGuard)
     @Put('/:id')

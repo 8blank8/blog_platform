@@ -16,18 +16,28 @@ export class BlogQueryRepositoryTypeorm {
             .getOne()
     }
 
-    async findAllBlogsView(queryParam: BlogQueryParamModel): Promise<Blogs[]> {
+    async findAllBlogsView(queryParam: BlogQueryParamModel) {
 
         const pagination = new BlogPagination(queryParam).getBlogPaginationForSql()
         const { searchNameTerm, sortBy, sortDirection, pageNumber, pageSize, offset } = pagination
 
-        const blogs = this.blogRepository.createQueryBuilder('b')
+        const blogs = await this.blogRepository.createQueryBuilder('b')
             .where('name ILIKE :searchNameTerm', { searchNameTerm })
-            .orderBy(`"${sortBy}"`, sortDirection)
+            .orderBy(`"${sortBy}" ${sortBy === 'createdAt' ? '' : 'COLLATE "C"'}`, sortDirection)
             .offset(offset)
             .limit(pageSize)
             .getMany()
 
-        return blogs
+        const totalCount = await this.blogRepository.createQueryBuilder('b')
+            .where('name ILIKE :searchNameTerm', { searchNameTerm })
+            .getCount()
+
+        return {
+            pagesCount: Math.ceil(totalCount / pageSize),
+            page: pageNumber,
+            pageSize: pageSize,
+            totalCount: totalCount,
+            items: blogs
+        }
     }
-}
+} 

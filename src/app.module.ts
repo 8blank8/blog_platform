@@ -176,6 +176,8 @@ import { SecurityQueryRepositoryTypeorm } from './features/security/infrastructu
 import { AuthRepositoryTypeorm } from './features/auth/infrastructure/typeorm/auth.repository.typeorm';
 import { BlogRepositoryTypeorm } from './features/blog/infrastructure/typeorm/blog.repository.typeorm';
 import { BlogQueryRepositoryTypeorm } from './features/blog/infrastructure/typeorm/blog.query.repository.typeorm';
+import { PostRepositoryTypeorm } from './features/post/infrastructure/typeorm/post.repository.typeorm';
+import { PostQueryRepositoryTypeorm } from './features/post/infrastructure/typeorm/post.query.repository.typeorm';
 const saUseCase = [
   BindUserForBlogUseCase, BannedUserUseCase
 ]
@@ -189,8 +191,8 @@ const saUseCase = [
       type: 'postgres',
       host: 'localhost',
       port: 5432,
-      username: 'postgres',
-      password: 'postgres',
+      username: 'blank',
+      password: 'blank',
       database: 'Blog_Platform',
       entities: [],
       autoLoadEntities: true,
@@ -250,7 +252,8 @@ const saUseCase = [
     CommentRepositorySql, CommentQueryRepositorySql,
 
     UserRepositoryTypeorm, UserQueryRepositoryTypeorm, SecurityRepositoryTypeorm, SecurityQueryRepositoryTypeorm,
-    AuthRepositoryTypeorm, BlogRepositoryTypeorm, BlogQueryRepositoryTypeorm,
+    AuthRepositoryTypeorm, BlogRepositoryTypeorm, BlogQueryRepositoryTypeorm, PostRepositoryTypeorm,
+    PostQueryRepositoryTypeorm,
 
 
     ...bloggerUseCase, ...commentUseCase, ...postUseCase, ...securityUseCase,

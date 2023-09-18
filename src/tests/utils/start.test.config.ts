@@ -66,6 +66,6 @@ export const dropDataBase = async (app) => {
     END;
     $$ LANGUAGE plpgsql;
 
-    SELECT truncate_tables('postgres');
+    SELECT truncate_tables('blank');
     `)
 }

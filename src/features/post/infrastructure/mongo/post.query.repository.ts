@@ -33,15 +33,15 @@ export class PostQueryRepository {
         }
 
         const posts = await this.postModel.find(filter)
-            .skip((pageNumber - 1) * pageSize)
-            .limit(pageSize)
+            .skip((+pageNumber - 1) * +pageSize)
+            .limit(+pageSize)
             .sort({ [sortBy]: sortDirection })
             .exec()
 
         const totalCount = await this.postModel.countDocuments(filter)
 
         return {
-            pagesCount: Math.ceil(totalCount / pageSize),
+            pagesCount: Math.ceil(totalCount / +pageSize),
             page: +pageNumber,
             pageSize: +pageSize,
             totalCount: totalCount,
