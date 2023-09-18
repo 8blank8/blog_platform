@@ -7,6 +7,7 @@ import { BlogViewModel } from "./models/blog.view.model";
 import { User, UserDocument } from "../../user/domain/mongoose/user.schema";
 import { BlogQueryParamType } from "../../../features/blog/models/blog.query.param.type";
 import { QUERY_PARAM } from "../../../entity/enum/query.param.enum";
+import { BlogQueryParamModel } from "./models/blog.query.param";
 
 
 @Injectable()
@@ -16,7 +17,7 @@ export class SaQueryRepository {
         @InjectModel(User.name) private userModel: Model<UserDocument>
     ) { }
 
-    async findAllBlogs(queryParam: BlogQueryParamType) {
+    async findAllBlogs(queryParam: BlogQueryParamModel) {
 
         const {
             searchNameTerm = QUERY_PARAM.SEARCH_NAME_TERM,
@@ -35,15 +36,15 @@ export class SaQueryRepository {
         }
 
         const blogs = await this.blogModel.find(filter)
-            .skip((pageNumber - 1) * pageSize)
-            .limit(pageSize)
+            .skip((+pageNumber - 1) * +pageSize)
+            .limit(+pageSize)
             .sort({ [sortBy]: sortDirection })
             .exec()
 
         const totalCount = await this.blogModel.countDocuments(filter)
 
         return {
-            pagesCount: Math.ceil(totalCount / pageSize),
+            pagesCount: Math.ceil(totalCount / +pageSize),
             page: +pageNumber,
             pageSize: +pageSize,
             totalCount: totalCount,

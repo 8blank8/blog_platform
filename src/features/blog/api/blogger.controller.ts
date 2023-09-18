@@ -9,7 +9,7 @@ import { CreatePostByBlogIdCommand } from "../../post/application/useCases/creat
 import { STATUS_CODE } from "../../../entity/enum/status.code";
 import { Response } from 'express'
 import { PostQueryRepository } from "../../post/infrastructure/mongo/post.query.repository";
-import { BlogQueryParamType } from "../models/blog.query.param.type";
+// import { BlogQueryParamType } from "../models/blog.query.param.type";
 import { PostQueryParamType } from "../../post/models/post.query.param.type";
 import { BlogUpdateType } from "../models/blog.update.type";
 import { UpdateBlogCommand } from "../application/useCases/update.blog.use.case";
@@ -23,6 +23,7 @@ import { BlogQueryRepositorySql } from "../infrastructure/sql/blog.query.reposit
 import { PostQueryRepositorySql } from "../../../features/post/infrastructure/sql/post.query.repository.sql";
 import { BasicAuthGuard } from "../../../features/auth/guards/basic.guard";
 import { BlogQueryRepositoryTypeorm } from "../infrastructure/typeorm/blog.query.repository.typeorm";
+import { BlogQueryParamModel } from "../../../features/sa/infrastructure/models/blog.query.param";
 
 
 @Controller('sa/blogs')
@@ -66,12 +67,12 @@ export class BloggerController {
     @UseGuards(BasicAuthGuard)
     @Get()
     async getBlogs(
-        @Query() queryParam: BlogQueryParamType,
+        @Query() queryParam: BlogQueryParamModel,
         @Request() req
     ) {
         const userId = req.user
         // return this.blogQueryRepository.findAllBlogs(queryParam, userId)
-        return this.blogQueryRepositorySql.findAllBlogsView(queryParam)
+        return this.blogQueryRepository.findAllBlogsView(queryParam)
     }
 
     @UseGuards(BasicAuthGuard)

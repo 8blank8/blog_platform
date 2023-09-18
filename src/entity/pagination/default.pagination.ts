@@ -9,22 +9,27 @@ export class DefaultPagination {
         public sortDirection: string | undefined
     ) { }
 
-    getDefaultPaginationForSql(): {
-        sortDirection: "ASC" | "DESC",
+    getSortDirectionForSql(): { sortDirection: "ASC" | "DESC" } {
+        const sortDirection = this.sortDirection === 'asc' ? QUERY_PARAM_SQL.SORT_DIRECTION_ASC : QUERY_PARAM_SQL.SORT_DIRECTION_DESC
+
+        return {
+            sortDirection: sortDirection
+        }
+    }
+
+    getDefaultPagination(): {
         sortBy: string,
         pageSize: number,
         pageNumber: number,
         offset: number
     } {
 
-        const sortDirection = this.sortDirection === 'asc' ? QUERY_PARAM_SQL.SORT_DIRECTION_ASC : QUERY_PARAM_SQL.SORT_DIRECTION_DESC
         const sortBy = this.sortBy ?? QUERY_PARAM_SQL.SORT_BY
         const pageSize = this.pageSize ?? QUERY_PARAM_SQL.PAGE_SIZE
         const pageNumber = this.pageNumber ?? QUERY_PARAM_SQL.PAGE_NUMBER
         const offset = (+pageNumber - 1) * +pageSize
 
         return {
-            sortDirection: sortDirection,
             sortBy: sortBy,
             pageSize: +pageSize,
             pageNumber: +pageNumber,

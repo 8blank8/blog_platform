@@ -16,15 +16,17 @@ describe('blog', () => {
         app = await startTestConfig()
     });
 
-    beforeEach(async () => {
-        await dropDataBase(app)
-    })
+    // beforeEach(async () => {
+    //     await dropDataBase(app)
+    // })
 
     describe('post blog', () => {
 
         const blog1 = createBlogDto(1)
 
         it('created blog unauthorized 401', async () => {
+
+
 
             await request(app.getHttpServer())
                 .post('/sa/blogs')
@@ -253,6 +255,77 @@ describe('blog', () => {
             await request(app.getHttpServer())
                 .get(`/blogs/${createdBlog1.id}`)
                 .expect(404)
+        })
+    })
+
+    describe('get blogs with query params', () => {
+
+        const createdBlogs: any[] = []
+
+        it('delete all data', async () => {
+            await dropDataBase(app)
+        })
+
+        it('created 4 blogs', async () => {
+
+            for (let i = 1; i < 5; i++) {
+
+                let blogDto = createBlogDto(i)
+
+                await request(app.getHttpServer())
+                    .post('/sa/blogs')
+                    .set('Authorization', AUTH.BASIC)
+                    .send(blogDto)
+                    .expect(201)
+                    .then(({ body }) => {
+                        createdBlogs.push(body)
+                    })
+            }
+        })
+
+        it('get blogs query param sortDirection=desc', async () => {
+
+            await request(app.getHttpServer())
+                .get('/blogs')
+                .query({ sortDirection: 'desc' })
+                .expect(200)
+                .then(({ body }) => {
+                    const createdBlogsSortDirectionDesc = createdBlogs.reverse()
+                    expect(body).toEqual(createdBlogsSortDirectionDesc)
+                })
+        })
+
+        it('get blogs query param sortDirection=asc', async () => {
+
+            await request(app.getHttpServer())
+                .get('/blogs')
+                .query({ sortDirection: 'asc' })
+                .expect(200)
+                .then(({ body }) => {
+                    expect(body).toEqual(createdBlogs.reverse())
+                })
+        })
+
+        it('get blogs query param sortDirection=asc, searchNameTerm=1', async () => {
+
+            await request(app.getHttpServer())
+                .get('/blogs')
+                .query({ sortDirection: 'asc', searchNameTerm: 1 })
+                .expect(200)
+                .then(({ body }) => {
+                    expect(body).toEqual([createdBlogs[0]])
+                })
+        })
+
+        it('get blogs query param sortDirection=asc, pageNumber=2, pageSize=1', async () => {
+
+            await request(app.getHttpServer())
+                .get('/blogs')
+                .query({ sortDirection: 'asc', pageNumber: 2, pageSize: 1 })
+                .expect(200)
+                .then(({ body }) => {
+                    expect(body).toEqual([createdBlogs[1]])
+                })
         })
     })
 

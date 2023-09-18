@@ -22,7 +22,7 @@ export class BlogQueryRepositorySql {
             pageSize = QUERY_PARAM_SQL.PAGE_SIZE
         } = queryParam
 
-        const page = (pageNumber - 1) * pageSize
+        const page = (+pageNumber - 1) * +pageSize
 
         if (sortBy) {
             const [first, ...last] = sortBy.split('')
@@ -43,7 +43,7 @@ export class BlogQueryRepositorySql {
         `, [`%${searchNameTerm}%`])
 
         return {
-            pagesCount: Math.ceil(totalCount[0].count / pageSize),
+            pagesCount: Math.ceil(totalCount[0].count / +pageSize),
             page: +pageNumber,
             pageSize: +pageSize,
             totalCount: +totalCount[0].count,

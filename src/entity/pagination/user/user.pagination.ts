@@ -18,13 +18,16 @@ export class UserPagination extends DefaultPagination {
     getPaginationUserForSql() {
 
         const {
-            searchLoginTerm = QUERY_PARAM_SQL.SEARCH_NAME_TERM, searchEmailTerm = QUERY_PARAM_SQL.SEARCH_NAME_TERM
+            searchLoginTerm = QUERY_PARAM_SQL.SEARCH_NAME_TERM,
+            searchEmailTerm = QUERY_PARAM_SQL.SEARCH_NAME_TERM
         } = this.queryParam;
 
-        const defaultPagination = this.getDefaultPaginationForSql();
+        const defaultPagination = this.getDefaultPagination();
+        const sortDirrection = this.getSortDirectionForSql()
 
         return {
             ...defaultPagination,
+            ...sortDirrection,
             searchLoginTerm: `%${searchLoginTerm}%`,
             searchEmailTerm: `%${searchEmailTerm}%`,
         };

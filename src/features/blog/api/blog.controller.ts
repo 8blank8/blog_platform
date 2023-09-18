@@ -9,6 +9,7 @@ import { STATUS_CODE } from "../../../entity/enum/status.code";
 import { BlogQueryRepositorySql } from "../infrastructure/sql/blog.query.repository.sql";
 import { PostQueryRepositorySql } from "../../../features/post/infrastructure/sql/post.query.repository.sql";
 import { BlogQueryRepositoryTypeorm } from "../infrastructure/typeorm/blog.query.repository.typeorm";
+import { BlogQueryParamModel } from "../../../features/sa/infrastructure/models/blog.query.param";
 
 
 
@@ -22,8 +23,8 @@ export class BlogController {
     ) { }
 
     @Get()
-    async getBlogs(@Query() queryParam: BlogQueryParamType) {
-        return this.blogQueryRepositorySql.findAllBlogsView(queryParam)
+    async getBlogs(@Query() queryParam: BlogQueryParamModel) {
+        return this.blogQueryRepository.findAllBlogsView(queryParam)
     }
 
     @Get('/:id')
