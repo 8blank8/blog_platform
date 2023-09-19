@@ -4,36 +4,91 @@ import { PostComments } from "../../domain/typeorm/comment.entitty";
 import { Repository } from "typeorm";
 import { CommentQueryParam } from "../../models/comment.query.param.type";
 import { CommentViewSqlModel } from "../sql/models/comment.view.sql.model";
+import { PostCommentLike } from "../../domain/typeorm/comment.like.entity";
+import { objectKeysMapTypeorm } from "src/entity/mapper/object.keys.map.typeorm";
+import { CommentPagniation } from "src/entity/pagination/comment/comment.pagination";
 
 
 @Injectable()
 export class CommentQueryRepositoryTypeorm {
     constructor(@InjectRepository(PostComments) private commentRepository: Repository<PostComments>) { }
 
-    async findCommentsViewByPostId(queryParam: CommentQueryParam, postId: string, userId?: string): Promise<CommentViewSqlModel[]> {
+    async findCommentsViewByPostId(queryParam: CommentQueryParam, postId: string, userId?: string) {
+
+        const pagination = new CommentPagniation(queryParam).getCommentPaginationForSql()
+        const { sortBy, sortDirection, offset, pageNumber, pageSize } = pagination
 
         const comments = await this.commentRepository.createQueryBuilder('c')
+            .addSelect((subquery) => {
+                return subquery.select('COUNT(*) as "likesCount"').from(PostCommentLike, 'cl').where(`cl.likeStatus = 'Like'`)
+            })
+            .addSelect((subquery) => {
+                return subquery.select('COUNT(*) as "dislikesCount"').from(PostCommentLike, 'cl').where(`cl.likeStatus = 'Dislike'`)
+            })
+            .addSelect((subquery) => {
+                return subquery.select('cl.likeStatus').from(PostCommentLike, 'cl').where(`cl.id = c.id`).andWhere('cl."userId" = :userId', { userId: userId ?? '' })
+            })
+            .addSelect('u.login')
             .leftJoin('c.post', 'p')
-            .leftJoinAndSelect('c.user', 'u')
+            .leftJoin('c.user', 'u')
             .where('p.id = :postId', { postId })
-            .getMany()
+            .orderBy(`c."${sortBy}" ${sortBy === 'createdAt' ? '' : 'COLLATE "C"'}`, sortDirection)
+            .offset(offset)
+            .limit(pageSize)
+            .getRawMany()
 
-        return comments.map(this._mapCommentView)
+        const totalCount = await this.commentRepository.createQueryBuilder('c')
+            .where('p.id = :postId', { postId })
+            .leftJoin('c.post', 'p')
+            .getCount()
+
+        const commentsKeyMap = objectKeysMapTypeorm(comments)
+
+        return {
+            pagesCount: Math.ceil(totalCount / pageSize),
+            page: pageNumber,
+            pageSize: pageSize,
+            totalCount: totalCount,
+            items: commentsKeyMap.map(this._mapCommentView)
+        }
     }
 
-    _mapCommentView(comment: PostComments): CommentViewSqlModel {
+    async findCommentViewById(commentId: string, userId?: string): Promise<CommentViewSqlModel | null> {
+        const comment = await this.commentRepository.createQueryBuilder('c')
+            .addSelect((subquery) => {
+                return subquery.select('COUNT(*) as "likesCount"').from(PostCommentLike, 'cl').where(`cl.likeStatus = 'Like'`)
+            })
+            .addSelect((subquery) => {
+                return subquery.select('COUNT(*) as "dislikesCount"').from(PostCommentLike, 'cl').where(`cl.likeStatus = 'Dislike'`)
+            })
+            .addSelect((subquery) => {
+                return subquery.select('cl.likeStatus').from(PostCommentLike, 'cl').where(`cl.id = c.id`).andWhere('cl."userId" = :userId', { userId: userId ?? '' })
+            })
+            .addSelect('u.login')
+            .leftJoin('c.user', 'u')
+            .where('c.id = :commentId', { commentId })
+            .getRawMany()
+
+        if (!comment) return null
+
+        const commentKeysMap = objectKeysMapTypeorm(comment)
+
+        return commentKeysMap.map(this._mapCommentView)[0]
+    }
+
+    _mapCommentView(comment): CommentViewSqlModel {
         return {
             id: comment.id,
             content: comment.content,
             commentatorInfo: {
-                userId: comment.user.id,
-                userLogin: comment.user.login
+                userId: comment.userId,
+                userLogin: comment.login
             },
             createdAt: comment.createdAt,
             likesInfo: {
-                likesCount: 0,
-                dislikesCount: 0,
-                myStatus: 'None'
+                likesCount: +comment.likesCount,
+                dislikesCount: +comment.dislikesCount,
+                myStatus: comment.likeStatus ?? 'None'
             }
         }
     }

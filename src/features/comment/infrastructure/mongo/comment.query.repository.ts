@@ -28,15 +28,15 @@ export class CommentQueryRepository {
         } = queryParam
 
         const comments = await this.commentModel.find({ postId: postId, "commentatorInfo.userIsBanned": false })
-            .skip((pageNumber - 1) * pageSize)
-            .limit(pageSize)
+            .skip((+pageNumber - 1) * +pageSize)
+            .limit(+pageSize)
             .sort({ [sortBy]: sortDirection })
             .exec()
 
         const totalCount = await this.commentModel.countDocuments({ postId: postId })
 
         return {
-            pagesCount: Math.ceil(totalCount / pageSize),
+            pagesCount: Math.ceil(totalCount / +pageSize),
             page: +pageNumber,
             pageSize: +pageSize,
             totalCount: totalCount,
@@ -75,14 +75,14 @@ export class CommentQueryRepository {
         const filter: FilterQuery<CommentDocument> = { blogId: { $in: blogIds } }
         const comments = await this.commentModel.find(filter)
             .sort({ [sortBy]: sortDirection })
-            .skip((pageNumber - 1) * pageSize)
-            .limit(pageSize)
+            .skip((+pageNumber - 1) * +pageSize)
+            .limit(+pageSize)
 
 
         const totalCount = await this.commentModel.countDocuments(filter)
 
         return {
-            pagesCount: Math.ceil(totalCount / pageSize),
+            pagesCount: Math.ceil(totalCount / +pageSize),
             page: +pageNumber,
             pageSize: +pageSize,
             totalCount: totalCount,

@@ -1,7 +1,7 @@
 
 export class CommentQueryParam {
-    pageNumber: number | undefined
-    pageSize: number | undefined
+    pageNumber: string | undefined
+    pageSize: string | undefined
     sortBy: string | undefined
     sortDirection: 'asc' | 'desc' | undefined
 }

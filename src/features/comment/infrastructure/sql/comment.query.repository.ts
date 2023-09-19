@@ -60,7 +60,7 @@ export class CommentQueryRepositorySql {
             pageSize = QUERY_PARAM_SQL.PAGE_SIZE
         } = queryParam
 
-        const page: number = (pageNumber - 1) * pageSize
+        const page: number = (+pageNumber - 1) * +pageSize
 
         if (sortBy) {
             const [first, ...last] = sortBy.split('')
@@ -100,7 +100,7 @@ export class CommentQueryRepositorySql {
         `, [postId])
 
         return {
-            pagesCount: Math.ceil(totalCount[0].count / pageSize),
+            pagesCount: Math.ceil(totalCount[0].count / +pageSize),
             page: +pageNumber,
             pageSize: +pageSize,
             totalCount: +totalCount[0].count,

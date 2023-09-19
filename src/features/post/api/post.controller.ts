@@ -117,7 +117,7 @@ export class PostControler {
         const commentId = await this.commandBus.execute(new CreateCommentForPostCommand(id, inputData, req.user))
         if (!commentId) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
-        const comment = await this.commentQueryRepositorySql.findCommentViewById(commentId)
+        const comment = await this.commentQueryRepository.findCommentViewById(commentId)
 
         return res.status(STATUS_CODE.CREATED).send(comment)
     }

@@ -11,8 +11,9 @@ import { UserQueryRepositorySql } from "../../../user/infrastructure/sql/user.qu
 import { CommentCreateSqlModel } from "../../../../features/comment/infrastructure/sql/models/comment.create.sql.model";
 import { CommentRepositorySql } from "../../../../features/comment/infrastructure/sql/comment.repository.sql";
 import { PostQueryRepositoryTypeorm } from "../../infrastructure/typeorm/post.query.repository.typeorm";
-import { UserQueryRepositoryTypeorm } from "src/features/user/infrastructure/typeorm/user.query.repository.typeorm";
+import { UserQueryRepositoryTypeorm } from "../../../../features/user/infrastructure/typeorm/user.query.repository.typeorm";
 import { PostComments } from "../../../../features/comment/domain/typeorm/comment.entitty";
+import { CommentRepositoryTypeorm } from "src/features/comment/infrastructure/typeorm/comment.repository.typeorm";
 
 
 export class CreateCommentForPostCommand {
@@ -30,7 +31,7 @@ export class CreateCommentForPostUseCase {
         // private userQueryRepository: UserQueryRepository,
         private postQueryRepository: PostQueryRepositoryTypeorm,
         private userQueryRepository: UserQueryRepositoryTypeorm,
-        private commentRepository: CommentRepositorySql,
+        private commentRepository: CommentRepositoryTypeorm,
         // private commentRepository: CommentRepository,
         private userBanBlogRepository: UserBanBlogRepository
     ) { }
@@ -60,6 +61,7 @@ export class CreateCommentForPostUseCase {
         comment.blog = post.blog
         comment.user = user
 
+        await this.commentRepository.saveComment(comment)
 
         return comment.id
 
