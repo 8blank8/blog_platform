@@ -10,6 +10,9 @@ import { PostQueryRepositorySql } from "../../infrastructure/sql/post.query.repo
 import { UserQueryRepositorySql } from "../../../user/infrastructure/sql/user.query.repository.sql";
 import { CommentCreateSqlModel } from "../../../../features/comment/infrastructure/sql/models/comment.create.sql.model";
 import { CommentRepositorySql } from "../../../../features/comment/infrastructure/sql/comment.repository.sql";
+import { PostQueryRepositoryTypeorm } from "../../infrastructure/typeorm/post.query.repository.typeorm";
+import { UserQueryRepositoryTypeorm } from "src/features/user/infrastructure/typeorm/user.query.repository.typeorm";
+import { PostComments } from "../../../../features/comment/domain/typeorm/comment.entitty";
 
 
 export class CreateCommentForPostCommand {
@@ -25,9 +28,9 @@ export class CreateCommentForPostUseCase {
     constructor(
         // private postQueryRepository: PostQueryRepository,
         // private userQueryRepository: UserQueryRepository,
-        private postQueryRepositorySql: PostQueryRepositorySql,
-        private userQueryRepositorySql: UserQueryRepositorySql,
-        private commentRepositorySql: CommentRepositorySql,
+        private postQueryRepository: PostQueryRepositoryTypeorm,
+        private userQueryRepository: UserQueryRepositoryTypeorm,
+        private commentRepository: CommentRepositorySql,
         // private commentRepository: CommentRepository,
         private userBanBlogRepository: UserBanBlogRepository
     ) { }
@@ -36,22 +39,29 @@ export class CreateCommentForPostUseCase {
 
         const { id, inputData, userId } = command
 
-        const post = await this.postQueryRepositorySql.findPostFullById(id)
+        const post = await this.postQueryRepository.findFullPostById(id)
         if (!post) return false
 
-        const user = await this.userQueryRepositorySql.findUser(userId)
+        const user = await this.userQueryRepository.findUserByIdForSa(userId)
         if (!user) return false
 
-        const commentDto: CommentCreateSqlModel = {
-            userId: user.id,
-            content: inputData.content,
-            postId: post.id,
-            blogId: post.blogId
-        }
+        // const commentDto: CommentCreateSqlModel = {
+        //     userId: user.id,
+        //     content: inputData.content,
+        //     postId: post.id,
+        //     blogId: post.blogId
+        // }
 
-        const commentId = await this.commentRepositorySql.createComment(commentDto)
+        // const commentId = await this.commentRepositorySql.createComment(commentDto)
 
-        return commentId
+        const comment = new PostComments()
+        comment.content = inputData.content
+        comment.post = post
+        comment.blog = post.blog
+        comment.user = user
+
+
+        return comment.id
 
         // const bannedUser = await this.userBanBlogRepository.findBannedUser(user.id, post.blogId)
         // if (bannedUser?.isBanned === true) throw new ForbiddenException()

@@ -9,8 +9,8 @@ import { PostQueryRepositorySql } from "../../../../features/post/infrastructure
 import { PostUpdateSqlModel } from "../../../../features/post/infrastructure/sql/models/post.update.sql.model";
 import { PostRepositorySql } from "../../../../features/post/infrastructure/sql/post.repository.sql";
 import { BlogQueryRepositoryTypeorm } from "../../infrastructure/typeorm/blog.query.repository.typeorm";
-import { PostQueryRepositoryTypeorm } from "src/features/post/infrastructure/typeorm/post.query.repository.typeorm";
-import { PostRepositoryTypeorm } from "src/features/post/infrastructure/typeorm/post.repository.typeorm";
+import { PostQueryRepositoryTypeorm } from "../../../../features/post/infrastructure/typeorm/post.query.repository.typeorm";
+import { PostRepositoryTypeorm } from "../../../../features/post/infrastructure/typeorm/post.repository.typeorm";
 
 
 export class UpdatePostByBlogIdCommand {

@@ -1,7 +1,8 @@
 import { Blogs } from "../../../../features/blog/domain/typeorm/blog.entity";
 import { Posts } from "../../../../features/post/domain/typeorm/post.entity";
 import { Users } from "../../../../features/user/domain/typeorm/user.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { PostCommentLike } from "./comment.like.entity";
 
 
 @Entity()
@@ -24,4 +25,7 @@ export class PostComments {
 
     @ManyToOne(() => Blogs, blog => blog.id)
     blog: Blogs
+
+    @OneToMany(() => PostCommentLike, like => like.id)
+    commentLikes: PostCommentLike
 }

@@ -6,8 +6,8 @@ import { BlogQueryRepositorySql } from "../../infrastructure/sql/blog.query.repo
 import { PostRepositorySql } from "../../../../features/post/infrastructure/sql/post.repository.sql";
 import { PostQueryRepositorySql } from "../../../../features/post/infrastructure/sql/post.query.repository.sql";
 import { BlogQueryRepositoryTypeorm } from "../../infrastructure/typeorm/blog.query.repository.typeorm";
-import { PostRepositoryTypeorm } from "src/features/post/infrastructure/typeorm/post.repository.typeorm";
-import { PostQueryRepositoryTypeorm } from "src/features/post/infrastructure/typeorm/post.query.repository.typeorm";
+import { PostRepositoryTypeorm } from "../../../../features/post/infrastructure/typeorm/post.repository.typeorm";
+import { PostQueryRepositoryTypeorm } from "../../../../features/post/infrastructure/typeorm/post.query.repository.typeorm";
 
 
 export class DeletePostByBlogIdCommand {

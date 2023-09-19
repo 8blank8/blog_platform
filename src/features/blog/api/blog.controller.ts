@@ -10,7 +10,7 @@ import { BlogQueryRepositorySql } from "../infrastructure/sql/blog.query.reposit
 import { PostQueryRepositorySql } from "../../../features/post/infrastructure/sql/post.query.repository.sql";
 import { BlogQueryRepositoryTypeorm } from "../infrastructure/typeorm/blog.query.repository.typeorm";
 import { BlogQueryParamModel } from "../../../features/sa/infrastructure/models/blog.query.param";
-import { PostQueryRepositoryTypeorm } from "src/features/post/infrastructure/typeorm/post.query.repository.typeorm";
+import { PostQueryRepositoryTypeorm } from "../../../features/post/infrastructure/typeorm/post.query.repository.typeorm";
 
 
 

@@ -14,6 +14,7 @@ export class PostQueryRepositoryTypeorm {
     async findFullPostById(postId: string): Promise<Posts | null> {
         return this.postRepository.createQueryBuilder('p')
             .where('p.id = :postId', { postId })
+            .leftJoinAndSelect('p.blog', 'b')
             .getOne()
     }
 

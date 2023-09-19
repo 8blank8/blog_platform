@@ -24,6 +24,7 @@ import { BlogQueryRepository } from "../../../features/blog/infrastructure/mongo
 import { PostQueryRepositorySql } from "../infrastructure/sql/post.query.repository.sql";
 import { CommentQueryRepositorySql } from "../../../features/comment/infrastructure/sql/comment.query.repository";
 import { PostQueryRepositoryTypeorm } from "../infrastructure/typeorm/post.query.repository.typeorm";
+import { CommentQueryRepositoryTypeorm } from "../../../features/comment/infrastructure/typeorm/comment.query.repository.typeorm";
 
 
 @Controller('posts')
@@ -32,7 +33,7 @@ export class PostControler {
     constructor(
         private postQueryRepository: PostQueryRepositoryTypeorm,
         private postQueryRepositorySql: PostQueryRepositorySql,
-        private commentQueryRepository: CommentQueryRepository,
+        private commentQueryRepository: CommentQueryRepositoryTypeorm,
         private commandBus: CommandBus,
         private blogQueryRepository: BlogQueryRepository,
         private commentQueryRepositorySql: CommentQueryRepositorySql
@@ -130,10 +131,10 @@ export class PostControler {
         @Request() req,
         @Res() res: Response
     ) {
-        const post = await this.postQueryRepositorySql.findPostFullById(id)
+        const post = await this.postQueryRepository.findFullPostById(id)
         if (!post) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
-        const comments = await this.commentQueryRepositorySql.findCommentsViewByPostId(queryParam, id, req.user)
+        const comments = await this.commentQueryRepository.findCommentsViewByPostId(queryParam, id, req.user)
         return res.status(STATUS_CODE.OK).send(comments)
     }
 
