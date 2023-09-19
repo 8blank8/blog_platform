@@ -11,7 +11,10 @@ import { CommentPagniation } from "src/entity/pagination/comment/comment.paginat
 
 @Injectable()
 export class CommentQueryRepositoryTypeorm {
-    constructor(@InjectRepository(PostComments) private commentRepository: Repository<PostComments>) { }
+    constructor(
+        @InjectRepository(PostComments) private commentRepository: Repository<PostComments>,
+        @InjectRepository(PostCommentLike) private commentLikeRepository: Repository<PostCommentLike>
+    ) { }
 
     async findCommentsViewByPostId(queryParam: CommentQueryParam, postId: string, userId?: string) {
 
@@ -26,7 +29,7 @@ export class CommentQueryRepositoryTypeorm {
                 return subquery.select('COUNT(*) as "dislikesCount"').from(PostCommentLike, 'cl').where(`cl.likeStatus = 'Dislike'`)
             })
             .addSelect((subquery) => {
-                return subquery.select('cl.likeStatus').from(PostCommentLike, 'cl').where(`cl.id = c.id`).andWhere('cl."userId" = :userId', { userId: userId ?? '' })
+                return subquery.select('cl.likeStatus').from(PostCommentLike, 'cl').where(`cl.id = c.id`).andWhere('cl."userId" = :userId', { userId: userId ?? null })
             })
             .addSelect('u.login')
             .leftJoin('c.post', 'p')
@@ -62,7 +65,7 @@ export class CommentQueryRepositoryTypeorm {
                 return subquery.select('COUNT(*) as "dislikesCount"').from(PostCommentLike, 'cl').where(`cl.likeStatus = 'Dislike'`)
             })
             .addSelect((subquery) => {
-                return subquery.select('cl.likeStatus').from(PostCommentLike, 'cl').where(`cl.id = c.id`).andWhere('cl."userId" = :userId', { userId: userId ?? '' })
+                return subquery.select('cl.likeStatus').from(PostCommentLike, 'cl').where(`cl.id = c.id`).andWhere('cl."userId" = :userId', { userId: userId ?? null })
             })
             .addSelect('u.login')
             .leftJoin('c.user', 'u')
@@ -74,6 +77,22 @@ export class CommentQueryRepositoryTypeorm {
         const commentKeysMap = objectKeysMapTypeorm(comment)
 
         return commentKeysMap.map(this._mapCommentView)[0]
+    }
+
+    async findCommentEntityById(commentId: string): Promise<PostComments | null> {
+        return this.commentRepository.createQueryBuilder('c')
+            .where('c.id = :commentId', { commentId })
+            .leftJoinAndSelect('c.user', 'u')
+            .getOne()
+    }
+
+    async findLikeCommentById(commentId: string, userId: string): Promise<PostCommentLike | null> {
+        return this.commentLikeRepository.createQueryBuilder('pl')
+            .where('u.id = :userId', { userId })
+            .andWhere('pl.id = :commentId', { commentId })
+            .leftJoin('pl.comment', 'c')
+            .leftJoin('pl.user', 'u')
+            .getOne()
     }
 
     _mapCommentView(comment): CommentViewSqlModel {

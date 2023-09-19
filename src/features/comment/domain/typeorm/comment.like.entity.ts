@@ -19,6 +19,6 @@ export class PostCommentLike {
     @ManyToOne(() => PostComments, postComment => postComment.id)
     comment: PostComments
 
-    @ManyToOne(() => Posts, post => post.id)
-    post: Posts
+    // @ManyToOne(() => Posts, post => post.id)
+    // post: Posts
 }

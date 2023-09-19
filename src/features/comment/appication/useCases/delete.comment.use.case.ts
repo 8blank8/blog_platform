@@ -4,6 +4,8 @@ import { CommentRepository } from "../../infrastructure/mongo/comment.repository
 import { ForbiddenException } from "@nestjs/common";
 import { CommentQueryRepositorySql } from "../../infrastructure/sql/comment.query.repository";
 import { CommentRepositorySql } from "../../infrastructure/sql/comment.repository.sql";
+import { CommentRepositoryTypeorm } from "../../infrastructure/typeorm/comment.repository.typeorm";
+import { CommentQueryRepositoryTypeorm } from "../../infrastructure/typeorm/comment.query.repository.typeorm";
 
 export class DeleteCommentCommand {
     constructor(
@@ -17,17 +19,18 @@ export class DeleteCommentUseCase {
     constructor(
         // private commentQueryRepository: CommentQueryRepository,
         // private commentRepository: CommentRepository,
-        private commentQueryRepositorySql: CommentQueryRepositorySql,
-        private commentRepositorySql: CommentRepositorySql
+        private commentQueryRepository: CommentQueryRepositoryTypeorm,
+        private commentRepository: CommentRepositoryTypeorm
     ) { }
 
     async execute(command: DeleteCommentCommand): Promise<boolean> {
-        const comment = await this.commentQueryRepositorySql.findCommentViewById(command.id)
+        const comment = await this.commentQueryRepository.findCommentEntityById(command.id)
         if (!comment) return false
 
-        if (comment.commentatorInfo.userId !== command.userId) throw new ForbiddenException()
+        if (comment.user.id !== command.userId) throw new ForbiddenException()
 
-        const isDelete = await this.commentRepositorySql.deleteComementById(command.id)
-        return isDelete
+        await this.commentRepository.deleteComementById(command.id)
+
+        return true
     }
 }

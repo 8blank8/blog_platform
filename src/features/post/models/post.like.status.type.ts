@@ -7,5 +7,5 @@ export class PostLikeStatusType {
     @IsNotEmpty()
     @IsString()
     @Validate(LikeStatus)
-    likeStatus: string
+    likeStatus: "Like" | "None" | "DisLike"
 }

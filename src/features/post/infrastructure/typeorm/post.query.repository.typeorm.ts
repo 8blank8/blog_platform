@@ -5,11 +5,15 @@ import { Repository } from "typeorm";
 import { PostViewSqlModel } from "../sql/models/post.view.sql.model";
 import { PostPagniation } from "../../../../entity/pagination/post/post.pagination";
 import { PostQueryParamType } from "../../models/post.query.param.type";
+import { PostLikes } from "../../domain/typeorm/post.like.entity";
 
 
 @Injectable()
 export class PostQueryRepositoryTypeorm {
-    constructor(@InjectRepository(Posts) private postRepository: Repository<Posts>) { }
+    constructor(
+        @InjectRepository(Posts) private postRepository: Repository<Posts>,
+        @InjectRepository(PostLikes) private postLikesRepository: Repository<PostLikes>
+    ) { }
 
     async findFullPostById(postId: string): Promise<Posts | null> {
         return this.postRepository.createQueryBuilder('p')
@@ -60,11 +64,22 @@ export class PostQueryRepositoryTypeorm {
         }
     }
 
-    async findPostsForPublic(queryParam: PostQueryParamType) {
+
+
+    async findPostsForPublic(queryParam: PostQueryParamType, userId?: string) {
         const pagination = new PostPagniation(queryParam).getPostPaginationForSql()
         let { sortBy, sortDirection, pageNumber, pageSize, offset } = pagination
 
         const posts = await this.postRepository.createQueryBuilder('p')
+            .addSelect((subquery) => {
+                return subquery.select('pl.likeStatus').from(PostLikes, 'pl').where(`pl.id = p.id`).andWhere('pl."userId" = :userId', { userId: userId ?? null })
+            })
+            .addSelect((subquery) => {
+                return subquery.select('COUNT(*) as "likesCount"').from(PostLikes, 'pl').where(`pl.likeStatus = 'Like'`)
+            })
+            .addSelect((subquery) => {
+                return subquery.select('COUNT(*) as "dislikesCount"').from(PostLikes, 'pl').where(`pl.likeStatus = 'Dislike'`)
+            })
             .leftJoinAndSelect('p.postLikes', 'pl')
             .leftJoinAndSelect('p.postComments', 'pc')
             .leftJoinAndSelect('p.blog', 'b')
@@ -83,6 +98,15 @@ export class PostQueryRepositoryTypeorm {
             totalCount: totalCount,
             items: posts.map(this._mapPostView)
         }
+    }
+
+    async findLikeStatusPost(userId: string, postId: string): Promise<PostLikes | null> {
+        return this.postLikesRepository.createQueryBuilder('pl')
+            .where('u.id = :userId', { userId })
+            .andWhere('p.id = :postId', { postId })
+            .leftJoin('pl.post', 'p')
+            .leftJoin('pl.user', 'u')
+            .getOne()
     }
 
     _mapPostView(post: Posts): PostViewSqlModel {

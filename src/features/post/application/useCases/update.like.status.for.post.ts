@@ -6,6 +6,10 @@ import { PostRepository } from "../../infrastructure/mongo/post.repository";
 import { PostQueryRepositorySql } from "../../infrastructure/sql/post.query.repository.sql";
 import { UserQueryRepositorySql } from "../../../user/infrastructure/sql/user.query.repository.sql";
 import { PostRepositorySql } from "../../infrastructure/sql/post.repository.sql";
+import { PostQueryRepositoryTypeorm } from "../../infrastructure/typeorm/post.query.repository.typeorm";
+import { UserQueryRepositoryTypeorm } from "src/features/user/infrastructure/typeorm/user.query.repository.typeorm";
+import { PostRepositoryTypeorm } from "../../infrastructure/typeorm/post.repository.typeorm";
+import { PostLikes } from "../../domain/typeorm/post.like.entity";
 
 
 export class UpdateLikeStatusForPostCommand {
@@ -22,9 +26,9 @@ export class UpdateLikeStatusForPostUseCase {
         // private postQueryRepository: PostQueryRepository,
         // private postRepository: PostRepository,
         // private userQueryRepository: UserQueryRepository,
-        private postQueryRepositorySql: PostQueryRepositorySql,
-        private userQueryRepositorySql: UserQueryRepositorySql,
-        private postRepositorySql: PostRepositorySql
+        private postQueryRepository: PostQueryRepositoryTypeorm,
+        private userQueryRepository: UserQueryRepositoryTypeorm,
+        private postRepository: PostRepositoryTypeorm
 
     ) { }
 
@@ -33,15 +37,15 @@ export class UpdateLikeStatusForPostUseCase {
         const { id, inputData, userId } = command
 
         // const post = await this.postQueryRepository.findPost(id)
-        const post = await this.postQueryRepositorySql.findPostFullById(id)
+        const post = await this.postQueryRepository.findFullPostById(id)
         if (!post) return false
 
         // const user = await this.userQueryRepository.findUserDocumentById(userId)
-        const user = await this.userQueryRepositorySql.findUser(userId)
+        const user = await this.userQueryRepository.findUserByIdForSa(userId)
         if (!user) return false
 
         // const like = await this.postQueryRepository.findPostLikeStatus(id, user.id)
-        const likeStatus = await this.postQueryRepositorySql.findLikeStatusPost(userId, id)
+        const likeStatus = await this.postQueryRepository.findLikeStatusPost(userId, id)
 
         if (inputData.likeStatus === likeStatus?.likeStatus) return true
 
@@ -51,11 +55,21 @@ export class UpdateLikeStatusForPostUseCase {
 
             // return true
 
-            await this.postRepositorySql.createLikeStatus(userId, id, inputData.likeStatus)
+            const createdLike = new PostLikes()
+            createdLike.likeStatus = inputData.likeStatus
+            createdLike.user = user
+            createdLike.post = post
+
+            await this.postRepository.savePostLike(createdLike)
             return true
+            // await this.postRepositorySql.createLikeStatus(userId, id, inputData.likeStatus)
+            // return true
+        } else {
+            likeStatus.likeStatus = inputData.likeStatus
+            await this.postRepository.savePostLike(likeStatus)
         }
 
-        await this.postRepositorySql.updateLikeStatus(userId, id, inputData.likeStatus)
+        // await this.postRepositorySql.updateLikeStatus(userId, id, inputData.likeStatus)
 
         // const newLike = await this.postRepository.createPostLike(inputData)
         // newLike.addId()
