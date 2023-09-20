@@ -6,13 +6,15 @@ import { PostViewSqlModel } from "../sql/models/post.view.sql.model";
 import { PostPagniation } from "../../../../entity/pagination/post/post.pagination";
 import { PostQueryParamType } from "../../models/post.query.param.type";
 import { PostLikes } from "../../domain/typeorm/post.like.entity";
+import { Users } from "src/features/user/domain/typeorm/user.entity";
 
 
 @Injectable()
 export class PostQueryRepositoryTypeorm {
     constructor(
         @InjectRepository(Posts) private postRepository: Repository<Posts>,
-        @InjectRepository(PostLikes) private postLikesRepository: Repository<PostLikes>
+        @InjectRepository(PostLikes) private postLikesRepository: Repository<PostLikes>,
+        @InjectRepository(Users) private userRepository: Repository<Users>
     ) { }
 
     async findFullPostById(postId: string): Promise<Posts | null> {
@@ -70,6 +72,34 @@ export class PostQueryRepositoryTypeorm {
         const pagination = new PostPagniation(queryParam).getPostPaginationForSql()
         let { sortBy, sortDirection, pageNumber, pageSize, offset } = pagination
 
+
+
+
+        // const queryBuilder = this.postRepository.createQueryBuilder('post');
+        // queryBuilder
+        //     .leftJoin('post.postLikes', 'likes')
+        //     .leftJoin('likes.user', 'user')
+        //     .where('post.id = p.id')
+        //     .andWhere('likes.likeStatus = :likeStatus', { likeStatus: 'Like' })
+        //     .orderBy('likes.addedAt', 'DESC')
+        //     .limit(3);
+
+        // const subQuery = queryBuilder
+        //     .subQuery()
+        //     .select(
+        //         `json_build_object('addedAt', likes.addedAt, 'userId', likes.userId, 'login', user.login)`,
+        //         'newestLikes'
+        //     )
+        //     .from(PostLikes, 'likes');
+
+        // const mainQuery = connection
+        //     .createQueryBuilder()
+        //     .select(`ARRAY(${subQuery.getQuery()})`, 'newestLikes');
+
+        // const result = await mainQuery.getRawOne();
+
+
+
         const posts = await this.postRepository.createQueryBuilder('p')
             .addSelect((subquery) => {
                 return subquery.select('pl.likeStatus').from(PostLikes, 'pl').where(`pl.id = p.id`).andWhere('pl."userId" = :userId', { userId: userId ?? null })
@@ -80,13 +110,30 @@ export class PostQueryRepositoryTypeorm {
             .addSelect((subquery) => {
                 return subquery.select('COUNT(*) as "dislikesCount"').from(PostLikes, 'pl').where(`pl.likeStatus = 'Dislike'`)
             })
+            .addSelect(
+                `(SELECT ARRAY(
+                    SELECT json_build_object(
+                        'addedAt', pl."addedAt", 
+                        'userId', pl."userId", 
+                        'login', (
+                            SELECT u."login" FROM "users" as u 
+                            WHERE u."id" = pl."userId"
+                    )) FROM "post_likes" as pl 
+                    WHERE p."id" = pl."postId" AND pl."likeStatus" = 'Like' 
+                    ORDER BY pl."addedAt" 
+                    DESC LIMIT 3
+                ))`,
+                'newestLikes'
+            )
             .leftJoinAndSelect('p.postLikes', 'pl')
             .leftJoinAndSelect('p.postComments', 'pc')
             .leftJoinAndSelect('p.blog', 'b')
             .orderBy(`${sortBy === 'blogName' ? `b."name"` : `p."${sortBy}"`} ${sortBy === 'createdAt' ? '' : 'COLLATE "C"'}`, sortDirection)
             .offset(offset)
             .limit(pageSize)
-            .getMany()
+            .getRawMany()
+
+        console.log(posts)
 
         const totalCount = await this.postRepository.createQueryBuilder('p')
             .getCount()
