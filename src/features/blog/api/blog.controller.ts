@@ -54,7 +54,7 @@ export class BlogController {
         if (!blog) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         // const posts = await this.postQueryRepository.findPosts(queryParam, req.user, id)
-        const posts = await this.postQueryRepository.findPostByBlogForBlogger(id, queryParam)
+        const posts = await this.postQueryRepository.findPostByBlogForBlogger(id, queryParam, userId)
 
         return res.status(STATUS_CODE.OK).send(posts)
     }

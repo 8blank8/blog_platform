@@ -23,13 +23,13 @@ export class CommentQueryRepositoryTypeorm {
 
         const comments = await this.commentRepository.createQueryBuilder('c')
             .addSelect((subquery) => {
-                return subquery.select('COUNT(*) as "likesCount"').from(PostCommentLike, 'cl').where(`cl.likeStatus = 'Like'`)
+                return subquery.select('COUNT(*) as "likesCount"').from(PostCommentLike, 'cl').where(`cl.likeStatus = 'Like' AND cl."commentId" = c.id`)
             })
             .addSelect((subquery) => {
-                return subquery.select('COUNT(*) as "dislikesCount"').from(PostCommentLike, 'cl').where(`cl.likeStatus = 'Dislike'`)
+                return subquery.select('COUNT(*) as "dislikesCount"').from(PostCommentLike, 'cl').where(`cl.likeStatus = 'Dislike' AND cl."commentId" = c.id`)
             })
             .addSelect((subquery) => {
-                return subquery.select('cl.likeStatus').from(PostCommentLike, 'cl').where(`cl.id = c.id`).andWhere('cl."userId" = :userId', { userId: userId ?? null })
+                return subquery.select('cl.likeStatus').from(PostCommentLike, 'cl').where(`cl."commentId" = c.id`).andWhere('cl."userId" = :userId', { userId: userId ?? null })
             })
             .addSelect('u.login')
             .leftJoin('c.post', 'p')
@@ -56,16 +56,16 @@ export class CommentQueryRepositoryTypeorm {
         }
     }
 
-    async findCommentViewById(commentId: string, userId?: string): Promise<CommentViewSqlModel | null> {
+    async findCommentViewById(commentId: string, userId?: string) {
         const comment = await this.commentRepository.createQueryBuilder('c')
             .addSelect((subquery) => {
-                return subquery.select('COUNT(*) as "likesCount"').from(PostCommentLike, 'cl').where(`cl.likeStatus = 'Like'`)
+                return subquery.select('COUNT(*) as "likesCount"').from(PostCommentLike, 'cl').where(`cl.likeStatus = 'Like' AND cl."commentId" = c.id`)
             })
             .addSelect((subquery) => {
-                return subquery.select('COUNT(*) as "dislikesCount"').from(PostCommentLike, 'cl').where(`cl.likeStatus = 'Dislike'`)
+                return subquery.select('COUNT(*) as "dislikesCount"').from(PostCommentLike, 'cl').where(`cl.likeStatus = 'Dislike' AND cl."commentId" = c.id`)
             })
             .addSelect((subquery) => {
-                return subquery.select('cl.likeStatus').from(PostCommentLike, 'cl').where(`cl.id = c.id`).andWhere('cl."userId" = :userId', { userId: userId ?? null })
+                return subquery.select('cl.likeStatus').from(PostCommentLike, 'cl').where(`cl."commentId" = c.id`).andWhere('cl."userId" = :userId', { userId: userId ?? null })
             })
             .addSelect('u.login')
             .leftJoin('c.user', 'u')
@@ -89,8 +89,7 @@ export class CommentQueryRepositoryTypeorm {
     async findLikeCommentById(commentId: string, userId: string): Promise<PostCommentLike | null> {
         return this.commentLikeRepository.createQueryBuilder('pl')
             .where('u.id = :userId', { userId })
-            .andWhere('pl.id = :commentId', { commentId })
-            .leftJoin('pl.comment', 'c')
+            .andWhere('pl."commentId" = :commentId', { commentId })
             .leftJoin('pl.user', 'u')
             .getOne()
     }

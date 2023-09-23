@@ -44,13 +44,13 @@ export class UpdateLikeStatusCommentUseCase {
         const like = await this.commentQueryRepository.findLikeCommentById(id, user.id)
 
         if (inputData.likeStatus === like?.likeStatus) return true
-
         // const createdComentLike: CommentCreateLikeSqlModel = {
         //     userId: user.id,
         //     likeStatus: inputData.likeStatus,
         //     commentId: comment.id,
         //     postId: comment.postId
         // }
+
 
         if (!like) {
             // await this.commentRepositorySql.createCommentLike(createdComentLike)

@@ -47,7 +47,7 @@ export class PostControler {
     ) {
         const userId = req.user
 
-        const posts = await this.postQueryRepository.findPostsForPublic(queryParam)
+        const posts = await this.postQueryRepository.findPostsForPublic(queryParam, userId)
         return posts
     }
 
@@ -59,7 +59,8 @@ export class PostControler {
         @Request() req
     ) {
         const userId = req.user
-        const post = await this.postQueryRepository.findPostByIdForPublic(id)
+
+        const post = await this.postQueryRepository.findPostByIdForPublic(id, userId)
         if (!post) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         // const blogIsBanned = await this.blogQueryRepository.findBannedBlog(post?.blogId)

@@ -82,12 +82,14 @@ export class BloggerController {
         @Param('id') id: string,
         @Res() res: Response,
         @Query() queryParam: PostQueryParamType,
-        // @Request() req
+        @Request() req
     ) {
+        const userId = req.user
+
         const blog = await this.blogQueryRepository.findBlogViewById(id)
         if (!blog) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
-        const posts = await this.postQueryRepository.findPostByBlogForBlogger(id, queryParam)
+        const posts = await this.postQueryRepository.findPostByBlogForBlogger(id, queryParam, userId)
 
         return res.status(STATUS_CODE.OK).send(posts)
     }
