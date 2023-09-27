@@ -180,6 +180,14 @@ import { PostRepositoryTypeorm } from './features/post/infrastructure/typeorm/po
 import { PostQueryRepositoryTypeorm } from './features/post/infrastructure/typeorm/post.query.repository.typeorm';
 import { CommentQueryRepositoryTypeorm } from './features/comment/infrastructure/typeorm/comment.query.repository.typeorm';
 import { CommentRepositoryTypeorm } from './features/comment/infrastructure/typeorm/comment.repository.typeorm';
+import { QuizController } from './features/quiz/api/sa/quiz.sa.controller';
+import { QuizQueryRepositoryTypeorm } from './features/quiz/infrastructure/typeorm/quiz.query.repository.typeorm';
+import { QuizRepositoryTypeorm } from './features/quiz/infrastructure/typeorm/quiz.repository.typeorm';
+import { QuizQestion } from './features/quiz/domain/typeorm/question.entity';
+import { CreateQuestionUseCase } from './features/quiz/application/useCases/create.question.use.case';
+import { DeleteQuestionUseCase } from './features/quiz/application/useCases/delete.question.use.case';
+import { UpdateQuestionUseCase } from './features/quiz/application/useCases/update.question.use.case';
+import { UpdatePublishedQuestUseCase } from './features/quiz/application/useCases/update.published.quest.use.case';
 const saUseCase = [
   BindUserForBlogUseCase, BannedUserUseCase
 ]
@@ -203,7 +211,7 @@ const saUseCase = [
     TypeOrmModule.forFeature([
       BlackListRefreshToken, Users, Blogs, Posts, PostLikes,
       PostComments, PostCommentLike, Devices, UsersConfirmationEmail,
-      UsersPassword
+      UsersPassword, QuizQestion
     ]),
     MongooseModule.forRoot(setting_env.MONGO_URL),
     MongooseModule.forFeature([
@@ -222,17 +230,13 @@ const saUseCase = [
       limit: +setting_env.LIMIT,
     }),
     PassportModule,
-    JwtModule.register({
-      global: true,
-      secret: setting_env.JWT_SECRET,
-      signOptions: { expiresIn: setting_env.JWT_ACCESS_EXP }
-    })
+    JwtModule.register({})
   ],
   controllers: [
     AppController, BlogController, PostControler,
     UserController, AuthController, CommentController,
     SecurityController, TestingController, BloggerController,
-    SaBlogController, BloggerUserController
+    SaBlogController, BloggerUserController, QuizController
   ],
   providers: [
     AppService,
@@ -257,9 +261,11 @@ const saUseCase = [
     AuthRepositoryTypeorm, BlogRepositoryTypeorm, BlogQueryRepositoryTypeorm, PostRepositoryTypeorm,
     PostQueryRepositoryTypeorm, CommentQueryRepositoryTypeorm, CommentRepositoryTypeorm,
 
+    QuizQueryRepositoryTypeorm, QuizRepositoryTypeorm,
 
     ...bloggerUseCase, ...commentUseCase, ...postUseCase, ...securityUseCase,
-    ...userUseCase, ...authUseCase, ...saUseCase
+    ...userUseCase, ...authUseCase, ...saUseCase,
+    CreateQuestionUseCase, DeleteQuestionUseCase, UpdateQuestionUseCase, UpdatePublishedQuestUseCase
   ],
 })
 
