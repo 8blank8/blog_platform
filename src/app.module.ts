@@ -188,6 +188,8 @@ import { CreateQuestionUseCase } from './features/quiz/application/useCases/crea
 import { DeleteQuestionUseCase } from './features/quiz/application/useCases/delete.question.use.case';
 import { UpdateQuestionUseCase } from './features/quiz/application/useCases/update.question.use.case';
 import { UpdatePublishedQuestUseCase } from './features/quiz/application/useCases/update.published.quest.use.case';
+import { QuizGame } from './features/quiz/domain/typeorm/quiz.game.entity';
+import { QuizResponse } from './features/quiz/domain/typeorm/quiz.response.entity';
 const saUseCase = [
   BindUserForBlogUseCase, BannedUserUseCase
 ]
@@ -211,7 +213,7 @@ const saUseCase = [
     TypeOrmModule.forFeature([
       BlackListRefreshToken, Users, Blogs, Posts, PostLikes,
       PostComments, PostCommentLike, Devices, UsersConfirmationEmail,
-      UsersPassword, QuizQestion
+      UsersPassword, QuizQestion, QuizGame, QuizResponse
     ]),
     MongooseModule.forRoot(setting_env.MONGO_URL),
     MongooseModule.forFeature([

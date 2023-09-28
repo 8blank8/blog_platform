@@ -4,11 +4,15 @@ import { QuizQestion } from "../../domain/typeorm/question.entity";
 import { Repository } from "typeorm";
 import { QuestionQueryParam } from "../../models/question.query.param";
 import { QuestPagniation } from "src/entity/pagination/quest/quest.pagination";
+import { QuizGame } from "../../domain/typeorm/quiz.game.entity";
 
 
 @Injectable()
 export class QuizQueryRepositoryTypeorm {
-    constructor(@InjectRepository(QuizQestion) private questRepo: Repository<QuizQestion>) { }
+    constructor(
+        @InjectRepository(QuizQestion) private questRepo: Repository<QuizQestion>,
+        @InjectRepository(QuizGame) private quizGameRepo: Repository<QuizGame>
+    ) { }
 
     async findQuestById(questId: string): Promise<QuizQestion | null> {
         return this.questRepo.createQueryBuilder('q')
@@ -46,4 +50,21 @@ export class QuizQueryRepositoryTypeorm {
             items: questions
         }
     }
+
+    async getFiveRandomQuestion(): Promise<string[]> {
+        const randomQuestion = await this.questRepo.createQueryBuilder('q')
+            .orderBy("RANDOM()")
+            .limit(5)
+            .getMany()
+
+        return randomQuestion.map(quest => quest.id)
+    }
+
+    async findPendingGame(): Promise<QuizGame | null> {
+        return this.quizGameRepo.createQueryBuilder('q')
+            .where('q.status = PendingSecondPlayer')
+            .getOne()
+    }
+
+
 }
