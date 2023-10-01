@@ -11,7 +11,7 @@ export class QuizResponse {
     id: string
 
     @Column()
-    answerStatus: 'Correct' | 'Incorrect '
+    answerStatus: 'Correct' | 'Incorrect'
 
     @Column({ type: 'timestamp without time zone', default: () => 'now()' })
     addedAt: string
@@ -24,4 +24,5 @@ export class QuizResponse {
 
     @ManyToOne(() => QuizQestion, quest => quest.id)
     question: QuizQestion
+
 }

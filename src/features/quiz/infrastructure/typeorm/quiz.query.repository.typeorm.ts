@@ -5,13 +5,17 @@ import { Repository } from "typeorm";
 import { QuestionQueryParam } from "../../models/question.query.param";
 import { QuestPagniation } from "src/entity/pagination/quest/quest.pagination";
 import { QuizGame } from "../../domain/typeorm/quiz.game.entity";
+import { QuizResponse } from "../../domain/typeorm/quiz.response.entity";
+import { QuizPlayerScore } from "../../domain/typeorm/quiz.player.score.entity";
 
 
 @Injectable()
 export class QuizQueryRepositoryTypeorm {
     constructor(
         @InjectRepository(QuizQestion) private questRepo: Repository<QuizQestion>,
-        @InjectRepository(QuizGame) private quizGameRepo: Repository<QuizGame>
+        @InjectRepository(QuizGame) private quizGameRepo: Repository<QuizGame>,
+        @InjectRepository(QuizResponse) private quizResponseRepo: Repository<QuizResponse>,
+        @InjectRepository(QuizPlayerScore) private quizPlayerScoreRepo: Repository<QuizPlayerScore>
     ) { }
 
     async findQuestById(questId: string): Promise<QuizQestion | null> {
@@ -62,9 +66,50 @@ export class QuizQueryRepositoryTypeorm {
 
     async findPendingGame(): Promise<QuizGame | null> {
         return this.quizGameRepo.createQueryBuilder('q')
-            .where('q.status = PendingSecondPlayer')
+            .where(`q.status = 'PendingSecondPlayer'`)
             .getOne()
     }
 
+    async findQuizGameById(gameId: string): Promise<QuizGame | null> {
+        return this.quizGameRepo.createQueryBuilder('q')
+            .where('q.id = :gameId', { gameId })
+            .leftJoinAndSelect('q.firstPlayer', 'fp')
+            .leftJoinAndSelect('q.secondPlayer', 'sp')
+            .getOne()
+
+    }
+
+    async findActiveQuizGameByUserId(userId: string): Promise<QuizGame | null> {
+        return this.quizGameRepo.createQueryBuilder('q')
+            .where(`q."firstPlayerId" = :userId`, { userId })
+            .orWhere(`q."secondPlayerId" = :userId`, { userId })
+            .andWhere(`q.finishGameDate = null`)
+            .andWhere(`q.status = 'Active'`)
+            .leftJoinAndSelect('q.firstPlayer', 'fp')
+            .leftJoinAndSelect('q.secondPlayer', 'sp')
+            .getOne()
+    }
+
+    async findCountAnswersGameByUserId(gameId: string, userId: string): Promise<number> {
+        return this.quizResponseRepo.createQueryBuilder('q')
+            .where('q."quizGameId" = :gameId', { gameId })
+            .andWhere('q.user = :userId', { userId })
+            .getCount()
+    }
+
+    async updateScoreQuizGameByUserId(gameId: string, userId: string, score: number) {
+        return this.quizPlayerScoreRepo.createQueryBuilder()
+            .update(QuizPlayerScore)
+            .set({ score: score })
+            .where(`"userId" = :userId`, { userId })
+            .andWhere(`"quizGame" = :gameId`, { gameId })
+    }
+
+    async findScoreQuizGameByUserId(gameId: string, userId: string): Promise<QuizPlayerScore | null> {
+        return this.quizPlayerScoreRepo.createQueryBuilder(`q`)
+            .where(`"userId" = :userId`, { userId })
+            .andWhere(`"quizGame" = :gameId`, { gameId })
+            .getOne()
+    }
 
 }
