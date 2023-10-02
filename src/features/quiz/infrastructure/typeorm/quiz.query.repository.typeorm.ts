@@ -20,7 +20,7 @@ export class QuizQueryRepositoryTypeorm {
 
     async findQuestById(questId: string): Promise<QuizQestion | null> {
         return this.questRepo.createQueryBuilder('q')
-            .where('id = :questId', { questId })
+            .where('q.id = :questId', { questId })
             .getOne()
     }
 
@@ -57,6 +57,7 @@ export class QuizQueryRepositoryTypeorm {
 
     async getFiveRandomQuestion(): Promise<string[]> {
         const randomQuestion = await this.questRepo.createQueryBuilder('q')
+            .where('q.published = true')
             .orderBy("RANDOM()")
             .limit(5)
             .getMany()
@@ -75,26 +76,27 @@ export class QuizQueryRepositoryTypeorm {
             .where('q.id = :gameId', { gameId })
             .leftJoinAndSelect('q.firstPlayer', 'fp')
             .leftJoinAndSelect('q.secondPlayer', 'sp')
+            .leftJoinAndSelect('q.score', 'se')
             .getOne()
 
     }
 
     async findActiveQuizGameByUserId(userId: string): Promise<QuizGame | null> {
         return this.quizGameRepo.createQueryBuilder('q')
-            .where(`q."firstPlayerId" = :userId`, { userId })
-            .orWhere(`q."secondPlayerId" = :userId`, { userId })
-            .andWhere(`q.finishGameDate = null`)
+            .where(`q."firstPlayerId" = :userId OR q."secondPlayerId" = :userId`, { userId })
+            .andWhere(`q.finishGameDate is null`)
             .andWhere(`q.status = 'Active'`)
             .leftJoinAndSelect('q.firstPlayer', 'fp')
             .leftJoinAndSelect('q.secondPlayer', 'sp')
+            .leftJoinAndSelect('q.score', 'se')
             .getOne()
     }
 
-    async findCountAnswersGameByUserId(gameId: string, userId: string): Promise<number> {
+    async findAnswersGameByUserId(gameId: string, userId: string): Promise<QuizResponse[]> {
         return this.quizResponseRepo.createQueryBuilder('q')
             .where('q."quizGameId" = :gameId', { gameId })
             .andWhere('q.user = :userId', { userId })
-            .getCount()
+            .getMany()
     }
 
     async updateScoreQuizGameByUserId(gameId: string, userId: string, score: number) {
@@ -102,13 +104,13 @@ export class QuizQueryRepositoryTypeorm {
             .update(QuizPlayerScore)
             .set({ score: score })
             .where(`"userId" = :userId`, { userId })
-            .andWhere(`"quizGame" = :gameId`, { gameId })
+            .andWhere(`"quizGameId" = :gameId`, { gameId })
     }
 
     async findScoreQuizGameByUserId(gameId: string, userId: string): Promise<QuizPlayerScore | null> {
         return this.quizPlayerScoreRepo.createQueryBuilder(`q`)
-            .where(`"userId" = :userId`, { userId })
-            .andWhere(`"quizGame" = :gameId`, { gameId })
+            .where(`q."userId" = :userId`, { userId })
+            .andWhere(`q."quizGameId" = :gameId`, { gameId })
             .getOne()
     }
 

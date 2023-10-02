@@ -17,4 +17,5 @@ export class QuizPlayerScore {
 
     @ManyToOne(() => Users, user => user.id)
     user: Users
+
 }

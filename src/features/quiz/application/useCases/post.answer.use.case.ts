@@ -4,6 +4,10 @@ import { UserQueryRepositoryTypeorm } from "src/features/user/infrastructure/typ
 import { QuizQueryRepositoryTypeorm } from "../../infrastructure/typeorm/quiz.query.repository.typeorm";
 import { QuizRepositoryTypeorm } from "../../infrastructure/typeorm/quiz.repository.typeorm";
 import { QuizResponse } from "../../domain/typeorm/quiz.response.entity";
+import { QuizGame } from "../../domain/typeorm/quiz.game.entity";
+import { QuizQestion } from "../../domain/typeorm/question.entity";
+import { QuizPlayerScore } from "../../domain/typeorm/quiz.player.score.entity";
+import { Users } from "src/features/user/domain/typeorm/user.entity";
 
 
 export class PostAnswerCommand {
@@ -31,31 +35,34 @@ export class PostAnswerUseCase {
         const quizGame = await this.quizQueryRepository.findActiveQuizGameByUserId(userId)
         if (!quizGame) return false
 
-        const playerAnwers = await this.quizQueryRepository.findCountAnswersGameByUserId(quizGame.id, user.id)
+        const secondPlayerId = this.findSecondUser(quizGame, user.id)
 
-        const question = await this.quizQueryRepository.findQuestById(quizGame.questions[playerAnwers === 0 ? 0 : playerAnwers - 1])
-        if (!question) return false
+        const firstPlayerAnwers = await this.quizQueryRepository.findAnswersGameByUserId(quizGame.id, user.id)
+        const secondPlayerAnswers = await this.quizQueryRepository.findAnswersGameByUserId(quizGame.id, secondPlayerId)
 
-        const correctAnswer = question.correctAnswers.find(item => item === inputData.answer)
-
+        const answerData = await this.checkCorrectAnswer(inputData.answer, quizGame, firstPlayerAnwers.length)
 
         const answer = new QuizResponse()
         answer.user = user
         answer.quizGame = quizGame
-        answer.question = question
-        answer.answerStatus = correctAnswer ? 'Correct' : 'Incorrect'
+        answer.question = answerData.question
+        answer.answerStatus = answerData.answerStatus
 
-        const playerScore = await this.quizQueryRepository.findScoreQuizGameByUserId(quizGame.id, user.id)
-        if (!playerScore) return false
-        if (answer.answerStatus === 'Correct') playerScore.score = playerScore.score + 1
+        await this.updateScorePlayer(quizGame, user, answerData.answerStatus)
 
-        quizGame.
 
-        await this.quizRepository.savePlayerScore(playerScore)
+        const isCorrectAnswer = firstPlayerAnwers.find(answer => answer.answerStatus === 'Correct')
+        if (firstPlayerAnwers.length === 5 && firstPlayerAnwers.length > secondPlayerAnswers.length && isCorrectAnswer) {
+            await this.updateScorePlayer(quizGame, user, 'Correct')
+        }
+
+        if (firstPlayerAnwers.length === 5 && secondPlayerAnswers.length === 5) {
+            quizGame.finishGameDate = new Date().toISOString()
+            await this.quizRepository.saveQuizGame(quizGame)
+        }
+
         await this.quizRepository.saveAnswer(answer)
-        // TODO: сделать проверку ответили ли пользователи на все вопросы если да то завершить игру 
-        // TODO: сделать проверку ответил ли пользователь быстрее другого и начислить доп бал если есть правильный ответ
-        // TODO: связать таблицу с счетом с игрой и в репозитории сделать джоин счета для пользователей
+        // TODO: сделать отображение пользователя в счете
 
         return {
             questionId: answer.question.id,
@@ -63,4 +70,41 @@ export class PostAnswerUseCase {
             addedAt: answer.addedAt
         }
     }
+
+    findSecondUser(quizGame: QuizGame, userId: string): string {
+        if (quizGame.firstPlayer.id !== userId) return quizGame.firstPlayer.id
+        return quizGame.secondPlayer.id
+    }
+
+    async checkCorrectAnswer(answer: string, quizGame: QuizGame, answerCount: number): Promise<{ question: QuizQestion, answerStatus: 'Correct' | 'Incorrect' }> {
+        const question = await this.quizQueryRepository.findQuestById(quizGame.questions[answerCount === 0 ? 0 : answerCount - 1])
+        console.log(quizGame.questions[answerCount === 0 ? 0 : answerCount - 1], 'questId')
+        console.log(quizGame.questions, 'question')
+        console.log(answerCount, 'count')
+        const correctAnswer = question!.correctAnswers.find(item => item === answer)
+
+        return {
+            question: question!,
+            answerStatus: correctAnswer ? 'Correct' : 'Incorrect'
+        }
+    }
+
+    async updateScorePlayer(quizGame: QuizGame, user: Users, answerStatus: string) {
+        const playerScore = await this.quizQueryRepository.findScoreQuizGameByUserId(quizGame.id, user.id)
+        if (!playerScore) {
+            const createdPlayerScore = new QuizPlayerScore()
+            createdPlayerScore.quizGame = quizGame
+            createdPlayerScore.user = user
+            createdPlayerScore.score = answerStatus === 'Correct' ? 1 : 0
+
+            await this.quizRepository.savePlayerScore(createdPlayerScore)
+            return true
+        }
+
+        if (answerStatus === 'Correct') playerScore.score = playerScore.score + 1
+
+        await this.quizRepository.savePlayerScore(playerScore)
+        return true
+    }
+
 }

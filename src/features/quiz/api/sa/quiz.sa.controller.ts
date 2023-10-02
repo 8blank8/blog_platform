@@ -25,7 +25,6 @@ export class QuizController {
     async createQuestion(
         @Body() inputData: CreateQuestionModel
     ) {
-        console.log(inputData)
         const questId = await this.commandBus.execute(new CreateQuestionCommand(inputData))
 
         const quest = await this.quizQueryRepository.findQuestById(questId)
@@ -60,7 +59,7 @@ export class QuizController {
     }
 
     @UseGuards(BasicAuthGuard)
-    @Put('/:id')
+    @Put('/:id/publish')
     async updatePublisherQuestion(
         @Param('id') id: string,
         @Body() inputData: UpdatePublishedQuestModel,
