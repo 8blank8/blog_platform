@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { QuizGame } from "./quiz.game.entity";
 
 
 @Entity()
@@ -21,4 +22,7 @@ export class QuizQestion {
 
     @Column({ type: 'timestamp without time zone', default: () => 'now()' })
     updatedAt: string
+
+    @ManyToOne(() => QuizGame, game => game.id)
+    quizGame: QuizGame
 }

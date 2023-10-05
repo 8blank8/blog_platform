@@ -2,6 +2,7 @@ import { Users } from "src/features/user/domain/typeorm/user.entity";
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { QuizResponse } from "./quiz.response.entity";
 import { QuizPlayerScore } from "./quiz.player.score.entity";
+import { QuizQestion } from "./question.entity";
 
 
 @Entity()
@@ -36,6 +37,9 @@ export class QuizGame {
 
     @OneToMany(() => QuizResponse, resp => resp.quizGame)
     quizResponse: QuizResponse[]
+
+    @OneToMany(() => QuizQestion, quest => quest.quizGame)
+    fullQuestions: QuizQestion[]
 }
 
 

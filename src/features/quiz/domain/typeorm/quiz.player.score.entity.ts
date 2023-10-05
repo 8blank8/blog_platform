@@ -15,6 +15,9 @@ export class QuizPlayerScore {
     @ManyToOne(() => QuizGame, quiz => quiz.id)
     quizGame: QuizGame
 
+    @Column({ nullable: false })
+    userId: string
+
     @ManyToOne(() => Users, user => user.id)
     user: Users
 

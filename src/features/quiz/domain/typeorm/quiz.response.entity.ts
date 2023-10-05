@@ -16,6 +16,12 @@ export class QuizResponse {
     @Column({ type: 'timestamp without time zone', default: () => 'now()' })
     addedAt: string
 
+    @Column({ nullable: false })
+    userId: string
+
+    @Column({ nullable: false })
+    questionId: string
+
     @ManyToOne(() => Users, user => user.id)
     user: Users
 

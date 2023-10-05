@@ -47,6 +47,8 @@ export class PostAnswerUseCase {
         answer.quizGame = quizGame
         answer.question = answerData.question
         answer.answerStatus = answerData.answerStatus
+        answer.userId = user.id
+        answer.questionId = answerData.question.id
 
         await this.updateScorePlayer(quizGame, user, answerData.answerStatus)
 
@@ -96,6 +98,7 @@ export class PostAnswerUseCase {
             createdPlayerScore.quizGame = quizGame
             createdPlayerScore.user = user
             createdPlayerScore.score = answerStatus === 'Correct' ? 1 : 0
+            createdPlayerScore.userId = user.id
 
             await this.quizRepository.savePlayerScore(createdPlayerScore)
             return true

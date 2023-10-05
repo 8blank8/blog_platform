@@ -38,7 +38,8 @@ export class ConnectionQuizGameUseCase {
             pendingGame.pairCreatedDate = new Date().toISOString()
             pendingGame.startGameDate = new Date().toISOString()
             pendingGame.status = 'Active'
-            pendingGame.questions = randomQuestion
+            pendingGame.questions = randomQuestion.map(quest => quest.id)
+            pendingGame.fullQuestions = randomQuestion
 
             await this.quizRepository.saveQuizGame(pendingGame)
 
@@ -52,7 +53,8 @@ export class ConnectionQuizGameUseCase {
         newGame.firstPlayer = user
 
         await this.quizRepository.saveQuizGame(newGame)
-        return newGame
+
+        return newGame.id
         // TODO: доделать логику создания игры 
     }
 }

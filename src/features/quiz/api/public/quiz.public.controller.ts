@@ -23,7 +23,9 @@ export class QuizPublicController {
     ) {
         const userId = req.user
 
-        const game = await this.commandBus.execute(new ConnectionQuizGameCommand(userId))
+        const gameId = await this.commandBus.execute(new ConnectionQuizGameCommand(userId))
+
+        const game = await this.quizQueryRepository.findQuizGameById(gameId)
 
         return game
     }
@@ -40,7 +42,7 @@ export class QuizPublicController {
         const quizGame = await this.quizQueryRepository.findQuizGameById(id)
 
         if (!quizGame) return res.sendStatus(STATUS_CODE.NOT_FOUND)
-        if (quizGame.firstPlayer.id !== userId && quizGame.secondPlayer.id !== userId) throw new ForbiddenException()
+        // if (quizGame.firstPlayer.id !== userId && quizGame.secondPlayer.id !== userId) throw new ForbiddenException()
 
         return res.status(STATUS_CODE.OK).send(quizGame)
     }
