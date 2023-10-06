@@ -9,7 +9,7 @@ import { UserQueryRepositorySql } from "../../../user/infrastructure/sql/user.qu
 import { CommentCreateLikeSqlModel } from "../../infrastructure/sql/models/comment.create.like.sql.model";
 import { CommentQueryRepositoryTypeorm } from "../../infrastructure/typeorm/comment.query.repository.typeorm";
 import { CommentRepositoryTypeorm } from "../../infrastructure/typeorm/comment.repository.typeorm";
-import { UserQueryRepositoryTypeorm } from "src/features/user/infrastructure/typeorm/user.query.repository.typeorm";
+import { UserQueryRepositoryTypeorm } from "../../../../features/user/infrastructure/typeorm/user.query.repository.typeorm";
 import { PostCommentLike } from "../../domain/typeorm/comment.like.entity";
 
 export class UpdateLikeStatusCommentCommand {

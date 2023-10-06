@@ -1,5 +1,8 @@
-import { Users } from "src/features/user/domain/typeorm/user.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Users } from "../../../../features/user/domain/typeorm/user.entity";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { QuizQestion } from "./question.entity";
+import { QuizPlayerScore } from "./quiz.player.score.entity";
+import { QuizResponse } from "./quiz.response.entity";
 
 
 @Entity()
@@ -8,8 +11,8 @@ export class QuizGame {
     @PrimaryGeneratedColumn('uuid')
     id: string
 
-    @Column({ array: true, type: 'varchar', nullable: true })
-    questions: string[]
+    // @Column({ nullable: true })
+    // questions: string[]
 
     @Column()
     status: 'PendingSecondPlayer' | 'Active'
@@ -23,14 +26,26 @@ export class QuizGame {
     @Column({ nullable: true })
     finishGameDate: string
 
-    @Column({ default: 0 })
-    firstPlayerScore: number
+    // @Column({ default: 0 })
+    // firstPlayerScore: number
 
-    @Column({ default: 0 })
-    secondPlayerScore: number
+    // @Column({ default: 0 })
+    // secondPlayerScore: number
+
+    @OneToMany(() => QuizPlayerScore, score => score.quizGame)
+    score: QuizPlayerScore[]
+
+    @OneToMany(() => QuizQestion, quest => quest.quizGame, { nullable: true })
+    questions: QuizQestion[]
 
     @ManyToOne(() => Users, user => user.id)
     firstPlayer: Users
+
+    @OneToMany(() => QuizResponse, response => response.quizGame)
+    answers: QuizResponse[]
+
+    // @OneToMany(() => QuizResponse, response => response.user)
+    // secondPlayerAnswers: QuizResponse[]
 
     @ManyToOne(() => Users, user => user.id)
     secondPlayer: Users

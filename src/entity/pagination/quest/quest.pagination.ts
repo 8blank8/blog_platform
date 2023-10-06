@@ -1,6 +1,6 @@
 import { DefaultPagination } from "../default.pagination";
-import { QuestionQueryParam } from "src/features/quiz/models/question.query.param";
-import { QUERY_PARAM_SQL } from "src/entity/enum/query.param.enum.sql";
+import { QuestionQueryParam } from "../../../features/quiz/models/question.query.param";
+import { QUERY_PARAM_SQL } from "../../../entity/enum/query.param.enum.sql";
 
 
 export class QuestPagniation extends DefaultPagination {

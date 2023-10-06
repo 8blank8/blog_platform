@@ -5,8 +5,8 @@ import { Repository } from "typeorm";
 import { CommentQueryParam } from "../../models/comment.query.param.type";
 import { CommentViewSqlModel } from "../sql/models/comment.view.sql.model";
 import { PostCommentLike } from "../../domain/typeorm/comment.like.entity";
-import { objectKeysMapTypeorm } from "src/entity/mapper/object.keys.map.typeorm";
-import { CommentPagniation } from "src/entity/pagination/comment/comment.pagination";
+import { objectKeysMapTypeorm } from "../../../../entity/mapper/object.keys.map.typeorm";
+import { CommentPagniation } from "../../../../entity/pagination/comment/comment.pagination";
 
 
 @Injectable()

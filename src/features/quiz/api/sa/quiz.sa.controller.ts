@@ -1,11 +1,11 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, Res, UseGuards } from "@nestjs/common";
-import { BasicAuthGuard } from "src/features/auth/guards/basic.guard";
+import { BasicAuthGuard } from "../../../../features/auth/guards/basic.guard";
 import { CreateQuestionModel } from "../../models/create.question.model";
 import { CommandBus } from "@nestjs/cqrs";
 import { CreateQuestionCommand } from "../../application/useCases/create.question.use.case";
 import { QuizQueryRepositoryTypeorm } from "../../infrastructure/typeorm/quiz.query.repository.typeorm";
 import { Response } from "express";
-import { STATUS_CODE } from "src/entity/enum/status.code";
+import { STATUS_CODE } from "../../../../entity/enum/status.code";
 import { DeleteQuestionCommand } from "../../application/useCases/delete.question.use.case";
 import { UpdateQuestionCommand } from "../../application/useCases/update.question.use.case";
 import { UpdatePublishedQuestModel } from "../../models/update.published.quest.model";
@@ -25,7 +25,6 @@ export class QuizController {
     async createQuestion(
         @Body() inputData: CreateQuestionModel
     ) {
-        console.log(inputData)
         const questId = await this.commandBus.execute(new CreateQuestionCommand(inputData))
 
         const quest = await this.quizQueryRepository.findQuestById(questId)
@@ -60,7 +59,7 @@ export class QuizController {
     }
 
     @UseGuards(BasicAuthGuard)
-    @Put('/:id')
+    @Put('/:id/publish')
     async updatePublisherQuestion(
         @Param('id') id: string,
         @Body() inputData: UpdatePublishedQuestModel,

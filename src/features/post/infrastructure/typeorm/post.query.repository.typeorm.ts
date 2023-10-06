@@ -6,7 +6,7 @@ import { PostViewSqlModel } from "../sql/models/post.view.sql.model";
 import { PostPagniation } from "../../../../entity/pagination/post/post.pagination";
 import { PostQueryParamType } from "../../models/post.query.param.type";
 import { PostLikes } from "../../domain/typeorm/post.like.entity";
-import { Users } from "src/features/user/domain/typeorm/user.entity";
+import { Users } from "../../../../features/user/domain/typeorm/user.entity";
 
 
 @Injectable()

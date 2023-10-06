@@ -13,7 +13,7 @@ import { CommentRepositorySql } from "../../../../features/comment/infrastructur
 import { PostQueryRepositoryTypeorm } from "../../infrastructure/typeorm/post.query.repository.typeorm";
 import { UserQueryRepositoryTypeorm } from "../../../../features/user/infrastructure/typeorm/user.query.repository.typeorm";
 import { PostComments } from "../../../../features/comment/domain/typeorm/comment.entitty";
-import { CommentRepositoryTypeorm } from "src/features/comment/infrastructure/typeorm/comment.repository.typeorm";
+import { CommentRepositoryTypeorm } from "../../../../features/comment/infrastructure/typeorm/comment.repository.typeorm";
 
 
 export class CreateCommentForPostCommand {

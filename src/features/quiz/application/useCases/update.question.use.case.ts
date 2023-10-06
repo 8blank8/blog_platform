@@ -27,6 +27,7 @@ export class UpdateQuestionUseCase {
 
         quest.body = inputData.body
         quest.correctAnswers = inputData.correctAnswers
+        quest.updatedAt = new Date().toISOString()
 
         await this.quizRepository.saveQuest(quest)
         return true

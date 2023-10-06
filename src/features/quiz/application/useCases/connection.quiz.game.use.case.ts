@@ -1,7 +1,9 @@
 import { CommandHandler } from "@nestjs/cqrs";
 import { QuizGameModel } from "../../models/quiz.game.model";
 import { QuizQueryRepositoryTypeorm } from "../../infrastructure/typeorm/quiz.query.repository.typeorm";
-import { UserQueryRepositoryTypeorm } from "src/features/user/infrastructure/typeorm/user.query.repository.typeorm";
+import { UserQueryRepositoryTypeorm } from "../../../../features/user/infrastructure/typeorm/user.query.repository.typeorm";
+import { QuizGame } from "../../domain/typeorm/quiz.game.entity";
+import { QuizRepositoryTypeorm } from "../../infrastructure/typeorm/quiz.repository.typeorm";
 
 
 export class ConnectionQuizGameCommand {
@@ -15,7 +17,8 @@ export class ConnectionQuizGameCommand {
 export class ConnectionQuizGameUseCase {
     constructor(
         private quizQueryRepository: QuizQueryRepositoryTypeorm,
-        private userQueryRepository: UserQueryRepositoryTypeorm
+        private userQueryRepository: UserQueryRepositoryTypeorm,
+        private quizRepository: QuizRepositoryTypeorm
     ) { }
 
     async execute(command: ConnectionQuizGameCommand)
@@ -36,9 +39,19 @@ export class ConnectionQuizGameUseCase {
             pendingGame.startGameDate = new Date().toISOString()
             pendingGame.status = 'Active'
             pendingGame.questions = randomQuestion
-            // TODO: сохранить данные
 
+            await this.quizRepository.saveQuizGame(pendingGame)
+
+            return pendingGame.id
         }
+
+        const game = new QuizGame()
+        game.firstPlayer = user
+        game.status = 'PendingSecondPlayer'
+
+        await this.quizRepository.saveQuizGame(game)
+
+        return game.id
         // TODO: доделать логику создания игры 
     }
 }

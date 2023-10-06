@@ -20,7 +20,7 @@ export class LoginUserUseCase {
         const { id } = command
 
         return {
-            accessToken: this.jwtService.sign({ id: id }, { expiresIn: setting_env.JWT_ACCESS_EXP }),
+            accessToken: this.jwtService.sign({ id: id }, { expiresIn: setting_env.JWT_ACCESS_EXP, secret: setting_env.JWT_SECRET }),
         }
     }
 }

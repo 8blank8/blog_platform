@@ -40,7 +40,7 @@ export class CreateRefreshTokenUseCase {
         // device.setLastActiveDate()
         // await this.securityRepository.saveDevice(device)
 
-        const refreshToken = this.jwtService.sign({ userId: userId, deviceId: device.id }, { expiresIn: setting_env.JWT_REFRESH_EXP })
+        const refreshToken = this.jwtService.sign({ userId: userId, deviceId: device.id }, { expiresIn: setting_env.JWT_REFRESH_EXP, secret: setting_env.JWT_SECRET })
         return refreshToken
     }
 }

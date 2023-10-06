@@ -7,7 +7,7 @@ import { PostQueryRepositorySql } from "../../infrastructure/sql/post.query.repo
 import { UserQueryRepositorySql } from "../../../user/infrastructure/sql/user.query.repository.sql";
 import { PostRepositorySql } from "../../infrastructure/sql/post.repository.sql";
 import { PostQueryRepositoryTypeorm } from "../../infrastructure/typeorm/post.query.repository.typeorm";
-import { UserQueryRepositoryTypeorm } from "src/features/user/infrastructure/typeorm/user.query.repository.typeorm";
+import { UserQueryRepositoryTypeorm } from "../../../../features/user/infrastructure/typeorm/user.query.repository.typeorm";
 import { PostRepositoryTypeorm } from "../../infrastructure/typeorm/post.repository.typeorm";
 import { PostLikes } from "../../domain/typeorm/post.like.entity";
 
