@@ -20,7 +20,7 @@ export class QuizQestion {
     @Column({ type: 'timestamp without time zone', default: () => 'now()' })
     createdAt: string
 
-    @Column({ nullable: true })
+    @Column({ nullable: true, type: 'timestamp without time zone' })
     updatedAt: string
 
     @ManyToOne(() => QuizGame, quiz => quiz.questions)

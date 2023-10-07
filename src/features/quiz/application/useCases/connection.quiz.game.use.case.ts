@@ -4,6 +4,7 @@ import { QuizQueryRepositoryTypeorm } from "../../infrastructure/typeorm/quiz.qu
 import { UserQueryRepositoryTypeorm } from "../../../../features/user/infrastructure/typeorm/user.query.repository.typeorm";
 import { QuizGame } from "../../domain/typeorm/quiz.game.entity";
 import { QuizRepositoryTypeorm } from "../../infrastructure/typeorm/quiz.repository.typeorm";
+import { ForbiddenException } from "@nestjs/common";
 
 
 export class ConnectionQuizGameCommand {
@@ -30,12 +31,14 @@ export class ConnectionQuizGameUseCase {
         const user = await this.userQueryRepository.findUserByIdForSa(userId)
         if (!user) return false
 
+        const activeGameUser = await this.quizQueryRepository.findMyActiveGame(user.id)
+        if (activeGameUser) throw new ForbiddenException()
+
         const pendingGame = await this.quizQueryRepository.findPendingGame()
         if (pendingGame) {
             const randomQuestion = await this.quizQueryRepository.getFiveRandomQuestion()
 
             pendingGame.secondPlayer = user
-            pendingGame.pairCreatedDate = new Date().toISOString()
             pendingGame.startGameDate = new Date().toISOString()
             pendingGame.status = 'Active'
             pendingGame.questions = randomQuestion
@@ -47,6 +50,7 @@ export class ConnectionQuizGameUseCase {
 
         const game = new QuizGame()
         game.firstPlayer = user
+        game.pairCreatedDate = new Date().toISOString()
         game.status = 'PendingSecondPlayer'
 
         await this.quizRepository.saveQuizGame(game)

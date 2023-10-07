@@ -41,23 +41,28 @@ export class QuizQueryRepositoryTypeorm {
 
         const questions = await queryBuilder.getMany()
 
-        const totalCount = await this.questRepo.createQueryBuilder('qs')
+        const totalCount = this.questRepo.createQueryBuilder('qs')
             .where('qs.body ILIKE :bodySearchTerm', { bodySearchTerm })
-            .andWhere('qs.published = :publishedStatus', { publishedStatus })
-            .getCount()
+
+
+        if (publishedStatus !== null) {
+            totalCount.andWhere('qs.published = :publishedStatus', { publishedStatus: publishedStatus ?? null })
+        }
+
+        const count = await totalCount.getCount()
 
         return {
-            pagesCount: Math.ceil(totalCount / pageSize),
+            pagesCount: Math.ceil(count / pageSize),
             page: pageNumber,
             pageSize: pageSize,
-            totalCount: totalCount,
+            totalCount: count,
             items: questions
         }
     }
 
     async getFiveRandomQuestion(): Promise<QuizQestion[]> {
         const randomQuestion = await this.questRepo.createQueryBuilder('q')
-            .orderBy("RANDOM()")
+            // .orderBy("RANDOM()")
             .limit(5)
             .getMany()
 
@@ -78,6 +83,7 @@ export class QuizQueryRepositoryTypeorm {
             .leftJoinAndSelect(`q.secondPlayer`, 'sp')
             .leftJoinAndSelect('q.questions', 'quest')
             .leftJoinAndSelect(`q.answers`, 'fpa')
+            .leftJoinAndSelect(`q.score`, 'score')
             .getOne()
 
         if (!game) return null
@@ -87,8 +93,7 @@ export class QuizQueryRepositoryTypeorm {
 
     async findMyActiveGame(userId: string) {
         const game = await this.quizGameRepo.createQueryBuilder('q')
-            .where(`q."firstPlayerId" = :userId`, { userId })
-            .orWhere(`q."secondPlayerId" = :userId`, { userId })
+            .where(`(q."firstPlayerId" = :userId OR q."secondPlayerId" = :userId)`, { userId })
             .andWhere(`q.finishGameDate IS NULL`)
             .leftJoinAndSelect(`q.firstPlayer`, 'fp')
             .leftJoinAndSelect(`q.secondPlayer`, 'sp')
@@ -101,6 +106,15 @@ export class QuizQueryRepositoryTypeorm {
 
         return this._mapQuizGame(game)
     }
+
+    // async findMyActiveOrPendingGame(userId: string): Promise<QuizGame | null> {
+    //     return this.quizGameRepo.createQueryBuilder(`q`)
+    //         .where(`q."firstPlayerId" = :userId`, { userId })
+    //         .orWhere(`q."secondPlayerId" = :userId`, { userId })
+    //         .andWhere(`q.finishGameDate IS NULL`)
+    //         // .orWhere(`q.status = 'PendingSecondPlayer'`)
+    //         .getOne()
+    // }
 
     async findFullActiveGameByUserId(userId: string): Promise<QuizGame | null> {
         return this.quizGameRepo.createQueryBuilder('q')

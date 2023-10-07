@@ -1,4 +1,4 @@
-import { Controller, Delete, Res } from "@nestjs/common";
+import { Controller, Delete, Get, Post, Put, Res } from "@nestjs/common";
 import { Response } from "express";
 import { BlogRepository } from "../blog/infrastructure/mongo/blog.repository";
 import { PostRepository } from "../post/infrastructure/mongo/post.repository";
@@ -36,6 +36,7 @@ export class TestingController {
         // await this.commentsRepository.deleteAllComments()
         // await this.commentsRepository.deleteAllCommentsLike()
         // await this.postRepository.deleteAllLikes()
+
         await this.dataSourse.query(`
         CREATE OR REPLACE FUNCTION truncate_tables(username IN VARCHAR) RETURNS void AS $$
         DECLARE

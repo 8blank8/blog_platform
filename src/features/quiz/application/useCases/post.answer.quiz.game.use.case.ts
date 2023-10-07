@@ -5,6 +5,7 @@ import { QuizResponse } from "../../domain/typeorm/quiz.response.entity";
 import { QuizQueryRepositoryTypeorm } from "../../infrastructure/typeorm/quiz.query.repository.typeorm";
 import { QuizRepositoryTypeorm } from "../../infrastructure/typeorm/quiz.repository.typeorm";
 import { QuizPlayerScore } from "../../domain/typeorm/quiz.player.score.entity";
+import { ForbiddenException } from "@nestjs/common";
 
 
 export class PostAnswerQuizGameCommand {
@@ -30,7 +31,8 @@ export class PostAnswerQuizGameUseCase {
         if (!user) return false
 
         const game = await this.quizQueryRepository.findFullActiveGameByUserId(user.id)
-        if (!game) return false
+        if (!game) throw new ForbiddenException()
+        if (game.status === 'PendingSecondPlayer') throw new ForbiddenException()
 
         let secondPlayerId: string
         if (game.firstPlayer.id !== user.id) {
@@ -38,10 +40,11 @@ export class PostAnswerQuizGameUseCase {
         } else {
             secondPlayerId = game.secondPlayer.id
         }
-
         const secondPlayerAnswers = await this.quizQueryRepository.findAnswersUser(secondPlayerId, game.id)
         const firstPlayerAnswers = await this.quizQueryRepository.findAnswersUser(user.id, game.id)
         const currentQuest = game.questions[firstPlayerAnswers.length === 0 ? 0 : firstPlayerAnswers.length - 1]
+
+        if (firstPlayerAnswers.length === 5) throw new ForbiddenException()
 
         const answerStatus = currentQuest.correctAnswers.find(answer => answer === inputData.answer)
 

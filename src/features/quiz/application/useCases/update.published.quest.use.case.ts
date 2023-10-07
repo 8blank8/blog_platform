@@ -26,6 +26,7 @@ export class UpdatePublishedQuestUseCase {
         if (!quest) return false
 
         quest.published = inputData.published
+        quest.updatedAt = new Date().toISOString()
 
         await this.quizRepository.saveQuest(quest)
         return true

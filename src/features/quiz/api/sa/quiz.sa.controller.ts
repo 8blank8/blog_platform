@@ -66,7 +66,7 @@ export class QuizController {
         @Res() res: Response
     ) {
         const isUpdate = await this.commandBus.execute(new UpdatePublishedQuestCommand(id, inputData))
-        if (!isUpdate) return res.sendStatus(STATUS_CODE.BAD_REQUEST)
+        if (!isUpdate) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         return res.sendStatus(STATUS_CODE.NO_CONTENT)
     }

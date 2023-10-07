@@ -28,12 +28,15 @@ describe('quiz', () => {
     describe('connection game', () => {
         const user1 = createUserDto(1)
         const user2 = createUserDto(2)
+        const user3 = createUserDto(3)
 
         let createdUser1
         let createdUser2
+        let createdUser3
 
         let accessTokenUser1: string
         let accessTokenUser2: string
+        let accessTokenUser3: string
 
         const questions = [
             { body: '11111111111', correctAnswers: ['1'] },
@@ -103,6 +106,17 @@ describe('quiz', () => {
                 })
         })
 
+        it('create user3', async () => {
+            await request(app.getHttpServer())
+                .post(`/sa/users`)
+                .set('Authorization', AUTH.BASIC)
+                .send(user3)
+                .expect(201)
+                .then(({ body }) => {
+                    createdUser3 = body
+                })
+        })
+
         it('login user1', async () => {
             await request(app.getHttpServer())
                 .post('/auth/login')
@@ -117,13 +131,27 @@ describe('quiz', () => {
                 })
         })
 
-        it('login user1', async () => {
+        it('login user2', async () => {
             await request(app.getHttpServer())
                 .post('/auth/login')
                 .send({ loginOrEmail: user2.login, password: user2.password })
                 .expect(200)
                 .then(({ body }) => {
                     accessTokenUser2 = body.accessToken
+
+                    expect(body).toEqual({
+                        accessToken: expect.any(String)
+                    })
+                })
+        })
+
+        it('login user3', async () => {
+            await request(app.getHttpServer())
+                .post('/auth/login')
+                .send({ loginOrEmail: user3.login, password: user3.password })
+                .expect(200)
+                .then(({ body }) => {
+                    accessTokenUser3 = body.accessToken
 
                     expect(body).toEqual({
                         accessToken: expect.any(String)
@@ -150,7 +178,7 @@ describe('quiz', () => {
                         secondPlayerProgress: null,
                         questions: null,
                         status: "PendingSecondPlayer",
-                        pairCreatedDate: null,
+                        pairCreatedDate: expect.any(String),
                         startGameDate: null,
                         finishGameDate: null
                     })
@@ -193,7 +221,6 @@ describe('quiz', () => {
         })
 
         it('get quiz game by id', async () => {
-            console.log(createdGameActive.id)
             await request(app.getHttpServer())
                 .get(`/pair-game-quiz/pairs/${createdGameActive.id}`)
                 .set('Authorization', `Bearer ${accessTokenUser2}`)
@@ -277,6 +304,14 @@ describe('quiz', () => {
                 })
         })
 
+        it('user3 response answer game user1', async () => {
+            await request(app.getHttpServer())
+                .post(`/pair-game-quiz/pairs/my-current/answers`)
+                .set('Authorization', `Bearer ${accessTokenUser3}`)
+                .send({ answer: '1' })
+                .expect(403)
+        })
+
         it('get my current game user1 correct answer and score: 1', async () => {
             await request(app.getHttpServer())
                 .get(`/pair-game-quiz/pairs/my-current`)
@@ -343,10 +378,10 @@ describe('quiz', () => {
 
         })
 
-        it('get my current game user1 should be finish game and add bonus score', async () => {
+        it('get quiz game user1 by id, should be finish game and add bonus score ', async () => {
             await request(app.getHttpServer())
-                .get(`/pair-game-quiz/pairs/my-current`)
-                .set('Authorization', `Bearer ${accessTokenUser1}`)
+                .get(`/pair-game-quiz/pairs/${createdGameActive.id}`)
+                .set('Authorization', `Bearer ${accessTokenUser2}`)
                 .expect(200)
                 .then(({ body }) => {
                     expect(body).toEqual({
@@ -383,6 +418,16 @@ describe('quiz', () => {
                     })
                 })
         })
+
+        it('get my current game user1 should be 404', async () => {
+            await request(app.getHttpServer())
+                .get(`/pair-game-quiz/pairs/my-current`)
+                .set('Authorization', `Bearer ${accessTokenUser1}`)
+                .expect(404)
+
+        })
+
+
     })
 
     afterAll(async () => {
