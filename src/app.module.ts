@@ -188,12 +188,12 @@ import { CreateQuestionUseCase } from './features/quiz/application/useCases/crea
 import { DeleteQuestionUseCase } from './features/quiz/application/useCases/delete.question.use.case';
 import { UpdateQuestionUseCase } from './features/quiz/application/useCases/update.question.use.case';
 import { UpdatePublishedQuestUseCase } from './features/quiz/application/useCases/update.published.quest.use.case';
-import { QuizGame } from './features/quiz/domain/typeorm/quiz.game.entity';
-import { QuizResponse } from './features/quiz/domain/typeorm/quiz.response.entity';
 import { QuizPublicController } from './features/quiz/api/public/quiz.public.controller';
-import { ConnectionQuizGameUseCase } from './features/quiz/application/useCases/connection.quiz.game.use.case';
-import { QuizPlayerScore } from './features/quiz/domain/typeorm/quiz.player.score.entity';
-import { PostAnswerQuizGameUseCase } from './features/quiz/application/useCases/post.answer.quiz.game.use.case';
+import { Game } from './features/quiz/domain/typeorm/quiz.game';
+import { Answer } from './features/quiz/domain/typeorm/answer.entity';
+import { PlayerProgress } from './features/quiz/domain/typeorm/player.progress.entity';
+import { ConnectionGameUseCase } from './features/quiz/application/useCases/connection.game.use.case';
+
 const saUseCase = [
   BindUserForBlogUseCase, BannedUserUseCase
 ]
@@ -217,7 +217,7 @@ const saUseCase = [
     TypeOrmModule.forFeature([
       BlackListRefreshToken, Users, Blogs, Posts, PostLikes,
       PostComments, PostCommentLike, Devices, UsersConfirmationEmail,
-      UsersPassword, QuizQestion, QuizGame, QuizResponse, QuizPlayerScore
+      UsersPassword, QuizQestion, Game, Answer, PlayerProgress
     ]),
     MongooseModule.forRoot(setting_env.MONGO_URL),
     MongooseModule.forFeature([
@@ -272,7 +272,8 @@ const saUseCase = [
     ...bloggerUseCase, ...commentUseCase, ...postUseCase, ...securityUseCase,
     ...userUseCase, ...authUseCase, ...saUseCase,
     CreateQuestionUseCase, DeleteQuestionUseCase, UpdateQuestionUseCase, UpdatePublishedQuestUseCase,
-    ConnectionQuizGameUseCase, PostAnswerQuizGameUseCase
+
+    ConnectionGameUseCase
   ],
 })
 

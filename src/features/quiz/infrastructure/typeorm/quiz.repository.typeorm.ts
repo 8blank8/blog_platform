@@ -2,18 +2,16 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { QuizQestion } from "../../domain/typeorm/question.entity";
 import { Repository } from "typeorm";
-import { QuizGame } from "../../domain/typeorm/quiz.game.entity";
-import { QuizResponse } from "../../domain/typeorm/quiz.response.entity";
-import { QuizPlayerScore } from "../../domain/typeorm/quiz.player.score.entity";
+import { Game } from "../../domain/typeorm/quiz.game";
+import { PlayerProgress } from "../../domain/typeorm/player.progress.entity";
 
 
 @Injectable()
 export class QuizRepositoryTypeorm {
     constructor(
         @InjectRepository(QuizQestion) private questRepo: Repository<QuizQestion>,
-        @InjectRepository(QuizGame) private quizGameRepo: Repository<QuizGame>,
-        @InjectRepository(QuizResponse) private quizResponseRepo: Repository<QuizResponse>,
-        @InjectRepository(QuizPlayerScore) private quizPlayerScoreRepo: Repository<QuizPlayerScore>
+        @InjectRepository(Game) private gameRepo: Repository<Game>,
+        @InjectRepository(PlayerProgress) private playerProgressRepo: Repository<PlayerProgress>,
     ) { }
 
     async saveQuest(quest: QuizQestion) {
@@ -24,15 +22,11 @@ export class QuizRepositoryTypeorm {
         return this.questRepo.delete({ id: questId })
     }
 
-    async saveQuizGame(game: QuizGame) {
-        return this.quizGameRepo.save(game)
+    async saveGame(game: Game){
+        return this.gameRepo.save(game)
     }
 
-    async saveAnswer(answer: QuizResponse) {
-        return this.quizResponseRepo.save(answer)
-    }
-
-    async savePlayerScore(score: QuizPlayerScore) {
-        return this.quizPlayerScoreRepo.save(score)
+    async savePlayerProgress(playerProgress: PlayerProgress){
+        return this.playerProgressRepo.save(playerProgress)
     }
 }

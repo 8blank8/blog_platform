@@ -1,12 +1,11 @@
 import { Body, Controller, ForbiddenException, Get, Param, ParseUUIDPipe, Post, Req, Res, UseGuards } from "@nestjs/common";
 import { CommandBus } from "@nestjs/cqrs";
 import { JwtAuthGuard } from "../../../../features/auth/guards/jwt.guard";
-import { ConnectionQuizGameCommand } from "../../application/useCases/connection.quiz.game.use.case";
 import { Response } from 'express'
 import { STATUS_CODE } from "../../../../entity/enum/status.code";
 import { QuizQueryRepositoryTypeorm } from "../../infrastructure/typeorm/quiz.query.repository.typeorm";
 import { AnswerCreateModel } from "../../models/create.answer.model";
-import { PostAnswerQuizGameCommand } from "../../application/useCases/post.answer.quiz.game.use.case";
+import { ConnectionGameCommand } from "../../application/useCases/connection.game.use.case";
 
 
 @Controller('pair-game-quiz/pairs')
@@ -24,10 +23,13 @@ export class QuizPublicController {
     ) {
         const userId = req.user
 
-        const gameId = await this.commandBus.execute(new ConnectionQuizGameCommand(userId))
-        const game = await this.quizQueryRepository.findGameById(gameId)
+        const gameId = await this.commandBus.execute(new ConnectionGameCommand(userId))
 
-        return res.status(STATUS_CODE.OK).send(game)
+        const game = await this.quizQueryRepository.findGameByGameId(gameId)
+
+        return res.status(200).send(game)
+        // TODO: доделать мапинг данный и получение пользователя в дате игры
+        // TODO: get game data by id and return game
     }
 
     @UseGuards(JwtAuthGuard)
@@ -36,13 +38,7 @@ export class QuizPublicController {
         @Req() req,
         @Res() res: Response
     ) {
-        const userId = req.user
-
-        const game = await this.quizQueryRepository.findMyActiveGame(userId)
-        console.log(game)
-        if (!game) return res.sendStatus(STATUS_CODE.NOT_FOUND)
-
-        return res.status(STATUS_CODE.OK).send(game)
+        return res.sendStatus(200)
     }
 
     @UseGuards(JwtAuthGuard)
@@ -52,14 +48,9 @@ export class QuizPublicController {
         @Res() res: Response,
         @Req() req
     ) {
+        return res.sendStatus(200)
 
-        const userId = req.user
-        console.log(id)
-        const game = await this.quizQueryRepository.findGameById(id)
-        if (!game) return res.sendStatus(STATUS_CODE.NOT_FOUND)
-        if (game.firstPlayerProgress.player.id !== userId && game.secondPlayerProgress?.player.id !== userId) throw new ForbiddenException()
-
-        return res.status(STATUS_CODE.OK).send(game)
+  
     }
 
     @UseGuards(JwtAuthGuard)
@@ -69,13 +60,8 @@ export class QuizPublicController {
         @Req() req,
         @Res() res: Response
     ) {
-        const userId = req.user
-
-        const answerId = await this.commandBus.execute(new PostAnswerQuizGameCommand(inputData, userId))
-
-        const answer = await this.quizQueryRepository.findAnswerById(answerId)
-
-        return res.status(STATUS_CODE.OK).send(answer)
+        return res.sendStatus(200)
+    
     }
 
 }

@@ -1,4 +1,4 @@
-import { INestApplication } from "@nestjs/common";
+import { HttpStatus, INestApplication } from "@nestjs/common";
 import { startTestConfig } from "../utils/start.test.config";
 import { createUserDto } from "../utils/create.user.dto";
 import request from "supertest";
@@ -7,9 +7,9 @@ import { AUTH } from "../enums/base.auth.enum";
 
 describe('quiz', () => {
     let app: INestApplication
+    jest.setTimeout(20000)
 
     let createdQuestions: any = []
-
     beforeAll(async () => {
         app = await startTestConfig()
     });
@@ -426,9 +426,169 @@ describe('quiz', () => {
                 .expect(404)
 
         })
-
-
     })
+
+    // describe('delete-all', () => {
+    //     it('delete all data', async () => {
+    //         await request(app.getHttpServer()).delete('/testing/all-data')
+    //     })
+    // })
+
+    // describe('game',()=> {
+
+    //     const user5 = createUserDto(5)
+    //     let accessTokenUser5: string
+    //     let createdUser5
+
+    //     const user6 = createUserDto(6)
+    //     let accessTokenUser6: string
+    //     let createdUser6
+
+    //     let createdGameActive
+
+    //     it('create user 5', async ()=> {
+    //         const res = await request(app.getHttpServer())
+    //             .post('/sa/users')
+    //             .set('Authorization', AUTH.BASIC)
+    //             .send(user5)
+            
+    //             expect(res.status).toBe(HttpStatus.CREATED)
+
+    //             createdUser5 = res.body
+    //     })
+
+    //     it('login user 5', async ()=> {
+    //         const res = await request(app.getHttpServer())
+    //             .post('/auth/login')
+    //             .send({loginOrEmail: user5.login, password: user5.password})
+            
+    //             expect(res.status).toBe(HttpStatus.OK)
+    //             expect(res.body).toEqual({
+    //                 accessToken: expect.any(String)
+    //             })
+
+    //             accessTokenUser5 = res.body.accessToken
+    //     })
+
+    //     it('create user 6', async ()=> {
+    //         const res = await request(app.getHttpServer())
+    //             .post('/sa/users')
+    //             .set('Authorization', AUTH.BASIC)
+    //             .send(user6)
+            
+    //             expect(res.status).toBe(HttpStatus.CREATED)
+
+    //             createdUser6 = res.body
+    //     })
+
+    //     it('login user 6', async ()=> {
+    //         const res = await request(app.getHttpServer())
+    //             .post('/auth/login')
+    //             .send({loginOrEmail: user6.login, password: user6.password})
+            
+    //             expect(res.status).toBe(HttpStatus.OK)
+    //             expect(res.body).toEqual({
+    //                 accessToken: expect.any(String)
+    //             })
+
+    //             accessTokenUser6 = res.body.accessToken
+    //     })
+
+    //     it('connect user5 to game', async () => {
+    //         await request(app.getHttpServer())
+    //             .post(`/pair-game-quiz/pairs/connection`)
+    //             .set('Authorization', `Bearer ${accessTokenUser5}`)
+    //             .expect(200)
+    //             .then(({ body }) => {
+    //                 expect(body).toEqual({
+    //                     id: expect.any(String),
+    //                     firstPlayerProgress: {
+    //                         answers: [],
+    //                         player: {
+    //                             id: createdUser5.id,
+    //                             login: createdUser5.login
+    //                         },
+    //                         score: 0
+    //                     },
+    //                     secondPlayerProgress: null,
+    //                     questions: null,
+    //                     status: "PendingSecondPlayer",
+    //                     pairCreatedDate: expect.any(String),
+    //                     startGameDate: null,
+    //                     finishGameDate: null
+    //                 })
+    //             })
+    //     })
+
+    //     it('user6 connection game', async () => {
+    //         await request(app.getHttpServer())
+    //             .post(`/pair-game-quiz/pairs/connection`)
+    //             .set('Authorization', `Bearer ${accessTokenUser6}`)
+    //             .expect(200)
+    //             .then(({ body }) => {
+    //                 createdGameActive = body
+    //                 expect(body).toEqual({
+    //                     id: expect.any(String),
+    //                     firstPlayerProgress: {
+    //                         answers: [],
+    //                         player: {
+    //                             id: createdUser5.id,
+    //                             login: createdUser5.login
+    //                         },
+    //                         score: 0
+    //                     },
+    //                     secondPlayerProgress: {
+    //                         answers: [],
+    //                         player: {
+    //                             id: createdUser6.id,
+    //                             login: createdUser6.login
+    //                         },
+    //                         score: 0
+    //                     },
+    //                     questions: expect.any(Array<{ id: String, body: String }>),
+    //                     status: "Active",
+    //                     pairCreatedDate: expect.any(String),
+    //                     startGameDate: expect.any(String),
+    //                     finishGameDate: null
+    //                 })
+    //             })
+    //     })
+
+    //     it('user5 response correct answer 1', async () => {
+    //         await request(app.getHttpServer())
+    //             .post(`/pair-game-quiz/pairs/my-current/answers`)
+    //             .set('Authorization', `Bearer ${accessTokenUser5}`)
+    //             .send({ answer: '1' })
+    //             .expect(200)
+    //             .then(({ body }) => {
+
+    //                 // answer1User1 = body
+    //                 expect(body).toEqual({
+    //                     questionId: expect.any(String),
+    //                     answerStatus: "Correct",
+    //                     addedAt: expect.any(String)
+    //                 })
+    //             })
+    //     })
+
+    //     it('user5 response correct answer 1', async () => {
+    //         await request(app.getHttpServer())
+    //             .post(`/pair-game-quiz/pairs/my-current/answers`)
+    //             .set('Authorization', `Bearer ${accessTokenUser5}`)
+    //             .send({ answer: '1' })
+    //             .expect(200)
+    //             .then(({ body }) => {
+
+    //                 // answer1User1 = body
+
+    //                 expect(body).toEqual({
+    //                     questionId: expect.any(String),
+    //                     answerStatus: "Correct",
+    //                     addedAt: expect.any(String)
+    //                 })
+    //             })
+    //     })
+    // })
 
     afterAll(async () => {
         await app.close()
