@@ -5,13 +5,15 @@ import { Repository } from "typeorm";
 import { QuestionQueryParam } from "../../models/question.query.param";
 import { QuestPagniation } from "../../../../entity/pagination/quest/quest.pagination";
 import { Game } from "../../domain/typeorm/quiz.game";
+import { PlayerProgress } from "../../domain/typeorm/player.progress.entity";
 
 
 @Injectable()
 export class QuizQueryRepositoryTypeorm {
     constructor(
         @InjectRepository(QuizQestion) private questRepo: Repository<QuizQestion>,
-        @InjectRepository(Game) private gameRepo: Repository<Game>
+        @InjectRepository(Game) private gameRepo: Repository<Game>,
+        @InjectRepository(PlayerProgress) private playerProgressRepo: Repository<PlayerProgress>
     ) { }
 
     async findQuestById(questId: string): Promise<QuizQestion | null> {
@@ -92,6 +94,13 @@ export class QuizQueryRepositoryTypeorm {
             .leftJoinAndSelect(`g.questions`, `quest`)
             .getOne()
 
+        if(!game) return null
+
+        const firstPlayer = await this.playerProgressRepo.createQueryBuilder('p')
+                .where(`p."playerId" = :id`, {id: game.firstPlayerId})
+                .getOne()
+
+        console.log(firstPlayer)
         return game
     }
    
