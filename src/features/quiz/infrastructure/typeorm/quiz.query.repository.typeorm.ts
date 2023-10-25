@@ -6,6 +6,7 @@ import { QuestionQueryParam } from "../../models/question.query.param";
 import { QuestPagniation } from "../../../../entity/pagination/quest/quest.pagination";
 import { Game } from "../../domain/typeorm/quiz.game";
 import { Answer } from "../../domain/typeorm/answer.entity";
+import { QuizScore } from "../../domain/typeorm/quiz.score.entity";
 
 
 @Injectable()
@@ -14,6 +15,7 @@ export class QuizQueryRepositoryTypeorm {
         @InjectRepository(QuizQestion) private questRepo: Repository<QuizQestion>,
         @InjectRepository(Game) private gameRepo: Repository<Game>,
         @InjectRepository(Answer) private answerRepo: Repository<Answer>,
+        @InjectRepository(QuizScore) private scoreRepo: Repository<QuizScore>,
     ) { }
 
     async findQuestById(questId: string): Promise<QuizQestion | null> {
@@ -91,15 +93,33 @@ export class QuizQueryRepositoryTypeorm {
         const game = await this.gameRepo.createQueryBuilder('g')
             .where(`g.id = :gameId`, { gameId })
             .leftJoinAndSelect(`g.answer`, 'a')
+            .orderBy(`a.addedAt`, "ASC")
             // .leftJoinAndSelect(`g.firstPlayerAnswer`, 'fpa')
             // .leftJoinAndSelect(`g.secondPlayerAnswer`, `spa`)
             .leftJoinAndSelect(`g.firstPlayer`, 'fp')
             .leftJoinAndSelect(`g.secondPlayer`, 'sp')
+            .leftJoinAndSelect(`g.score`, 's')
             // .leftJoinAndSelect(`g.questions`, `quest`)
             .getOne()
         if (!game) return null
 
         return this._mapGame(game)
+    }
+
+    async findFullGameByGameId(gameId: string): Promise<Game | null> {
+        const game = await this.gameRepo.createQueryBuilder('g')
+            .where(`g.id = :gameId`, { gameId })
+            .leftJoinAndSelect(`g.answer`, 'a')
+            .orderBy(`a.addedAt`, "ASC")
+            // .leftJoinAndSelect(`g.firstPlayerAnswer`, 'fpa')
+            // .leftJoinAndSelect(`g.secondPlayerAnswer`, `spa`)
+            .leftJoinAndSelect(`g.firstPlayer`, 'fp')
+            .leftJoinAndSelect(`g.secondPlayer`, 'sp')
+            .leftJoinAndSelect(`g.score`, 's')
+            // .leftJoinAndSelect(`g.questions`, `quest`)
+            .getOne()
+
+        return game
     }
 
     async findMyCurrentGameByUserId(userId: string): Promise<GameViewModel | null> {
@@ -113,6 +133,7 @@ export class QuizQueryRepositoryTypeorm {
             // .leftJoinAndSelect(`g.secondPlayerAnswer`, `spa`)
             .leftJoinAndSelect(`g.firstPlayer`, 'fp')
             .leftJoinAndSelect(`g.secondPlayer`, 'sp')
+            .leftJoinAndSelect(`g.score`, 's')
             // .leftJoinAndSelect(`g.questions`, `quest`)
             // .orderBy(`quest.createdAt`, "DESC")
             .getOne()
@@ -132,6 +153,7 @@ export class QuizQueryRepositoryTypeorm {
             // .leftJoinAndSelect(`g.secondPlayerAnswer`, `spa`)
             .leftJoinAndSelect(`g.firstPlayer`, 'fp')
             .leftJoinAndSelect(`g.secondPlayer`, 'sp')
+            .leftJoinAndSelect(`g.score`, 's')
             // .leftJoinAndSelect(`g.questions`, `quest`)
             // .orderBy(`quest.createdAt`, "DESC")
             .getOne()
@@ -160,6 +182,15 @@ export class QuizQueryRepositoryTypeorm {
         return this._mapAnswer(answer)
     }
 
+    async findPlayerScoreByUserId(gameId: string, userId: string): Promise<QuizScore | null> {
+        const score = await this.scoreRepo.createQueryBuilder('s')
+            .where(`s.userId = :userId`, { userId })
+            .andWhere(`s."gameId" = :gameId`, { gameId })
+            .getOne()
+
+        return score
+    }
+
     private _mapGame(game: Game): GameViewModel {
 
         let firstPlayerAnswer: any = []
@@ -177,6 +208,18 @@ export class QuizQueryRepositoryTypeorm {
 
         let secondPlayerProgress: PlayerProgressModel | null = null
 
+        let firstPlayerScore: number = 0
+        let secondPlayerScore: number = 0
+
+        if (game.score) {
+            game.score.forEach(item => {
+                if (item.userId === game.firstPlayer.id) {
+                    firstPlayerScore = item.score
+                } else {
+                    secondPlayerScore = item.score
+                }
+            })
+        }
         // if (game.secondPlayerAnswer.length !== 0) {
         //     secondPlayerAnswer = game.secondPlayerAnswer.map(this._mapAnswer)
         // }
@@ -188,7 +231,7 @@ export class QuizQueryRepositoryTypeorm {
                     id: game.secondPlayer.id,
                     login: game.secondPlayer.login
                 },
-                score: game.secondPlayerScore
+                score: secondPlayerScore
             }
         }
 
@@ -206,7 +249,7 @@ export class QuizQueryRepositoryTypeorm {
                     id: game.firstPlayer.id,
                     login: game.firstPlayer.login
                 },
-                score: game.firstPlayerScore
+                score: firstPlayerScore
             },
             secondPlayerProgress: secondPlayerProgress,
             questions: questions,

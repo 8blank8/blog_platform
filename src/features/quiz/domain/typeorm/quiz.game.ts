@@ -2,6 +2,7 @@ import { Column, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn 
 import { QuizQestion } from "./question.entity";
 import { Users } from "../../../user/domain/typeorm/user.entity";
 import { Answer } from "./answer.entity";
+import { QuizScore } from "./quiz.score.entity";
 
 @Entity()
 export class Game {
@@ -16,11 +17,11 @@ export class Game {
 
   // @OneToMany(() => Answer, answer => answer.user)
   // firstPlayerAnswer: Answer[];
-  @OneToMany(()=> Answer, answer => answer.game)
+  @OneToMany(() => Answer, answer => answer.game)
   answer: Answer[]
 
-  @Column({ default: 0 })
-  firstPlayerScore: number
+  // @OneToMany(()=>QuizScore, score=> score.)
+  // firstPlayerScore: number
 
   @ManyToOne(() => Users, user => user.id)
   secondPlayer: Users
@@ -28,15 +29,15 @@ export class Game {
   // @OneToMany(() => Answer, answer => answer.user)
   // secondPlayerAnswer: Answer[];
 
-  @Column({ default: 0 })
-  secondPlayerScore: number
+  @OneToMany(() => QuizScore, score => score.game)
+  score: QuizScore[]
   // @OneToOne(() => PlayerProgress, playerProgress => playerProgress.game, { nullable: true })
   // secondPlayerProgress: PlayerProgress;
 
   // @OneToMany(() => QuizQestion, question => question.quizGame, { nullable: true })
   // questions: QuizQestion[];
 
-  @Column( {nullable: true, type: 'json'})
+  @Column({ nullable: true, type: 'json' })
   questions: Array<QuizQestion>
 
   @Column()

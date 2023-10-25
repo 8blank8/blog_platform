@@ -235,36 +235,47 @@ describe('quiz', () => {
                 .send({ answer: '1' })
                 .expect(200)
 
+
+
             await request(app.getHttpServer())
                 .post(`/pair-game-quiz/pairs/my-current/answers`)
                 .set('Authorization', `Bearer ${accessTokenUser1}`)
                 .send({ answer: '1' })
                 .expect(200)
 
-            await request(app.getHttpServer())
-                .post(`/pair-game-quiz/pairs/my-current/answers`)
-                .set('Authorization', `Bearer ${accessTokenUser2}`)
-                .send({ answer: '2' })
-                .expect(200)
-
-            await request(app.getHttpServer())
-                .post(`/pair-game-quiz/pairs/my-current/answers`)
-                .set('Authorization', `Bearer ${accessTokenUser2}`)
-                .send({ answer: '2' })
-                .expect(200)
-
-              const res =  await request(app.getHttpServer())
-                .get(`/pair-game-quiz/pairs/${responseConnection.body.id}`)
+            const responseMyCurrent = await request(app.getHttpServer())
+                .get(`/pair-game-quiz/pairs/my-current`)
                 .set('Authorization', `Bearer ${accessTokenUser1}`)
                 .expect(200)
 
-            expect(res.body.firstPlayerProgress.score).toBe(5)
-            expect(res.body.secondPlayerProgress.score).toBe(3)
+            expect(responseMyCurrent.body.firstPlayerProgress.score).toBe(4)
 
-            // const responseMyCurrent = await request(app.getHttpServer())
-            //     .get(`/pair-game-quiz/pairs/my-current`)
-            //     .set('Authorization', `Bearer ${accessTokenUser1}`)
-            //     .expect(200)
+            await request(app.getHttpServer())
+                .post(`/pair-game-quiz/pairs/my-current/answers`)
+                .set('Authorization', `Bearer ${accessTokenUser2}`)
+                .send({ answer: '2' })
+                .expect(200)
+
+            await request(app.getHttpServer())
+                .post(`/pair-game-quiz/pairs/my-current/answers`)
+                .set('Authorization', `Bearer ${accessTokenUser2}`)
+                .send({ answer: '2' })
+                .expect(200)
+
+            const res = await request(app.getHttpServer())
+                .get(`/pair-game-quiz/pairs/${responseConnection.body.id}`)
+                .set('Authorization', `Bearer ${accessTokenUser1}`)
+                .expect(200)
+            
+            const res2 = await request(app.getHttpServer())
+            .get(`/pair-game-quiz/pairs/${responseConnection.body.id}`)
+            .set('Authorization', `Bearer ${accessTokenUser2}`)
+            .expect(200)
+
+            expect(res.body.firstPlayerProgress.answers).toEqual(res2.body.firstPlayerProgress.answers)
+            expect(res.body.secondPlayerProgress.answers).toEqual(res2.body.secondPlayerProgress.answers)
+
+
 
             // const responseMyCurrentUser2 = await request(app.getHttpServer())
             //     .get(`/pair-game-quiz/pairs/my-current`)

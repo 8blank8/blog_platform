@@ -4,6 +4,7 @@ import { QuizQestion } from "../../domain/typeorm/question.entity";
 import { Repository } from "typeorm";
 import { Game } from "../../domain/typeorm/quiz.game";
 import { Answer } from "../../domain/typeorm/answer.entity";
+import { QuizScore } from "../../domain/typeorm/quiz.score.entity";
 
 
 @Injectable()
@@ -12,6 +13,7 @@ export class QuizRepositoryTypeorm {
         @InjectRepository(QuizQestion) private questRepo: Repository<QuizQestion>,
         @InjectRepository(Game) private gameRepo: Repository<Game>,
         @InjectRepository(Answer) private answerRepo: Repository<Answer>,
+        @InjectRepository(QuizScore) private scoreRepo: Repository<QuizScore>,
     ) { }
 
     async saveQuest(quest: QuizQestion) {
@@ -28,5 +30,9 @@ export class QuizRepositoryTypeorm {
 
     async saveAnswer(answer: Answer){
         return this.answerRepo.save(answer)
+    }
+
+    async saveScore(score: QuizScore){
+        return this.scoreRepo.save(score)
     }
 }
