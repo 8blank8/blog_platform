@@ -3,7 +3,6 @@ import { UserQueryRepositoryTypeorm } from "../../../user/infrastructure/typeorm
 import { QuizQueryRepositoryTypeorm } from "../../infrastructure/typeorm/quiz.query.repository.typeorm";
 import { ForbiddenException } from "@nestjs/common";
 import { Game } from "../../domain/typeorm/quiz.game";
-import { PlayerProgress } from "../../domain/typeorm/player.progress.entity";
 import { QuizRepositoryTypeorm } from "../../infrastructure/typeorm/quiz.repository.typeorm";
 
 
@@ -35,33 +34,19 @@ export class ConnectionGameUseCase {
 
         if(!pendingGame){
 
-            const firstPlayerProgress = new PlayerProgress()
             const game = new Game()
 
-            firstPlayerProgress.player = user
-            firstPlayerProgress.game = game
-
-            game.firstPlayerId = user.id
-            game.firstPlayerProgress = firstPlayerProgress
+            game.firstPlayer = user
             game.pairCreatedDate = new Date().toISOString()
             game.status ='PendingSecondPlayer'
 
             await this.quizRepository.saveGame(game)
-            await this.quizRepository.savePlayerProgress(firstPlayerProgress)
-
             return game.id
         }  
 
         const randomQuestion = await this.quizQueryRepository.getFiveRandomQuestion()
-
-        const secondPlayerProgress = new PlayerProgress()
-        secondPlayerProgress.player = user
-        secondPlayerProgress.game = pendingGame
-
-        await this.quizRepository.savePlayerProgress(secondPlayerProgress)
-
-        pendingGame.secondPlayerId = user.id
-        pendingGame.secondPlayerProgress = secondPlayerProgress
+        
+        pendingGame.secondPlayer = user
         pendingGame.startGameDate = new Date().toISOString()
         pendingGame.status = 'Active'
         pendingGame.questions = randomQuestion

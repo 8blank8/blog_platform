@@ -191,8 +191,8 @@ import { UpdatePublishedQuestUseCase } from './features/quiz/application/useCase
 import { QuizPublicController } from './features/quiz/api/public/quiz.public.controller';
 import { Game } from './features/quiz/domain/typeorm/quiz.game';
 import { Answer } from './features/quiz/domain/typeorm/answer.entity';
-import { PlayerProgress } from './features/quiz/domain/typeorm/player.progress.entity';
 import { ConnectionGameUseCase } from './features/quiz/application/useCases/connection.game.use.case';
+import { AddAnswerUseCase } from './features/quiz/application/useCases/add.answer.use.case';
 
 const saUseCase = [
   BindUserForBlogUseCase, BannedUserUseCase
@@ -217,7 +217,7 @@ const saUseCase = [
     TypeOrmModule.forFeature([
       BlackListRefreshToken, Users, Blogs, Posts, PostLikes,
       PostComments, PostCommentLike, Devices, UsersConfirmationEmail,
-      UsersPassword, QuizQestion, Game, Answer, PlayerProgress
+      UsersPassword, QuizQestion, Game, Answer, 
     ]),
     MongooseModule.forRoot(setting_env.MONGO_URL),
     MongooseModule.forFeature([
@@ -273,7 +273,7 @@ const saUseCase = [
     ...userUseCase, ...authUseCase, ...saUseCase,
     CreateQuestionUseCase, DeleteQuestionUseCase, UpdateQuestionUseCase, UpdatePublishedQuestUseCase,
 
-    ConnectionGameUseCase
+    ConnectionGameUseCase, AddAnswerUseCase
   ],
 })
 

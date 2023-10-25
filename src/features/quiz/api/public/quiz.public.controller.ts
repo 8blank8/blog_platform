@@ -1,4 +1,4 @@
-import { Body, Controller, ForbiddenException, Get, Param, ParseUUIDPipe, Post, Req, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, ForbiddenException, Get, Param, ParseUUIDPipe, Post, Req, Res, UseGuards, assignMetadata } from "@nestjs/common";
 import { CommandBus } from "@nestjs/cqrs";
 import { JwtAuthGuard } from "../../../../features/auth/guards/jwt.guard";
 import { Response } from 'express'
@@ -6,6 +6,7 @@ import { STATUS_CODE } from "../../../../entity/enum/status.code";
 import { QuizQueryRepositoryTypeorm } from "../../infrastructure/typeorm/quiz.query.repository.typeorm";
 import { AnswerCreateModel } from "../../models/create.answer.model";
 import { ConnectionGameCommand } from "../../application/useCases/connection.game.use.case";
+import { AddAnswerCommand } from "../../application/useCases/add.answer.use.case";
 
 
 @Controller('pair-game-quiz/pairs')
@@ -38,7 +39,12 @@ export class QuizPublicController {
         @Req() req,
         @Res() res: Response
     ) {
-        return res.sendStatus(200)
+        const userId = req.user
+
+        const game = await this.quizQueryRepository.findMyCurrentGameByUserId(userId)
+        if (!game) return res.sendStatus(STATUS_CODE.NOT_FOUND)
+
+        return res.status(STATUS_CODE.OK).send(game)
     }
 
     @UseGuards(JwtAuthGuard)
@@ -48,9 +54,16 @@ export class QuizPublicController {
         @Res() res: Response,
         @Req() req
     ) {
-        return res.sendStatus(200)
+        const userId = req.user
 
-  
+        const game = await this.quizQueryRepository.findGameByGameId(id)
+        if (!game) return res.sendStatus(STATUS_CODE.NOT_FOUND)
+        if (
+            game.firstPlayerProgress.player.id !== userId &&
+            game.secondPlayerProgress?.player.id !== userId
+        ) throw new ForbiddenException()
+
+        return res.status(STATUS_CODE.OK).send(game)
     }
 
     @UseGuards(JwtAuthGuard)
@@ -60,8 +73,15 @@ export class QuizPublicController {
         @Req() req,
         @Res() res: Response
     ) {
-        return res.sendStatus(200)
-    
+        const userId = req.user
+
+        const answerId = await this.commandBus.execute(new AddAnswerCommand(inputData, userId))
+        if(!answerId) return res.sendStatus(STATUS_CODE.BAD_REQUEST)
+
+        const answer = await this.quizQueryRepository.findAnswerById(answerId)
+
+        return res.status(STATUS_CODE.OK).send(answer)
+
     }
 
 }

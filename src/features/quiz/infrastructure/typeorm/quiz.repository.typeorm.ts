@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { QuizQestion } from "../../domain/typeorm/question.entity";
 import { Repository } from "typeorm";
 import { Game } from "../../domain/typeorm/quiz.game";
-import { PlayerProgress } from "../../domain/typeorm/player.progress.entity";
+import { Answer } from "../../domain/typeorm/answer.entity";
 
 
 @Injectable()
@@ -11,7 +11,7 @@ export class QuizRepositoryTypeorm {
     constructor(
         @InjectRepository(QuizQestion) private questRepo: Repository<QuizQestion>,
         @InjectRepository(Game) private gameRepo: Repository<Game>,
-        @InjectRepository(PlayerProgress) private playerProgressRepo: Repository<PlayerProgress>,
+        @InjectRepository(Answer) private answerRepo: Repository<Answer>,
     ) { }
 
     async saveQuest(quest: QuizQestion) {
@@ -26,7 +26,7 @@ export class QuizRepositoryTypeorm {
         return this.gameRepo.save(game)
     }
 
-    async savePlayerProgress(playerProgress: PlayerProgress){
-        return this.playerProgressRepo.save(playerProgress)
+    async saveAnswer(answer: Answer){
+        return this.answerRepo.save(answer)
     }
 }

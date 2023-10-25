@@ -1,26 +1,43 @@
-import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { QuizQestion } from "./question.entity";
-import { PlayerProgress } from "./player.progress.entity";
+import { Users } from "../../../user/domain/typeorm/user.entity";
+import { Answer } from "./answer.entity";
 
 @Entity()
 export class Game {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
-  firstPlayerId: string
+  @ManyToOne(() => Users, user => user.id)
+  firstPlayer: Users
 
-  @OneToOne(() => PlayerProgress, playerProgress => playerProgress.game)
-  firstPlayerProgress: PlayerProgress;
+  // @OneToOne(() => PlayerProgress, playerProgress => playerProgress.game)
+  // firstPlayerProgress: PlayerProgress;
 
-  @Column({nullable: true})
-  secondPlayerId: string
+  // @OneToMany(() => Answer, answer => answer.user)
+  // firstPlayerAnswer: Answer[];
+  @OneToMany(()=> Answer, answer => answer.game)
+  answer: Answer[]
 
-  @OneToOne(() => PlayerProgress, playerProgress => playerProgress.game, {nullable: true})
-  secondPlayerProgress: PlayerProgress;
+  @Column({ default: 0 })
+  firstPlayerScore: number
 
-  @OneToMany(() => QuizQestion, question => question.quizGame, {nullable: true})
-  questions: QuizQestion[];
+  @ManyToOne(() => Users, user => user.id)
+  secondPlayer: Users
+
+  // @OneToMany(() => Answer, answer => answer.user)
+  // secondPlayerAnswer: Answer[];
+
+  @Column({ default: 0 })
+  secondPlayerScore: number
+  // @OneToOne(() => PlayerProgress, playerProgress => playerProgress.game, { nullable: true })
+  // secondPlayerProgress: PlayerProgress;
+
+  // @OneToMany(() => QuizQestion, question => question.quizGame, { nullable: true })
+  // questions: QuizQestion[];
+
+  @Column( {nullable: true, type: 'json'})
+  questions: Array<QuizQestion>
 
   @Column()
   status: 'PendingSecondPlayer' | 'Active' | 'Finished';
@@ -28,9 +45,9 @@ export class Game {
   @Column()
   pairCreatedDate: string;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   startGameDate: string;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   finishGameDate: string;
 }
