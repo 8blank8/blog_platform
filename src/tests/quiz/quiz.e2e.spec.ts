@@ -272,6 +272,9 @@ describe('quiz', () => {
             .set('Authorization', `Bearer ${accessTokenUser2}`)
             .expect(200)
 
+            expect(res2.body.firstPlayerProgress.score).toBe(5)
+            expect(res2.body.secondPlayerProgress.score).toBe(3)
+
             expect(res.body.firstPlayerProgress.answers).toEqual(res2.body.firstPlayerProgress.answers)
             expect(res.body.secondPlayerProgress.answers).toEqual(res2.body.secondPlayerProgress.answers)
 

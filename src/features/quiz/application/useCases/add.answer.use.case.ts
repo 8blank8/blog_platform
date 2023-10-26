@@ -108,8 +108,40 @@ export class AddAnswerUseCase {
         const game = await this.quizQueryRepository.findFullGameByGameId(gameId)
         if (!game || game.status !== "Finished") return false
 
-        const firstAnswerUserId = game.answer[0].userId
-        const score = await this.quizQueryRepository.findPlayerScoreByUserId(game.id, firstAnswerUserId)
+        let playerId: string
+        let firstPlayerAnswer: any = []
+        let secondPlayerAnswer: any = []
+        let firstPlayerCorrectAnswer = false
+        let secondPlayerCorrectAnser = false
+
+        game.answer.forEach(item => {
+            if (item.userId === game.firstPlayer.id) {
+                firstPlayerAnswer.push(item)
+            } else {
+                secondPlayerAnswer.push(item)
+            }
+        })
+
+        firstPlayerAnswer.sort((a, b) => a.addedAt < b.addedAt)
+        secondPlayerAnswer.sort((a, b) => a.addedAt < b.addedAt)
+
+        firstPlayerCorrectAnswer = firstPlayerAnswer.find(item => item.answerStatus === 'Correct') ? true : false
+        secondPlayerCorrectAnser = secondPlayerAnswer.find(item => item.answerStatus === 'Correct') ? true : false
+
+        if (firstPlayerAnswer[0].addedAt > secondPlayerAnswer[0].addedAt && firstPlayerCorrectAnswer) {
+            console.log({first: firstPlayerAnswer[0], second:secondPlayerAnswer[0] })
+            console.log('first')
+            playerId = firstPlayerId
+        }
+        if (secondPlayerAnswer[0].addedAt > firstPlayerAnswer[0].addedAt && secondPlayerCorrectAnser) {
+            console.log({second:secondPlayerAnswer[0] ,first: firstPlayerAnswer[0], })
+            console.log('second')
+            playerId = secondPlayerId
+        }
+
+        if (!firstPlayerCorrectAnswer && !secondPlayerCorrectAnser) return false
+
+        const score = await this.quizQueryRepository.findPlayerScoreByUserId(game.id, playerId!)
 
         if (score) {
             score.score = score.score + 1

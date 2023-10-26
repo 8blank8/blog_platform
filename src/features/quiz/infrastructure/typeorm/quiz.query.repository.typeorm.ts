@@ -73,9 +73,8 @@ export class QuizQueryRepositoryTypeorm {
     async findActiveGameByUserId(userId: string) {
 
         const game = await this.gameRepo.createQueryBuilder('g')
-            .where('g."firstPlayerId" = :userId', { userId })
-            .orWhere('g."secondPlayerId" = :userId', { userId })
-            .andWhere(`g.finishGameDate IS NULL`)
+            .where('g."firstPlayerId" = :userId OR g."secondPlayerId" = :userId', { userId })
+            .andWhere(`g.finishGameDate IS NULL AND g."status" != 'Finished'`)
             .getOne()
 
         return game

@@ -28,7 +28,7 @@ export class ConnectionGameUseCase {
         const user = await this.userQueryRepository.findUserByIdForSa(userId)
         if (!user) return false
 
-        const activeGame = await this.quizQueryRepository.findActiveGameByUserId(userId)
+        const activeGame = await this.quizQueryRepository.findMyCurrentGameFullByUserId(userId)
         if (activeGame) throw new ForbiddenException()
 
         const pendingGame = await this.quizQueryRepository.findPendingGame()

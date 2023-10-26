@@ -43,7 +43,7 @@ export class QuizPublicController {
 
         const game = await this.quizQueryRepository.findMyCurrentGameByUserId(userId)
         if (!game) return res.sendStatus(STATUS_CODE.NOT_FOUND)
-        console.log(game.firstPlayerProgress.answers)
+        // console.log(game.firstPlayerProgress.answers)
         return res.status(STATUS_CODE.OK).send(game)
     }
 
