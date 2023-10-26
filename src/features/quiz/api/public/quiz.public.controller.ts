@@ -43,7 +43,7 @@ export class QuizPublicController {
 
         const game = await this.quizQueryRepository.findMyCurrentGameByUserId(userId)
         if (!game) return res.sendStatus(STATUS_CODE.NOT_FOUND)
-
+        console.log(game.firstPlayerProgress.answers)
         return res.status(STATUS_CODE.OK).send(game)
     }
 
@@ -76,7 +76,7 @@ export class QuizPublicController {
         const userId = req.user
 
         const answerId = await this.commandBus.execute(new AddAnswerCommand(inputData, userId))
-        if(!answerId) return res.sendStatus(STATUS_CODE.BAD_REQUEST)
+        if (!answerId) return res.sendStatus(STATUS_CODE.BAD_REQUEST)
 
         const answer = await this.quizQueryRepository.findAnswerById(answerId)
 

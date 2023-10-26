@@ -23,6 +23,6 @@ export class QuizQestion {
     @Column({ nullable: true, type: 'timestamp without time zone' })
     updatedAt: string
 
-    @ManyToOne(() => Game, quiz => quiz.questions)
-    quizGame: Game
+    // @ManyToOne(() => Game, quiz => quiz.questions)
+    // quizGame: Game
 }

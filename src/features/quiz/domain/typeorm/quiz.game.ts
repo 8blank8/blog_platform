@@ -17,8 +17,8 @@ export class Game {
 
   // @OneToMany(() => Answer, answer => answer.user)
   // firstPlayerAnswer: Answer[];
-  @OneToMany(() => Answer, answer => answer.game)
-  answer: Answer[]
+  @Column({ nullable: true, type: 'json' })
+  answer: Array<Answer>
 
   // @OneToMany(()=>QuizScore, score=> score.)
   // firstPlayerScore: number

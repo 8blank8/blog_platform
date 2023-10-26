@@ -5,8 +5,7 @@ import { QuizQueryRepositoryTypeorm } from "../../infrastructure/typeorm/quiz.qu
 import { ForbiddenException } from "@nestjs/common";
 import { Answer } from "../../domain/typeorm/answer.entity";
 import { QuizRepositoryTypeorm } from "../../infrastructure/typeorm/quiz.repository.typeorm";
-import { QuizScore } from "../../domain/typeorm/quiz.score.entity";
-import { Game } from "../../domain/typeorm/quiz.game";
+import { log } from "console";
 
 
 export class AddAnswerCommand {
@@ -35,6 +34,9 @@ export class AddAnswerUseCase {
         if (!game) throw new ForbiddenException()
         if (!game.secondPlayer) throw new ForbiddenException()
 
+        const firstPlayerAnswersCount = !game.answer ? 0 : game.answer.filter(answer => answer.userId === user.id).length
+        if (firstPlayerAnswersCount === 5) throw new ForbiddenException()
+
         let secondPlayerId: string
         if (game.firstPlayer.id === user.id) {
             secondPlayerId = game.secondPlayer.id
@@ -42,19 +44,36 @@ export class AddAnswerUseCase {
             secondPlayerId = game.firstPlayer.id
         }
 
-        const firstPlayerAnswersCount = game.answer.filter(answer => answer.userId === user.id).length
-        // const secondPlayerAnswersCount = game.answer.filter(answer => answer.userId === secondPlayerId).length
-
-        if (firstPlayerAnswersCount === 5) throw new ForbiddenException()
-
         const createdAnswer = new Answer()
-        createdAnswer.game = game
+        // createdAnswer.game = game
+        createdAnswer.gameId = game.id
         createdAnswer.user = user
         createdAnswer.userId = user.id
         createdAnswer.question = game.questions[firstPlayerAnswersCount]
         createdAnswer.questionId = game.questions[firstPlayerAnswersCount].id
+        createdAnswer.addedAt = new Date().toISOString()
 
         const answer = game.questions[firstPlayerAnswersCount].correctAnswers.find(item => item === inputData.answer)
+
+        if (answer) {
+            createdAnswer.answerStatus = 'Correct'
+        } else {
+            createdAnswer.answerStatus = 'Incorrect'
+        }
+
+        let gameAnswers
+        if (game.answer) {
+            gameAnswers = [...game.answer, createdAnswer]
+        } else {
+            gameAnswers = [createdAnswer]
+        }
+
+        game.answer = gameAnswers
+
+        await this.quizRepository.saveGame(game)
+        // log(createdAnswer, 'IN UC AFTER SAVE')
+        await this.quizRepository.saveAnswer(createdAnswer)
+
 
         const score = await this.quizQueryRepository.findPlayerScoreByUserId(game.id, user.id)
 
@@ -63,14 +82,6 @@ export class AddAnswerUseCase {
             await this.quizRepository.saveScore(score)
         }
 
-        if (answer) {
-            createdAnswer.answerStatus = 'Correct'
-        } else {
-            createdAnswer.answerStatus = 'Incorrect'
-        }
-
-        await this.quizRepository.saveGame(game)
-        await this.quizRepository.saveAnswer(createdAnswer)
 
         const isFinished = await this.checkFinishGame(user.id)
         if (isFinished) {
@@ -79,12 +90,9 @@ export class AddAnswerUseCase {
             await this.quizRepository.saveGame(game)
         }
 
-        // if (firstPlayerAnswersCount === 4) {
-        // }
+
         await this.checkAddBonus(game.id, user.id, secondPlayerId)
-
-
-
+        // console.log(createdAnswer, 'IN UC FOR RETURN')
         return createdAnswer.id
     }
 
@@ -99,34 +107,13 @@ export class AddAnswerUseCase {
 
         const game = await this.quizQueryRepository.findFullGameByGameId(gameId)
         if (!game || game.status !== "Finished") return false
-        console.log(game)
 
-        const firstAnswerUserId =  game.answer[0].userId
+        const firstAnswerUserId = game.answer[0].userId
         const score = await this.quizQueryRepository.findPlayerScoreByUserId(game.id, firstAnswerUserId)
 
-        if(score){
+        if (score) {
             score.score = score.score + 1
             await this.quizRepository.saveScore(score)
         }
-        // const firstPlayerAnswers = await this.quizQueryRepository.findUserAnswers(game.id, firstPlayerId)
-        // const secondPlayerAnswers = await this.quizQueryRepository.findUserAnswers(game.id, secondPlayerId)
-
-        // const isCorrectAnswer = firstPlayerAnswers.find(item => item.answerStatus === 'Correct')
-
-        // const firstPlayerAnswerTime = new Date(firstPlayerAnswers[0].addedAt)
-        // const secondPlayerAnswerTime = new Date(secondPlayerAnswers[0].addedAt)
-        
-
-        // if (isCorrectAnswer && firstPlayerAnswers.length === 5 && firstPlayerAnswerTime < secondPlayerAnswerTime) {
-            // const game = await this.quizQueryRepository.findMyCurrentGameFullByUserId(firstPlayerId)
-            // game![firstPlayerPrefix + 'PlayerScore'] = game![firstPlayerPrefix + 'PlayerScore'] + 1
-            // const score = await this.quizQueryRepository.findPlayerScoreByUserId(game.id, firstPlayerId)
-            // if (score) {
-            //     score.score = score.score + 1
-            //     await this.quizRepository.saveScore(score)
-            // }
-
-            // await this.quizRepository.saveGame(game!)
-        // }
     }
 }

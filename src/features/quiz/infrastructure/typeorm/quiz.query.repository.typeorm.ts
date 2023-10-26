@@ -92,8 +92,8 @@ export class QuizQueryRepositoryTypeorm {
     async findGameByGameId(gameId: string): Promise<GameViewModel | null> {
         const game = await this.gameRepo.createQueryBuilder('g')
             .where(`g.id = :gameId`, { gameId })
-            .leftJoinAndSelect(`g.answer`, 'a')
-            .orderBy(`a.addedAt`, "ASC")
+            // .leftJoinAndSelect(`g.answer`, 'a')
+            // .orderBy(`a.addedAt`, "ASC")
             // .leftJoinAndSelect(`g.firstPlayerAnswer`, 'fpa')
             // .leftJoinAndSelect(`g.secondPlayerAnswer`, `spa`)
             .leftJoinAndSelect(`g.firstPlayer`, 'fp')
@@ -109,8 +109,8 @@ export class QuizQueryRepositoryTypeorm {
     async findFullGameByGameId(gameId: string): Promise<Game | null> {
         const game = await this.gameRepo.createQueryBuilder('g')
             .where(`g.id = :gameId`, { gameId })
-            .leftJoinAndSelect(`g.answer`, 'a')
-            .orderBy(`a.addedAt`, "ASC")
+            // .leftJoinAndSelect(`g.answer`, 'a')
+            // .orderBy(`a.addedAt`, "ASC")
             // .leftJoinAndSelect(`g.firstPlayerAnswer`, 'fpa')
             // .leftJoinAndSelect(`g.secondPlayerAnswer`, `spa`)
             .leftJoinAndSelect(`g.firstPlayer`, 'fp')
@@ -127,8 +127,8 @@ export class QuizQueryRepositoryTypeorm {
             .where(`(g."firstPlayerId" = :userId OR g."secondPlayerId" = :userId)`, { userId })
             .andWhere(`g."finishGameDate" IS NULL AND g."status" != 'Finished'`)
             // .andWhere(`g.status != 'Finished'`)
-            .leftJoinAndSelect(`g.answer`, 'a')
-            .orderBy(`a.addedAt`, "ASC")
+            // .leftJoinAndSelect(`g.answer`, 'a')
+            // .orderBy(`a.addedAt`, "ASC")
             // .leftJoinAndSelect(`g.firstPlayerAnswer`, 'fpa')
             // .leftJoinAndSelect(`g.secondPlayerAnswer`, `spa`)
             .leftJoinAndSelect(`g.firstPlayer`, 'fp')
@@ -147,7 +147,7 @@ export class QuizQueryRepositoryTypeorm {
         const game = await this.gameRepo.createQueryBuilder('g')
             .where(`(g."firstPlayerId" = :userId OR g."secondPlayerId" = :userId)`, { userId })
             .andWhere(`g.finishGameDate IS NULL AND g."status" != 'Finished'`)
-            .leftJoinAndSelect(`g.answer`, 'a')
+            // .leftJoinAndSelect(`g.answer`, 'a')
             // .orderBy(`a.addedAt`, "ASC")
             // .leftJoinAndSelect(`g.firstPlayerAnswer`, 'fpa')
             // .leftJoinAndSelect(`g.secondPlayerAnswer`, `spa`)
@@ -196,7 +196,7 @@ export class QuizQueryRepositoryTypeorm {
         let firstPlayerAnswer: any = []
         let secondPlayerAnswer: any = []
 
-        if (game.answer.length !== 0) {
+        if (game.answer && game.answer.length !== 0) {
             game.answer.forEach(item => {
                 if (item.userId === game.firstPlayer.id) {
                     firstPlayerAnswer.push(this._mapAnswer(item))
