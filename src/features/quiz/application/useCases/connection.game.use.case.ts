@@ -5,6 +5,8 @@ import { ForbiddenException } from "@nestjs/common";
 import { Game } from "../../domain/typeorm/quiz.game";
 import { QuizRepositoryTypeorm } from "../../infrastructure/typeorm/quiz.repository.typeorm";
 import { QuizScore } from "../../domain/typeorm/quiz.score.entity";
+import { QuizPlayer } from "../../domain/typeorm/quiz.player.entity";
+import { v4 as uuidv4 } from 'uuid'
 
 
 export class ConnectionGameCommand {
@@ -28,9 +30,18 @@ export class ConnectionGameUseCase {
         const user = await this.userQueryRepository.findUserByIdForSa(userId)
         if (!user) return false
 
-        const activeGame = await this.quizQueryRepository.findMyCurrentGameFullByUserId(userId)
-        if (activeGame) throw new ForbiddenException()
+        let player = await this.quizQueryRepository.findPlayerById(user.id)
 
+        if (!player) {
+            player = new QuizPlayer()
+            player.userId = user.id
+            player.user = user
+            await this.quizRepository.savePlayer(player)
+        }
+
+        const activeGame = await this.quizQueryRepository.findMyCurrentGameFullByUserId(player.id)
+        if (activeGame) throw new ForbiddenException()
+        
         const pendingGame = await this.quizQueryRepository.findPendingGame()
 
         const score = new QuizScore()
@@ -39,14 +50,15 @@ export class ConnectionGameUseCase {
 
             const game = new Game()
 
-            game.firstPlayer = user
+            game.firstPlayer = player
+            // game.firstPlayerUserId = user.id
             game.pairCreatedDate = new Date().toISOString()
             game.status = 'PendingSecondPlayer'
 
             await this.quizRepository.saveGame(game)
 
-            score.user = user
-            score.userId = userId
+            score.user = player
+            score.userId = player.id
             score.game = game
 
             await this.quizRepository.saveScore(score)
@@ -55,15 +67,16 @@ export class ConnectionGameUseCase {
 
         const randomQuestion = await this.quizQueryRepository.getFiveRandomQuestion()
 
-        pendingGame.secondPlayer = user
+        pendingGame.secondPlayer = player
+        // pendingGame.secondPlayerUserId = user.id
         pendingGame.startGameDate = new Date().toISOString()
         pendingGame.status = 'Active'
         pendingGame.questions = randomQuestion
 
         await this.quizRepository.saveGame(pendingGame)
 
-        score.user = user
-        score.userId = userId
+        score.user = player
+        score.userId = player.id
         score.game = pendingGame
 
         await this.quizRepository.saveScore(score)

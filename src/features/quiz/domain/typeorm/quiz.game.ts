@@ -3,39 +3,30 @@ import { QuizQestion } from "./question.entity";
 import { Users } from "../../../user/domain/typeorm/user.entity";
 import { Answer } from "./answer.entity";
 import { QuizScore } from "./quiz.score.entity";
+import { QuizPlayer } from "./quiz.player.entity";
 
 @Entity()
 export class Game {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Users, user => user.id)
-  firstPlayer: Users
+  // @Column({nullable: false})
+  // firstPlayerUserId: string
 
-  // @OneToOne(() => PlayerProgress, playerProgress => playerProgress.game)
-  // firstPlayerProgress: PlayerProgress;
+  @ManyToOne(() => QuizPlayer, user => user.id)
+  firstPlayer: QuizPlayer
 
-  // @OneToMany(() => Answer, answer => answer.user)
-  // firstPlayerAnswer: Answer[];
   @Column({ nullable: true, type: 'json' })
   answer: Array<Answer>
 
-  // @OneToMany(()=>QuizScore, score=> score.)
-  // firstPlayerScore: number
+  // @Column({nullable: true})
+  // secondPlayerUserId: string
 
-  @ManyToOne(() => Users, user => user.id)
-  secondPlayer: Users
-
-  // @OneToMany(() => Answer, answer => answer.user)
-  // secondPlayerAnswer: Answer[];
+  @ManyToOne(() => QuizPlayer, user => user.id)
+  secondPlayer: QuizPlayer
 
   @OneToMany(() => QuizScore, score => score.game)
   score: QuizScore[]
-  // @OneToOne(() => PlayerProgress, playerProgress => playerProgress.game, { nullable: true })
-  // secondPlayerProgress: PlayerProgress;
-
-  // @OneToMany(() => QuizQestion, question => question.quizGame, { nullable: true })
-  // questions: QuizQestion[];
 
   @Column({ nullable: true, type: 'json' })
   questions: Array<QuizQestion>

@@ -2,6 +2,7 @@ import { PostLikes } from "../../../../features/post/domain/typeorm/post.like.en
 import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { UsersPassword } from "./user.password.entity";
 import { UsersConfirmationEmail } from "./user.confirmation.email.entity";
+import { QuizPlayer } from "../../../quiz/domain/typeorm/quiz.player.entity";
 
 
 @Entity()

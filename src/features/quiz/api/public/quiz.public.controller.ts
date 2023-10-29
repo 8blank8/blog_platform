@@ -40,8 +40,11 @@ export class QuizPublicController {
         @Res() res: Response
     ) {
         const userId = req.user
+        
+        const player = await this.quizQueryRepository.findPlayerById(userId)
+        if(!player) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
-        const game = await this.quizQueryRepository.findMyCurrentGameByUserId(userId)
+        const game = await this.quizQueryRepository.findMyCurrentGameByUserId(player.id)
         if (!game) return res.sendStatus(STATUS_CODE.NOT_FOUND)
         // console.log(game.firstPlayerProgress.answers)
         return res.status(STATUS_CODE.OK).send(game)
@@ -84,4 +87,14 @@ export class QuizPublicController {
 
     }
 
+    @UseGuards(JwtAuthGuard)
+    @Get('users/my-statistic')
+    async getStatistic(
+        @Req() req
+    ){
+        const userId = req.user
+
+        const statistic = await this.quizQueryRepository.findMyStatistic(userId)
+        return statistic
+    }
 }

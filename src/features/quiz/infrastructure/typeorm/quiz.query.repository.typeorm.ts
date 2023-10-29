@@ -7,6 +7,8 @@ import { QuestPagniation } from "../../../../entity/pagination/quest/quest.pagin
 import { Game } from "../../domain/typeorm/quiz.game";
 import { Answer } from "../../domain/typeorm/answer.entity";
 import { QuizScore } from "../../domain/typeorm/quiz.score.entity";
+import { QuizPlayer } from "../../domain/typeorm/quiz.player.entity";
+import { PlayerStatisticViewModel } from "../../models/player.statistic.view.model";
 
 
 @Injectable()
@@ -16,6 +18,7 @@ export class QuizQueryRepositoryTypeorm {
         @InjectRepository(Game) private gameRepo: Repository<Game>,
         @InjectRepository(Answer) private answerRepo: Repository<Answer>,
         @InjectRepository(QuizScore) private scoreRepo: Repository<QuizScore>,
+        @InjectRepository(QuizPlayer) private playerRepo: Repository<QuizPlayer>,
     ) { }
 
     async findQuestById(questId: string): Promise<QuizQestion | null> {
@@ -96,7 +99,9 @@ export class QuizQueryRepositoryTypeorm {
             // .leftJoinAndSelect(`g.firstPlayerAnswer`, 'fpa')
             // .leftJoinAndSelect(`g.secondPlayerAnswer`, `spa`)
             .leftJoinAndSelect(`g.firstPlayer`, 'fp')
+            .leftJoinAndSelect(`fp.user`, 'fu')
             .leftJoinAndSelect(`g.secondPlayer`, 'sp')
+            .leftJoinAndSelect(`sp.user`, 'su')
             .leftJoinAndSelect(`g.score`, 's')
             // .leftJoinAndSelect(`g.questions`, `quest`)
             .getOne()
@@ -113,8 +118,11 @@ export class QuizQueryRepositoryTypeorm {
             // .leftJoinAndSelect(`g.firstPlayerAnswer`, 'fpa')
             // .leftJoinAndSelect(`g.secondPlayerAnswer`, `spa`)
             .leftJoinAndSelect(`g.firstPlayer`, 'fp')
+            .leftJoinAndSelect(`fp.user`, 'fu')
             .leftJoinAndSelect(`g.secondPlayer`, 'sp')
+            .leftJoinAndSelect(`sp.user`, 'su')
             .leftJoinAndSelect(`g.score`, 's')
+            .leftJoinAndSelect(`s.user`, 'u')
             // .leftJoinAndSelect(`g.questions`, `quest`)
             .getOne()
 
@@ -131,7 +139,9 @@ export class QuizQueryRepositoryTypeorm {
             // .leftJoinAndSelect(`g.firstPlayerAnswer`, 'fpa')
             // .leftJoinAndSelect(`g.secondPlayerAnswer`, `spa`)
             .leftJoinAndSelect(`g.firstPlayer`, 'fp')
+            .leftJoinAndSelect(`fp.user`, 'fu')
             .leftJoinAndSelect(`g.secondPlayer`, 'sp')
+            .leftJoinAndSelect(`sp.user`, 'su')
             .leftJoinAndSelect(`g.score`, 's')
             // .leftJoinAndSelect(`g.questions`, `quest`)
             // .orderBy(`quest.createdAt`, "DESC")
@@ -151,7 +161,9 @@ export class QuizQueryRepositoryTypeorm {
             // .leftJoinAndSelect(`g.firstPlayerAnswer`, 'fpa')
             // .leftJoinAndSelect(`g.secondPlayerAnswer`, `spa`)
             .leftJoinAndSelect(`g.firstPlayer`, 'fp')
+            .leftJoinAndSelect(`fp.user`, 'fu')
             .leftJoinAndSelect(`g.secondPlayer`, 'sp')
+            .leftJoinAndSelect(`sp.user`, 'su')
             .leftJoinAndSelect(`g.score`, 's')
             // .leftJoinAndSelect(`g.questions`, `quest`)
             // .orderBy(`quest.createdAt`, "DESC")
@@ -190,6 +202,42 @@ export class QuizQueryRepositoryTypeorm {
         return score
     }
 
+    async findPlayerById(userId: string): Promise<QuizPlayer | null> {
+        const player = await this.playerRepo.createQueryBuilder('p')
+            .where(`p.userId = :userId`, { userId })
+            .getOne()
+
+        return player
+    }
+
+    async findPlayerByPlayerId(playerId: string): Promise<QuizPlayer | null> {
+        const player = await this.playerRepo.createQueryBuilder('p')
+            .where(`p.id = :playerId`, { playerId })
+            .getOne()
+
+        return player
+    }
+
+    async findMyStatistic(userId: string): Promise<PlayerStatisticViewModel | null> {
+        const statistic = await this.playerRepo.createQueryBuilder(`p`)
+            .where(`p.userId = :userId`, { userId })
+            .getOne()
+
+        if (!statistic) return null
+        return this._mapPlayerStatistic(statistic)
+    }
+
+    private _mapPlayerStatistic(statistic: QuizPlayer): PlayerStatisticViewModel {
+        return {
+            sumScore: 0,
+            avgScores: 0,
+            gamesCount: statistic.gamesCount,
+            winsCount: statistic.winsCount,
+            lossesCount: statistic.lostCount,
+            drawsCount: 0
+        }
+    }
+
     private _mapGame(game: Game): GameViewModel {
 
         let firstPlayerAnswer: any = []
@@ -197,7 +245,7 @@ export class QuizQueryRepositoryTypeorm {
 
         if (game.answer && game.answer.length !== 0) {
             game.answer.forEach(item => {
-                if (item.userId === game.firstPlayer.id) {
+                if (item.userId === game.firstPlayer.user.id) {
                     firstPlayerAnswer.push(this._mapAnswer(item))
                 } else {
                     secondPlayerAnswer.push(this._mapAnswer(item))
@@ -227,8 +275,8 @@ export class QuizQueryRepositoryTypeorm {
             secondPlayerProgress = {
                 answers: secondPlayerAnswer,
                 player: {
-                    id: game.secondPlayer.id,
-                    login: game.secondPlayer.login
+                    id: game.secondPlayer.user.id,
+                    login: game.secondPlayer.user.login
                 },
                 score: secondPlayerScore
             }
@@ -245,8 +293,8 @@ export class QuizQueryRepositoryTypeorm {
             firstPlayerProgress: {
                 answers: firstPlayerAnswer,
                 player: {
-                    id: game.firstPlayer.id,
-                    login: game.firstPlayer.login
+                    id: game.firstPlayer.user.id,
+                    login: game.firstPlayer.user.login
                 },
                 score: firstPlayerScore
             },

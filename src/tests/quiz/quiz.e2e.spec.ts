@@ -279,7 +279,20 @@ describe('quiz', () => {
             expect(res.body.secondPlayerProgress.answers).toEqual(res2.body.secondPlayerProgress.answers)
 
 
+            const statistic = await request(app.getHttpServer())
+                .get('/pair-game-quiz/pairs/users/my-statistic')
+                .set('Authorization', `Bearer ${accessTokenUser1}`)
+                .expect(200)
 
+
+            expect(statistic.body).toEqual({
+                sumScore: 5,
+                avgScores: 2.50,
+                gamesCount: 1,
+                winsCount: 1,
+                lossesCount: 0,
+                drawsCount: 0
+              })
             // const responseMyCurrentUser2 = await request(app.getHttpServer())
             //     .get(`/pair-game-quiz/pairs/my-current`)
             //     .set('Authorization', `Bearer ${accessTokenUser2}`)

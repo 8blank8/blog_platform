@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "t
 import { QuizQestion } from "./question.entity";
 import { Users } from "../../../../features/user/domain/typeorm/user.entity";
 import { Game } from "./quiz.game";
+import { QuizPlayer } from "./quiz.player.entity";
 
 
 @Entity()
@@ -24,8 +25,8 @@ export class Answer {
     @Column({ nullable: false })
     userId: string
 
-    @ManyToOne(() => Users, user => user.id)
-    user: Users
+    @ManyToOne(() => QuizPlayer, user => user.id)
+    user: QuizPlayer
 
     // @ManyToOne(() => Game, game => game.id)
     // @JoinColumn({ name: 'gameId' })

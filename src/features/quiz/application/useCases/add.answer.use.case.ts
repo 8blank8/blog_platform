@@ -27,18 +27,22 @@ export class AddAnswerUseCase {
 
         const { inputData, userId } = command
 
-        const user = await this.userQueryRepository.findUserByIdForSa(userId)
-        if (!user) throw new ForbiddenException()
+        // const user = await this.userQueryRepository.findUserByIdForSa(userId)
+        // console.log(userId)
+        // if (!user) throw new ForbiddenException()
 
-        const game = await this.quizQueryRepository.findMyCurrentGameFullByUserId(userId)
+        const player = await this.quizQueryRepository.findPlayerById(userId)
+        if (!player) throw new ForbiddenException()
+
+        const game = await this.quizQueryRepository.findMyCurrentGameFullByUserId(player.id)
         if (!game) throw new ForbiddenException()
         if (!game.secondPlayer) throw new ForbiddenException()
 
-        const firstPlayerAnswersCount = !game.answer ? 0 : game.answer.filter(answer => answer.userId === user.id).length
+        const firstPlayerAnswersCount = !game.answer ? 0 : game.answer.filter(answer => answer.userId === player.id).length
         if (firstPlayerAnswersCount === 5) throw new ForbiddenException()
 
         let secondPlayerId: string
-        if (game.firstPlayer.id === user.id) {
+        if (game.firstPlayer.id === player.id) {
             secondPlayerId = game.secondPlayer.id
         } else {
             secondPlayerId = game.firstPlayer.id
@@ -47,8 +51,8 @@ export class AddAnswerUseCase {
         const createdAnswer = new Answer()
         // createdAnswer.game = game
         createdAnswer.gameId = game.id
-        createdAnswer.user = user
-        createdAnswer.userId = user.id
+        createdAnswer.user = player
+        createdAnswer.userId = player.id
         createdAnswer.question = game.questions[firstPlayerAnswersCount]
         createdAnswer.questionId = game.questions[firstPlayerAnswersCount].id
         createdAnswer.addedAt = new Date().toISOString()
@@ -75,7 +79,7 @@ export class AddAnswerUseCase {
         await this.quizRepository.saveAnswer(createdAnswer)
 
 
-        const score = await this.quizQueryRepository.findPlayerScoreByUserId(game.id, user.id)
+        const score = await this.quizQueryRepository.findPlayerScoreByUserId(game.id, player.id)
 
         if (score && answer) {
             score.score = score.score + 1
@@ -83,7 +87,7 @@ export class AddAnswerUseCase {
         }
 
 
-        const isFinished = await this.checkFinishGame(user.id)
+        const isFinished = await this.checkFinishGame(player.id)
         if (isFinished) {
             game.finishGameDate = new Date().toISOString()
             game.status = 'Finished'
@@ -91,7 +95,7 @@ export class AddAnswerUseCase {
         }
 
 
-        await this.checkAddBonus(game.id, user.id, secondPlayerId)
+        await this.checkAddBonus(game.id, player.id, secondPlayerId)
         // console.log(createdAnswer, 'IN UC FOR RETURN')
         return createdAnswer.id
     }
@@ -107,6 +111,15 @@ export class AddAnswerUseCase {
 
         const game = await this.quizQueryRepository.findFullGameByGameId(gameId)
         if (!game || game.status !== "Finished") return false
+
+        const firstPlayer = await this.quizQueryRepository.findPlayerByPlayerId(firstPlayerId)
+        const secondPlayer = await this.quizQueryRepository.findPlayerByPlayerId(secondPlayerId)
+        if (!firstPlayer || !secondPlayer) return false
+
+        firstPlayer.gamesCount += 1
+        firstPlayer.sumScore += game.score.find(item => item.user.id === firstPlayer.id)!.score
+        secondPlayer.gamesCount += 1
+        secondPlayer.sumScore += game.score.find(item => item.user.id === secondPlayer.id)!.score
 
         let playerId: string
         let firstPlayerAnswer: any = []
@@ -129,14 +142,16 @@ export class AddAnswerUseCase {
         secondPlayerCorrectAnser = secondPlayerAnswer.find(item => item.answerStatus === 'Correct') ? true : false
 
         if (firstPlayerAnswer[0].addedAt > secondPlayerAnswer[0].addedAt && firstPlayerCorrectAnswer) {
-            console.log({first: firstPlayerAnswer[0], second:secondPlayerAnswer[0] })
-            console.log('first')
             playerId = firstPlayerId
+
+            firstPlayer.winsCount += 1
+            secondPlayer.lostCount += 1
         }
         if (secondPlayerAnswer[0].addedAt > firstPlayerAnswer[0].addedAt && secondPlayerCorrectAnser) {
-            console.log({second:secondPlayerAnswer[0] ,first: firstPlayerAnswer[0], })
-            console.log('second')
             playerId = secondPlayerId
+
+            secondPlayer.winsCount += 1
+            firstPlayer.lostCount += 1
         }
 
         if (!firstPlayerCorrectAnswer && !secondPlayerCorrectAnser) return false
@@ -147,5 +162,10 @@ export class AddAnswerUseCase {
             score.score = score.score + 1
             await this.quizRepository.saveScore(score)
         }
+
+        console.log({firstPlayer})
+
+        await this.quizRepository.savePlayer(firstPlayer)
+        await this.quizRepository.savePlayer(secondPlayer)
     }
 }

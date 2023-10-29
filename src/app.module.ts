@@ -194,6 +194,7 @@ import { Answer } from './features/quiz/domain/typeorm/answer.entity';
 import { ConnectionGameUseCase } from './features/quiz/application/useCases/connection.game.use.case';
 import { AddAnswerUseCase } from './features/quiz/application/useCases/add.answer.use.case';
 import { QuizScore } from './features/quiz/domain/typeorm/quiz.score.entity';
+import { QuizPlayer } from './features/quiz/domain/typeorm/quiz.player.entity';
 
 const saUseCase = [
   BindUserForBlogUseCase, BannedUserUseCase
@@ -218,7 +219,7 @@ const saUseCase = [
     TypeOrmModule.forFeature([
       BlackListRefreshToken, Users, Blogs, Posts, PostLikes,
       PostComments, PostCommentLike, Devices, UsersConfirmationEmail,
-      UsersPassword, QuizQestion, Game, Answer, QuizScore
+      UsersPassword, QuizQestion, Game, Answer, QuizScore, QuizPlayer
     ]),
     MongooseModule.forRoot(setting_env.MONGO_URL),
     MongooseModule.forFeature([
