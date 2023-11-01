@@ -32,12 +32,19 @@ export class ConnectionGameUseCase {
 
         let player = await this.quizQueryRepository.findPlayerById(user.id)
 
+        if(player){
+            player.gamesCount += 1
+            await this.quizRepository.savePlayer(player)
+        }
+
         if (!player) {
             player = new QuizPlayer()
             player.userId = user.id
             player.user = user
+            player.gamesCount = 1
             await this.quizRepository.savePlayer(player)
         }
+
 
         const activeGame = await this.quizQueryRepository.findMyCurrentGameFullByUserId(player.id)
         if (activeGame) throw new ForbiddenException()

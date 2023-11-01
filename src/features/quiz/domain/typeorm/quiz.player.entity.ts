@@ -9,7 +9,7 @@ export class QuizPlayer {
     @PrimaryGeneratedColumn('uuid')
     id: string
 
-    @Column({nullable: false})
+    @Column({ nullable: false })
     userId: string
 
     @ManyToOne(() => Users, user => user.id)
@@ -24,8 +24,11 @@ export class QuizPlayer {
     @Column({ default: 0 })
     gamesCount: number
 
-    @Column({default: 0})
+    @Column({ default: 0 })
     sumScore: number
+
+    @Column({ default: 0 })
+    drawsCount: number
 
     // @OneToMany(()=> Game, game => game.id)
     // games: Game[]

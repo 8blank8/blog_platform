@@ -1,4 +1,4 @@
-import { Body, Controller, ForbiddenException, Get, Param, ParseUUIDPipe, Post, Req, Res, UseGuards, assignMetadata } from "@nestjs/common";
+import { Body, Controller, ForbiddenException, Get, HttpStatus, Param, ParseUUIDPipe, Post, Req, Res, UseGuards, assignMetadata } from "@nestjs/common";
 import { CommandBus } from "@nestjs/cqrs";
 import { JwtAuthGuard } from "../../../../features/auth/guards/jwt.guard";
 import { Response } from 'express'
@@ -7,9 +7,10 @@ import { QuizQueryRepositoryTypeorm } from "../../infrastructure/typeorm/quiz.qu
 import { AnswerCreateModel } from "../../models/create.answer.model";
 import { ConnectionGameCommand } from "../../application/useCases/connection.game.use.case";
 import { AddAnswerCommand } from "../../application/useCases/add.answer.use.case";
+import { QuizGameQueryParamModel } from "../../models/quiz.game.query.param.model";
 
 
-@Controller('pair-game-quiz/pairs')
+@Controller('pair-game-quiz')
 export class QuizPublicController {
     constructor(
         private commandBus: CommandBus,
@@ -17,7 +18,35 @@ export class QuizPublicController {
     ) { }
 
     @UseGuards(JwtAuthGuard)
-    @Post('/connection')
+    @Get('users/my-statistic')
+    async getStatistic(
+        @Req() req
+    ) {
+        const userId = req.user
+
+        const statistic = await this.quizQueryRepository.findMyStatistic(userId)
+        return statistic
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('/pairs/my')
+    async myGames(
+        @Req() req,
+        @Param() queryParam: QuizGameQueryParamModel,
+        @Res() res: Response
+    ) {
+        const userId = req.user
+        console.log({ userId })
+        const player = await this.quizQueryRepository.findPlayerById(userId)
+        if (!player) return res.sendStatus(HttpStatus.BAD_REQUEST)
+
+        const games = await this.quizQueryRepository.findMyGamesByUserId(player.id, queryParam)
+
+        return res.status(HttpStatus.OK).send(games)
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post('pairs/connection')
     async connectionGame(
         @Req() req,
         @Res() res: Response
@@ -34,15 +63,15 @@ export class QuizPublicController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Get('/my-current')
+    @Get('pairs/my-current')
     async findMyActiveGame(
         @Req() req,
         @Res() res: Response
     ) {
         const userId = req.user
-        
+
         const player = await this.quizQueryRepository.findPlayerById(userId)
-        if(!player) return res.sendStatus(STATUS_CODE.NOT_FOUND)
+        if (!player) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
         const game = await this.quizQueryRepository.findMyCurrentGameByUserId(player.id)
         if (!game) return res.sendStatus(STATUS_CODE.NOT_FOUND)
@@ -51,7 +80,7 @@ export class QuizPublicController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Get('/:id')
+    @Get('pairs/:id')
     async findQuizGameById(
         @Param('id', new ParseUUIDPipe()) id: string,
         @Res() res: Response,
@@ -70,7 +99,7 @@ export class QuizPublicController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Post('/my-current/answers')
+    @Post('pairs/my-current/answers')
     async postAnswer(
         @Body() inputData: AnswerCreateModel,
         @Req() req,
@@ -87,14 +116,7 @@ export class QuizPublicController {
 
     }
 
-    @UseGuards(JwtAuthGuard)
-    @Get('users/my-statistic')
-    async getStatistic(
-        @Req() req
-    ){
-        const userId = req.user
 
-        const statistic = await this.quizQueryRepository.findMyStatistic(userId)
-        return statistic
-    }
+
+
 }

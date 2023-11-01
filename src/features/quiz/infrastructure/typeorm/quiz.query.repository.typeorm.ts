@@ -9,6 +9,8 @@ import { Answer } from "../../domain/typeorm/answer.entity";
 import { QuizScore } from "../../domain/typeorm/quiz.score.entity";
 import { QuizPlayer } from "../../domain/typeorm/quiz.player.entity";
 import { PlayerStatisticViewModel } from "../../models/player.statistic.view.model";
+import { QuizGameQueryParamModel } from "../../models/quiz.game.query.param.model";
+import { GamePagniation } from "../../../../entity/pagination/game/game.pagination";
 
 
 @Injectable()
@@ -227,14 +229,47 @@ export class QuizQueryRepositoryTypeorm {
         return this._mapPlayerStatistic(statistic)
     }
 
-    private _mapPlayerStatistic(statistic: QuizPlayer): PlayerStatisticViewModel {
+    async findMyGamesByUserId(userId: string, queryParam: QuizGameQueryParamModel) {
+
+        const pagination = new GamePagniation(queryParam).getGamePaginationForSql()
+
+        const games = await this.gameRepo.createQueryBuilder('p')
+            .where(`p."firstPlayerId" = :userId OR p."secondPlayerId" = :userId`, { userId })
+            .leftJoinAndSelect(`p.firstPlayer`, 'fp')
+            .leftJoinAndSelect(`fp.user`, 'fu')
+            .leftJoinAndSelect(`p.secondPlayer`, 'sp')
+            .leftJoinAndSelect(`sp.user`, 'su')
+            .leftJoinAndSelect(`p.score`, 's')
+            .orderBy(`p.${pagination.sortBy}`, pagination.sortDirection)
+            .offset(pagination.offset)
+            .limit(pagination.pageSize)
+            .getMany()
+
+
+        const gamesTotalCount = await this.gameRepo.createQueryBuilder('p')
+            .where(`p."firstPlayerId" = :userId OR p."secondPlayerId" = :userId`, { userId })
+            .getCount()
+
         return {
-            sumScore: 0,
-            avgScores: 0,
+            pagesCount: Math.ceil(gamesTotalCount / pagination.pageSize),
+            page: pagination.pageNumber,
+            pageSize: pagination.pageSize,
+            totalCount: gamesTotalCount,
+            items: games.map(item => this._mapGame(item))
+        }
+    }
+
+    private _mapPlayerStatistic(statistic: QuizPlayer): PlayerStatisticViewModel {
+
+        const avgScores = +(statistic.sumScore / statistic.gamesCount).toFixed(2)
+
+        return {
+            sumScore: statistic.sumScore,
+            avgScores: avgScores,
             gamesCount: statistic.gamesCount,
             winsCount: statistic.winsCount,
             lossesCount: statistic.lostCount,
-            drawsCount: 0
+            drawsCount: statistic.drawsCount
         }
     }
 
@@ -245,7 +280,7 @@ export class QuizQueryRepositoryTypeorm {
 
         if (game.answer && game.answer.length !== 0) {
             game.answer.forEach(item => {
-                if (item.userId === game.firstPlayer.user.id) {
+                if (item.userId === game.firstPlayer.id) {
                     firstPlayerAnswer.push(this._mapAnswer(item))
                 } else {
                     secondPlayerAnswer.push(this._mapAnswer(item))

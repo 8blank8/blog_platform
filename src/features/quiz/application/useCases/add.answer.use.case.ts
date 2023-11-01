@@ -6,6 +6,7 @@ import { ForbiddenException } from "@nestjs/common";
 import { Answer } from "../../domain/typeorm/answer.entity";
 import { QuizRepositoryTypeorm } from "../../infrastructure/typeorm/quiz.repository.typeorm";
 import { log } from "console";
+import { QuizScore } from "../../domain/typeorm/quiz.score.entity";
 
 
 export class AddAnswerCommand {
@@ -83,6 +84,9 @@ export class AddAnswerUseCase {
 
         if (score && answer) {
             score.score = score.score + 1
+            player.sumScore += 1
+
+            await this.quizRepository.savePlayer(player)
             await this.quizRepository.saveScore(score)
         }
 
@@ -116,16 +120,14 @@ export class AddAnswerUseCase {
         const secondPlayer = await this.quizQueryRepository.findPlayerByPlayerId(secondPlayerId)
         if (!firstPlayer || !secondPlayer) return false
 
-        firstPlayer.gamesCount += 1
-        firstPlayer.sumScore += game.score.find(item => item.user.id === firstPlayer.id)!.score
-        secondPlayer.gamesCount += 1
-        secondPlayer.sumScore += game.score.find(item => item.user.id === secondPlayer.id)!.score
+        // firstPlayer.sumScore += game.score.find(item => item.user.id === firstPlayer.id)!.score
+        // secondPlayer.sumScore += game.score.find(item => item.user.id === secondPlayer.id)!.score
 
-        let playerId: string
+        let playerId: string = firstPlayerId
         let firstPlayerAnswer: any = []
         let secondPlayerAnswer: any = []
-        let firstPlayerCorrectAnswer = false
-        let secondPlayerCorrectAnser = false
+        let firstPlayerCorrectAnswer = []
+        let secondPlayerCorrectAnser = []
 
         game.answer.forEach(item => {
             if (item.userId === game.firstPlayer.id) {
@@ -138,34 +140,72 @@ export class AddAnswerUseCase {
         firstPlayerAnswer.sort((a, b) => a.addedAt < b.addedAt)
         secondPlayerAnswer.sort((a, b) => a.addedAt < b.addedAt)
 
-        firstPlayerCorrectAnswer = firstPlayerAnswer.find(item => item.answerStatus === 'Correct') ? true : false
-        secondPlayerCorrectAnser = secondPlayerAnswer.find(item => item.answerStatus === 'Correct') ? true : false
+        firstPlayerCorrectAnswer = firstPlayerAnswer.filter(item => item.answerStatus === 'Correct')
+        secondPlayerCorrectAnser = secondPlayerAnswer.filter(item => item.answerStatus === 'Correct')
 
-        if (firstPlayerAnswer[0].addedAt > secondPlayerAnswer[0].addedAt && firstPlayerCorrectAnswer) {
-            playerId = firstPlayerId
+        if (firstPlayerCorrectAnswer.length === 0 && secondPlayerCorrectAnser.length === 0) return false
 
-            firstPlayer.winsCount += 1
-            secondPlayer.lostCount += 1
-        }
-        if (secondPlayerAnswer[0].addedAt > firstPlayerAnswer[0].addedAt && secondPlayerCorrectAnser) {
-            playerId = secondPlayerId
+        if (firstPlayerAnswer[0].addedAt > secondPlayerAnswer[0].addedAt && firstPlayerCorrectAnswer.length !== 0) {
 
-            secondPlayer.winsCount += 1
-            firstPlayer.lostCount += 1
-        }
+            const score = await this.quizQueryRepository.findPlayerScoreByUserId(game.id, firstPlayerId)
+            if (!score) return false
 
-        if (!firstPlayerCorrectAnswer && !secondPlayerCorrectAnser) return false
-
-        const score = await this.quizQueryRepository.findPlayerScoreByUserId(game.id, playerId!)
-
-        if (score) {
             score.score = score.score + 1
+            firstPlayer.sumScore += 1
+
+            await this.quizRepository.saveScore(score)
+        }
+        if (secondPlayerAnswer[0].addedAt > firstPlayerAnswer[0].addedAt && secondPlayerCorrectAnser.length !== 0) {
+            const score = await this.quizQueryRepository.findPlayerScoreByUserId(game.id, secondPlayerId)
+            if (!score) return false
+
+            score.score = score.score + 1
+            secondPlayer.sumScore += 1
+
             await this.quizRepository.saveScore(score)
         }
 
-        console.log({firstPlayer})
+        const game1 = await this.quizQueryRepository.findFullGameByGameId(game.id)
+        if (!game1) return false
+
+        let firstPlayerScore
+        let secondPlayerScore
+
+        game1.score.forEach(item => {
+            if (item.userId === firstPlayer.id) {
+                firstPlayerScore = item
+            } else {
+                secondPlayerScore = item
+            }
+        })
+
+        console.log({
+            firstPlayerScore: firstPlayerScore.score,
+            secondPlayerScore: secondPlayerScore.score
+        })
+
+        if (firstPlayerScore.score === secondPlayerScore.score) {
+            firstPlayer.drawsCount += 1
+            secondPlayer.drawsCount += 1
+
+
+            await this.quizRepository.savePlayer(firstPlayer)
+            await this.quizRepository.savePlayer(secondPlayer)
+            console.log({ draw: 'its draw' })
+            return true
+        }
+
+        if (firstPlayerScore.score > secondPlayerScore.score) {
+            firstPlayer.winsCount += 1
+            secondPlayer.lostCount += 1
+        } else {
+            secondPlayer.winsCount += 1
+            firstPlayer.lostCount += 1
+        }
 
         await this.quizRepository.savePlayer(firstPlayer)
         await this.quizRepository.savePlayer(secondPlayer)
     }
 }
+
+
