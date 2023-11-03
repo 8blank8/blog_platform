@@ -1,4 +1,4 @@
-import { Body, Controller, ForbiddenException, Get, HttpStatus, Param, ParseUUIDPipe, Post, Req, Res, UseGuards, assignMetadata } from "@nestjs/common";
+import { Body, Controller, ForbiddenException, Get, HttpStatus, Param, ParseUUIDPipe, Post, Query, Req, Res, UseGuards, assignMetadata } from "@nestjs/common";
 import { CommandBus } from "@nestjs/cqrs";
 import { JwtAuthGuard } from "../../../../features/auth/guards/jwt.guard";
 import { Response } from 'express'
@@ -8,6 +8,7 @@ import { AnswerCreateModel } from "../../models/create.answer.model";
 import { ConnectionGameCommand } from "../../application/useCases/connection.game.use.case";
 import { AddAnswerCommand } from "../../application/useCases/add.answer.use.case";
 import { QuizGameQueryParamModel } from "../../models/quiz.game.query.param.model";
+import { TopUsersQueryParamModel } from "../../models/top.users.query.param.model";
 
 
 @Controller('pair-game-quiz')
@@ -28,6 +29,16 @@ export class QuizPublicController {
         return statistic
     }
 
+    // @UseGuards(JwtAuthGuard)
+    @Get('users/top')
+    async getTopUsers(
+        @Req() req,
+        @Query() queryParam: TopUsersQueryParamModel
+    ) {
+        const users = await this.quizQueryRepository.findTopUsers(queryParam)
+        return users
+    }
+
     @UseGuards(JwtAuthGuard)
     @Get('/pairs/my')
     async myGames(
@@ -36,7 +47,6 @@ export class QuizPublicController {
         @Res() res: Response
     ) {
         const userId = req.user
-        console.log({ userId })
         const player = await this.quizQueryRepository.findPlayerById(userId)
         if (!player) return res.sendStatus(HttpStatus.BAD_REQUEST)
 
@@ -56,10 +66,7 @@ export class QuizPublicController {
         const gameId = await this.commandBus.execute(new ConnectionGameCommand(userId))
 
         const game = await this.quizQueryRepository.findGameByGameId(gameId)
-
         return res.status(200).send(game)
-        // TODO: доделать мапинг данный и получение пользователя в дате игры
-        // TODO: get game data by id and return game
     }
 
     @UseGuards(JwtAuthGuard)
