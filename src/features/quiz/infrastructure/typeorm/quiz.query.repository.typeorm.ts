@@ -11,6 +11,9 @@ import { QuizPlayer } from "../../domain/typeorm/quiz.player.entity";
 import { PlayerStatisticViewModel } from "../../models/player.statistic.view.model";
 import { QuizGameQueryParamModel } from "../../models/quiz.game.query.param.model";
 import { GamePagniation } from "../../../../entity/pagination/game/game.pagination";
+import { TopUsersQueryParamModel } from "../../models/top.users.query.param.model";
+import { TopUsersViewModel } from "../../models/top.users.view.model";
+import { TopUsersPagniation } from "../../../../entity/pagination/game/top.user.pagination";
 
 
 @Injectable()
@@ -259,17 +262,52 @@ export class QuizQueryRepositoryTypeorm {
         }
     }
 
-    private _mapPlayerStatistic(statistic: QuizPlayer): PlayerStatisticViewModel {
+    async findTopUsers(queryParam: TopUsersQueryParamModel) {
+        const pagination = new TopUsersPagniation(queryParam).getTopUsersPaginationForSql()
 
-        const avgScores = +(statistic.sumScore / statistic.gamesCount).toFixed(2)
+        const topUsers = await this.playerRepo.createQueryBuilder('p')
+            .leftJoinAndSelect('p.user', 'u')
+            .orderBy(pagination.sort)
+            .skip(pagination.offset)
+            .limit(pagination.pageNumber)
+            .getMany()
+
+        const totalCount = await this.playerRepo.createQueryBuilder('p')
+            .getCount()
 
         return {
+            pagesCount: Math.ceil(totalCount / pagination.pageSize),
+            page: pagination.pageNumber,
+            pageSize: pagination.pageSize,
+            totalCount: totalCount,
+            items: topUsers.map(item => this._mapTopUser(item))
+        }
+    }
+
+    private _mapPlayerStatistic(statistic: QuizPlayer): PlayerStatisticViewModel {
+        console.log(statistic)
+        return {
             sumScore: statistic.sumScore,
-            avgScores: avgScores,
+            avgScores: statistic.avgScores,
             gamesCount: statistic.gamesCount,
             winsCount: statistic.winsCount,
-            lossesCount: statistic.lostCount,
+            lossesCount: statistic.lossesCount,
             drawsCount: statistic.drawsCount
+        }
+    }
+
+    private _mapTopUser(player: QuizPlayer): TopUsersViewModel {
+        return {
+            sumScore: player.sumScore,
+            avgScores: player.avgScores,
+            gamesCount: player.gamesCount,
+            winsCount: player.winsCount,
+            lossesCount: player.lossesCount,
+            drawsCount: player.drawsCount,
+            player: {
+                id: player.user.id,
+                login: player.user.login,
+            }
         }
     }
 
