@@ -5,8 +5,8 @@ export class DefaultPagination {
     constructor(
         public pageSize: string | undefined,
         public pageNumber: string | undefined,
-        public sortBy: string | undefined,
-        public sortDirection: string | undefined
+        public sortBy?: string | undefined,
+        public sortDirection?: string | undefined
     ) { }
 
     getSortDirectionForSql(): { sortDirection: "ASC" | "DESC" } {
