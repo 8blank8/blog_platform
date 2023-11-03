@@ -19,7 +19,7 @@ export class QuizPlayer {
     winsCount: number
 
     @Column({ default: 0 })
-    lostCount: number
+    lossesCount: number
 
     @Column({ default: 0 })
     gamesCount: number
@@ -29,6 +29,9 @@ export class QuizPlayer {
 
     @Column({ default: 0 })
     drawsCount: number
+
+    @Column({ default: 0 })
+    avgScores: number
 
     // @OneToMany(()=> Game, game => game.id)
     // games: Game[]
