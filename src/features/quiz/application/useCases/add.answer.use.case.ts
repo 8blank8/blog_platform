@@ -179,11 +179,6 @@ export class AddAnswerUseCase {
             }
         })
 
-        console.log({
-            firstPlayerScore: firstPlayerScore.score,
-            secondPlayerScore: secondPlayerScore.score
-        })
-
         if (firstPlayerScore.score === secondPlayerScore.score) {
             firstPlayer.drawsCount += 1
             secondPlayer.drawsCount += 1
@@ -197,12 +192,15 @@ export class AddAnswerUseCase {
 
         if (firstPlayerScore.score > secondPlayerScore.score) {
             firstPlayer.winsCount += 1
-            secondPlayer.lostCount += 1
+            secondPlayer.lossesCount += 1
         } else {
             secondPlayer.winsCount += 1
-            firstPlayer.lostCount += 1
+            firstPlayer.lossesCount += 1
         }
 
+        firstPlayer.avgScores = parseInt((firstPlayer.sumScore / firstPlayer.gamesCount).toFixed(2))
+        secondPlayer.avgScores = parseInt((secondPlayer.sumScore / secondPlayer.gamesCount).toFixed(2))
+        // TODO: не правильно расчитывается avgCount возможно из-за бонусных очков
         await this.quizRepository.savePlayer(firstPlayer)
         await this.quizRepository.savePlayer(secondPlayer)
     }
