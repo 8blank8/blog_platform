@@ -34,7 +34,6 @@ export class ResendingConfirmationCodeUseCase {
         if (!user || user.confirmationInfo.isConfirmed === true) return false
 
         const confirmationCode = uuidv4()
-        // TODO: обновить код в базе
         // await this.userRepositorySql.updateConfirmationCode(user.id, confirmationCode)
 
         const userConfirmation = await this.userQueryRepository.findConfirmationCodeUser(user.confirmationInfo.code)
