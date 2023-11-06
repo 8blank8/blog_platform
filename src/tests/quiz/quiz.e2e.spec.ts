@@ -171,18 +171,17 @@ describe('quiz', () => {
                 .set('Authorization', `Bearer ${accessTokenUser2}`)
                 .expect(200)
 
+            await addAnswer(app, accessTokenUser1, '1')
+            await addAnswer(app, accessTokenUser1, '1')
+            await addAnswer(app, accessTokenUser1, '1')
+            await addAnswer(app, accessTokenUser1, '1')
+            await addAnswer(app, accessTokenUser1, '1')
 
-            addAnswer(app, accessTokenUser1, '1')
-            addAnswer(app, accessTokenUser1, '1')
-            addAnswer(app, accessTokenUser1, '1')
-            addAnswer(app, accessTokenUser1, '1')
-            addAnswer(app, accessTokenUser1, '1')
-
-            addAnswer(app, accessTokenUser2, '1')
-            addAnswer(app, accessTokenUser2, '1')
-            addAnswer(app, accessTokenUser2, '2')
-            addAnswer(app, accessTokenUser2, '2')
-            addAnswer(app, accessTokenUser2, '2')
+            await addAnswer(app, accessTokenUser2, '1')
+            await addAnswer(app, accessTokenUser2, '1')
+            await addAnswer(app, accessTokenUser2, '2')
+            await addAnswer(app, accessTokenUser2, '2')
+            await addAnswer(app, accessTokenUser2, '2')
 
 
             const statistic = await request(app.getHttpServer())
@@ -192,22 +191,26 @@ describe('quiz', () => {
 
 
             expect(statistic.body).toEqual({
-                sumScore: 5,
-                avgScores: 5,
+                sumScore: 6,
+                avgScores: 6,
                 gamesCount: 1,
                 winsCount: 1,
                 lossesCount: 0,
                 drawsCount: 0
             })
         })
+
+        it('find top users', async () => {
+            const res = await request(app.getHttpServer())
+                .get('/pair-game-quiz/users/top')
+                .query('sort=avgScores desc')
+
+            console.log(res.body.items)
+
+        })
     })
 
-    it('find top users', async () => {
-        const res = await request(app.getHttpServer())
-            .get('/pair-game-quiz/users/top')
-            .query('sort=avgScores desc&sort=sumScore desc&sort=winsCount desc&sort=lossesCount asc')
 
-    })
 
     afterAll(async () => {
         await app.close()

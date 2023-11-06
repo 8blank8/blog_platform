@@ -17,23 +17,24 @@ export class TopUsersPagniation extends DefaultPagination {
         const defaultPagination = this.getDefaultPagination()
         const sortDirection = this.getSortDirectionForSql()
 
-        // class SortModel {
-        //     "avgScores"?: "ASC" | "DESC"
-        //     "sumScore"?: "ASC" | "DESC"
-        //     "winsCount"?: "ASC" | "DESC"
-        //     "lossesCount"?: "ASC" | "DESC"
-        // }
+        let sort: { [column: string]: 'ASC' | 'DESC' } = {}
+        console.log({ sort: this.queryParam.sort })
 
-        let sort: any = {}
+        if (!this.queryParam.sort) {
+            sort[`"avgScores"`] = "DESC",
+                sort[`"sumScore"`] = "ASC"
+        }
 
-        if (this.queryParam.sort) {
+        if (typeof this.queryParam.sort === 'string') {
+            const [key, order] = this.queryParam.sort.split(' ')
+            sort[key] = order === 'asc' ? 'ASC' : 'DESC'
+        }
+
+        if (Array.isArray(this.queryParam.sort)) {
             this.queryParam.sort.forEach(item => {
                 const [key, order] = item.split(' ');
-                sort[`"${key}"`] = order.toUpperCase();
+                sort[key] = order === 'asc' ? 'ASC' : 'DESC';
             })
-        } else {
-            sort.avgScores = "DESC",
-                sort.sumScore = "ASC"
         }
 
         return {

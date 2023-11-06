@@ -265,12 +265,19 @@ export class QuizQueryRepositoryTypeorm {
     async findTopUsers(queryParam: TopUsersQueryParamModel) {
         const pagination = new TopUsersPagniation(queryParam).getTopUsersPaginationForSql()
 
-        const topUsers = await this.playerRepo.createQueryBuilder('p')
+        console.log(pagination.sort)
+        const query = this.playerRepo.createQueryBuilder('p')
+
+        Object.entries(pagination.sort).forEach(([column, order]) => {
+            query.addOrderBy(`p.${column}`, order);
+        });
+
+        const topUsers = await query
             .leftJoinAndSelect('p.user', 'u')
-            .orderBy(pagination.sort)
-            .skip(pagination.offset)
-            .limit(pagination.pageNumber)
+            .offset(pagination.offset)
+            .limit(pagination.pageSize)
             .getMany()
+        console.log('work!')
 
         const totalCount = await this.playerRepo.createQueryBuilder('p')
             .getCount()
@@ -285,7 +292,6 @@ export class QuizQueryRepositoryTypeorm {
     }
 
     private _mapPlayerStatistic(statistic: QuizPlayer): PlayerStatisticViewModel {
-        console.log(statistic)
         return {
             sumScore: statistic.sumScore,
             avgScores: statistic.avgScores,

@@ -7,6 +7,7 @@ import { Answer } from "../../domain/typeorm/answer.entity";
 import { QuizRepositoryTypeorm } from "../../infrastructure/typeorm/quiz.repository.typeorm";
 import { log } from "console";
 import { QuizScore } from "../../domain/typeorm/quiz.score.entity";
+import { QuizPlayer } from "../../domain/typeorm/quiz.player.entity";
 
 
 export class AddAnswerCommand {
@@ -107,7 +108,6 @@ export class AddAnswerUseCase {
     private async checkFinishGame(userId: string) {
         const game = await this.quizQueryRepository.findMyCurrentGameFullByUserId(userId)
         if (!game) return false
-
         return game.answer.length === 10 ? true : false
     }
 
@@ -198,12 +198,13 @@ export class AddAnswerUseCase {
             firstPlayer.lossesCount += 1
         }
 
-        firstPlayer.avgScores = parseInt((firstPlayer.sumScore / firstPlayer.gamesCount).toFixed(2))
-        secondPlayer.avgScores = parseInt((secondPlayer.sumScore / secondPlayer.gamesCount).toFixed(2))
-        // TODO: не правильно расчитывается avgCount возможно из-за бонусных очков
+        firstPlayer.avgScores = Math.round((firstPlayer.sumScore / firstPlayer.gamesCount) * 100) / 100;;
+        secondPlayer.avgScores = Math.round((secondPlayer.sumScore / secondPlayer.gamesCount) * 100) / 100;;
+
         await this.quizRepository.savePlayer(firstPlayer)
         await this.quizRepository.savePlayer(secondPlayer)
     }
+
 }
 
 

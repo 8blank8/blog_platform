@@ -1,6 +1,5 @@
 import { Users } from "../../../user/domain/typeorm/user.entity";
 import { Column, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Game } from "./quiz.game";
 
 
 @Entity()
@@ -30,9 +29,6 @@ export class QuizPlayer {
     @Column({ default: 0 })
     drawsCount: number
 
-    @Column({ default: 0 })
+    @Column({ default: 0, type: 'float' })
     avgScores: number
-
-    // @OneToMany(()=> Game, game => game.id)
-    // games: Game[]
 }
