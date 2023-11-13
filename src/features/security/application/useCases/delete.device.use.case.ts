@@ -1,9 +1,5 @@
 import { CommandHandler } from "@nestjs/cqrs";
-import { SecurityRepository } from "../../infrastructure/mongoose/security.repository";
-import { SecurityQueryRepository } from "../../infrastructure/mongoose/security.query.repository";
 import { ForbiddenException } from "@nestjs/common";
-import { SecurityQueryRepositorySql } from "../../infrastructure/sql/security.query.repository.sql";
-import { SecurityRepositorySql } from "../../infrastructure/sql/security.repository.sql";
 import { SecurityRepositoryTypeorm } from "../../infrastructure/typeorm/security.repository.typeorm";
 import { SecurityQueryRepositoryTypeorm } from "../../infrastructure/typeorm/secutity.query.repository.typeorm";
 
@@ -18,8 +14,6 @@ export class DeleteDeviceCommand {
 @CommandHandler(DeleteDeviceCommand)
 export class DeleteDeviceUseCase {
     constructor(
-        // private securityRepository: SecurityRepository,
-        // private securityQueryRepository: SecurityQueryRepository
         private securityRepository: SecurityRepositoryTypeorm,
         private securityQueryRepository: SecurityQueryRepositoryTypeorm
     ) { }

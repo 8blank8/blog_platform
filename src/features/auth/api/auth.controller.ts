@@ -1,14 +1,10 @@
 import { Controller, Get, Post, UseGuards, Request, Res, Body } from "@nestjs/common";
 import { Response } from "express";
-import { AuthService } from "../application/auth.service";
 import { LocalAuthGuard } from "../guards/local.guard";
 import { JwtAuthGuard } from "../guards/jwt.guard";
-import { UserQueryRepository } from "../../user/infrastructure/mongo/user.query.repository";
 import { UserCreateType } from "../../user/models/user.create.type";
-import { UserService } from "../../user/application/user.service";
-import { ConfirmationCodeType } from "../models/confirmation.code.type";
-import { EmailType } from "../models/email.type";
-import { SecurityService } from "../../security/application/security.service";
+import { ConfirmationCodeType } from "../../../utils/custom-validation/confirmation.code.type";
+import { EmailType } from "./models/email.type";
 import { JwtRefreshTokenGuard } from "../guards/jwt.refresh.token.guard";
 import { ThrottlerGuard } from "@nestjs/throttler";
 import { STATUS_CODE } from "../../../utils/enum/status.code";
@@ -20,17 +16,12 @@ import { ResendingConfirmationCodeCommand } from "../../user/application/useCase
 import { LoginUserCommand } from "../application/useCases/login.user.use.case";
 import { CreateRefreshTokenCommand } from "../application/useCases/create.refresh.token.use.case";
 import { AddRefreshTokenInBlackListCommand } from "../application/useCases/add.refresh.token.in.black.list.use.case";
-import { UserQueryRepositorySql } from "../../user/infrastructure/sql/user.query.repository.sql";
 import { UserQueryRepositoryTypeorm } from "../../../features/user/infrastructure/typeorm/user.query.repository.typeorm";
 
 @Controller('/auth')
 export class AuthController {
     constructor(
-        private readonly authService: AuthService,
-        // private readonly userQueryRepository: UserQueryRepository,
         private userQueryRepository: UserQueryRepositoryTypeorm,
-        private readonly userService: UserService,
-        private readonly securityService: SecurityService,
         private commandBus: CommandBus
     ) { }
 

@@ -2,24 +2,19 @@ import { Body, Controller, Param, Put, UseGuards, Request, Res, Delete, Req, Get
 import { CommentCreateType } from "../models/comment.create.type";
 import { JwtAuthGuard } from "../../auth/guards/jwt.guard";
 import { Response } from "express";
-import { CommentService } from "../appication/comment.service";
 import { CommentLikeStatusType } from "../models/comment.like.status";
-import { CommentQueryRepository } from "../infrastructure/mongo/comment.query.repository";
 import { JwtOrNotGuard } from "../../auth/guards/jwt.or.not.guard";
 import { STATUS_CODE } from "../../../utils/enum/status.code";
 import { CommandBus } from "@nestjs/cqrs";
 import { UpdateCommetCommand } from "../appication/useCases/update.comment.use.case";
 import { DeleteCommentCommand } from "../appication/useCases/delete.comment.use.case";
 import { UpdateLikeStatusCommentCommand } from "../appication/useCases/update.like.status.comment.use.case";
-import { CommentQueryRepositorySql } from "../infrastructure/sql/comment.query.repository";
 import { CommentQueryRepositoryTypeorm } from "../infrastructure/typeorm/comment.query.repository.typeorm";
 
 @Controller('/comments')
 export class CommentController {
 
     constructor(
-        // private readonly commentService: CommentService,
-        // private readonly commentQueryRepository: CommentQueryRepository,
         private commentQueryRepository: CommentQueryRepositoryTypeorm,
         private commandBus: CommandBus
     ) { }

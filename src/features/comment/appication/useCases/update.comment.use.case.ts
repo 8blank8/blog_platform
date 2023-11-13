@@ -20,10 +20,8 @@ export class UpdateCommetCommand {
 @CommandHandler(UpdateCommetCommand)
 export class UpdateCommentUseCase {
     constructor(
-        // private commentQueryRepository: CommentQueryRepository,
         private commentQueryRepository: CommentQueryRepositoryTypeorm,
         private commentRepository: CommentRepositoryTypeorm
-        // private commentRepository: CommentRepository,
     ) { }
 
     async execute(command: UpdateCommetCommand): Promise<boolean> {
@@ -35,10 +33,6 @@ export class UpdateCommentUseCase {
         comment.content = command.inputData.content
 
         await this.commentRepository.saveComment(comment)
-        // await this.commentRepositorySql.updateCommentById(comment.id, command.inputData.content)
-
-        // comment.updateContent(command.inputData.content)
-        // await this.commentRepository.saveComment(comment)
 
         return true
     }

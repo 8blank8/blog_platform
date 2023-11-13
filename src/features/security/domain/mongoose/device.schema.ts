@@ -25,11 +25,6 @@ export class Device {
     })
     deviceId: string
 
-    // @Prop({
-    //     required: true
-    // })
-    // experationDate: string
-
     @Prop({
         required: true
     })

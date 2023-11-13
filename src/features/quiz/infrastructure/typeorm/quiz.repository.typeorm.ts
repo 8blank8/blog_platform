@@ -5,7 +5,6 @@ import { Repository } from "typeorm";
 import { Game } from "../../domain/typeorm/quiz.game";
 import { Answer } from "../../domain/typeorm/answer.entity";
 import { QuizScore } from "../../domain/typeorm/quiz.score.entity";
-import { log } from "console";
 import { QuizPlayer } from "../../domain/typeorm/quiz.player.entity";
 
 
@@ -32,7 +31,6 @@ export class QuizRepositoryTypeorm {
     }
 
     async saveAnswer(answer: Answer) {
-        // log(answer, 'IN REPO')
         return this.answerRepo.save(answer)
     }
 
@@ -40,7 +38,7 @@ export class QuizRepositoryTypeorm {
         return this.scoreRepo.save(score)
     }
 
-    async savePlayer(player: QuizPlayer){
+    async savePlayer(player: QuizPlayer) {
         return this.playerRepo.save(player)
     }
 }

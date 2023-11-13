@@ -2,10 +2,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
-// import { AuthQueryRepository } from '../infrastructure/auth.query.repository';
-// import { AuthRepository } from '../infrastructure/auth.repository';
 import { setting_env } from '../../../setting.env';
-import { AuthRepositorySql } from '../infrastructure/sql/auth.repository.sql';
 import { AuthRepositoryTypeorm } from '../infrastructure/typeorm/auth.repository.typeorm';
 
 
@@ -16,8 +13,6 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(
 
 ) {
     constructor(
-        // private readonly authQueryRepository: AuthQueryRepository,
-        // private readonly authRepository: AuthRepository
         private authRepository: AuthRepositoryTypeorm
     ) {
         super({

@@ -28,12 +28,6 @@ export class Answer {
     @ManyToOne(() => QuizPlayer, user => user.id)
     user: QuizPlayer
 
-    // @ManyToOne(() => Game, game => game.id)
-    // @JoinColumn({ name: 'gameId' })
-    // @Column({ nullable: false })
-    // game: Game
-
-
     @Column()
     gameId: string
 }

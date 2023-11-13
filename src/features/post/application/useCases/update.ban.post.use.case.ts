@@ -1,5 +1,4 @@
 import { CommandHandler } from "@nestjs/cqrs";
-import { PostQueryRepository } from "../../infrastructure/mongo/post.query.repository";
 import { PostRepository } from "../../infrastructure/mongo/post.repository";
 
 
@@ -20,6 +19,6 @@ export class UpdateBanPostUseCase {
 
         const { isBanned, userId } = command
 
-        return await this.postRepository.updateBanStatusPosts(userId, isBanned)
+        return this.postRepository.updateBanStatusPosts(userId, isBanned)
     }
 }

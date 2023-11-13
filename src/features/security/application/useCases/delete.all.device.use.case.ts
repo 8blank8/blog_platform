@@ -1,6 +1,4 @@
 import { CommandHandler } from "@nestjs/cqrs";
-import { SecurityRepository } from "../../infrastructure/mongoose/security.repository";
-import { SecurityRepositorySql } from "../../infrastructure/sql/security.repository.sql";
 import { SecurityRepositoryTypeorm } from "../../infrastructure/typeorm/security.repository.typeorm";
 
 
@@ -14,7 +12,6 @@ export class DeleteAllDevicesCommand {
 @CommandHandler(DeleteAllDevicesCommand)
 export class DeleteAllDevicesUseCase {
     constructor(
-        // private securityRepository: SecurityRepository
         private securityRepository: SecurityRepositoryTypeorm
     ) { }
 

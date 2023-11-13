@@ -1,14 +1,9 @@
 import { CommandHandler } from "@nestjs/cqrs";
 import { AnswerCreateModel } from "../../models/create.answer.model";
-import { UserQueryRepositoryTypeorm } from "../../../user/infrastructure/typeorm/user.query.repository.typeorm";
 import { QuizQueryRepositoryTypeorm } from "../../infrastructure/typeorm/quiz.query.repository.typeorm";
 import { ForbiddenException } from "@nestjs/common";
 import { Answer } from "../../domain/typeorm/answer.entity";
 import { QuizRepositoryTypeorm } from "../../infrastructure/typeorm/quiz.repository.typeorm";
-import { log } from "console";
-import { QuizScore } from "../../domain/typeorm/quiz.score.entity";
-import { QuizPlayer } from "../../domain/typeorm/quiz.player.entity";
-import { Game } from "../../domain/typeorm/quiz.game";
 
 
 export class AddAnswerCommand {
@@ -21,7 +16,6 @@ export class AddAnswerCommand {
 @CommandHandler(AddAnswerCommand)
 export class AddAnswerUseCase {
     constructor(
-        private userQueryRepository: UserQueryRepositoryTypeorm,
         private quizQueryRepository: QuizQueryRepositoryTypeorm,
         private quizRepository: QuizRepositoryTypeorm
     ) { }

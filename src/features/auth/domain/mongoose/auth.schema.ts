@@ -11,6 +11,5 @@ export class Auth {
 }
 
 export const AuthSchema = SchemaFactory.createForClass(Auth)
-
 export type AuthDocument = HydratedDocument<Auth>
 

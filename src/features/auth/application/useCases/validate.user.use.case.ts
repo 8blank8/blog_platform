@@ -1,7 +1,5 @@
 import { CommandHandler } from "@nestjs/cqrs";
-// import { UserQueryRepository } from "src/features/user/infrastructure/user.query.repository";
 import bcrypt from 'bcrypt'
-import { UserQueryRepositorySql } from "../../../user/infrastructure/sql/user.query.repository.sql";
 import { UserQueryRepositoryTypeorm } from "../../../../features/user/infrastructure/typeorm/user.query.repository.typeorm";
 
 
@@ -15,7 +13,6 @@ export class ValidateUserCommand {
 @CommandHandler(ValidateUserCommand)
 export class ValidateUserUseCase {
     constructor(
-        // private userQueryRepository: UserQueryRepository
         private userQueryRepository: UserQueryRepositoryTypeorm
     ) { }
 

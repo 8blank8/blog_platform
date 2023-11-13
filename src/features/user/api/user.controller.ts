@@ -1,7 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, Res, UseGuards } from "@nestjs/common";
 import { Response } from 'express';
 import { UserCreateType } from "../models/user.create.type";
-import { UserQueryRepository } from "../infrastructure/mongo/user.query.repository";
 import { UserQueryParamType } from "../models/user.query.param.type";
 import { BasicAuthGuard } from "../../auth/guards/basic.guard";
 import { CommandBus } from "@nestjs/cqrs";
@@ -10,7 +9,6 @@ import { DeleteUserCommand } from "../application/useCases/delete.user.use.case"
 import { STATUS_CODE } from "../../../utils/enum/status.code";
 import { UserBanModel } from "../models/user.ban.model";
 import { BannedUserCommand } from "../application/useCases/banned.user.use.case";
-import { UserQueryRepositorySql } from "../infrastructure/sql/user.query.repository.sql";
 import { UserQueryRepositoryTypeorm } from "../infrastructure/typeorm/user.query.repository.typeorm";
 
 
@@ -18,7 +16,6 @@ import { UserQueryRepositoryTypeorm } from "../infrastructure/typeorm/user.query
 export class UserController {
 
     constructor(
-        // private userQueryRepository: UserQueryRepository,
         private commandBus: CommandBus,
         private userQueryRepository: UserQueryRepositoryTypeorm
     ) { }
@@ -40,7 +37,6 @@ export class UserController {
         @Query() queryParam: UserQueryParamType
     ) {
         return await this.userQueryRepository.findAllUsers(queryParam)
-        // return await this.userQueryRepository.findAllUsersForSa(queryParam)
     }
 
     @UseGuards(BasicAuthGuard)

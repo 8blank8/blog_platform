@@ -1,8 +1,5 @@
-import { Controller, Delete, Get, Post, Put, Res } from "@nestjs/common";
+import { Controller, Delete, Res } from "@nestjs/common";
 import { Response } from "express";
-import { BlogRepository } from "../blog/infrastructure/mongo/blog.repository";
-import { PostRepository } from "../post/infrastructure/mongo/post.repository";
-import { UserRepository } from "../user/infrastructure/mongo/user.repository";
 import { CommentRepository } from "../comment/infrastructure/mongo/comment.repository";
 import { STATUS_CODE } from "../../utils/enum/status.code";
 import { UserRepositorySql } from "../user/infrastructure/sql/user.repository.sql";
@@ -15,13 +12,6 @@ import { DataSource } from "typeorm";
 @Controller('/testing')
 export class TestingController {
     constructor(
-        // private readonly blogRepository: BlogRepository,
-        private blogRepositorySql: BlogRepositorySql,
-        // private readonly postRepository: PostRepository,
-        private postRepositorySql: PostRepositorySql,
-        // private readonly userRepository: UserRepository,
-        private readonly commentsRepository: CommentRepository,
-        private userRepositorySql: UserRepositorySql,
         @InjectDataSource() private dataSourse: DataSource
     ) { }
 
@@ -30,13 +20,6 @@ export class TestingController {
         @Res() res: Response,
 
     ) {
-        // await this.postRepository.deleteAllData()
-        // await this.blogRepository.deleteAllData()
-        // await this.userRepository.deleteAllData()
-        // await this.commentsRepository.deleteAllComments()
-        // await this.commentsRepository.deleteAllCommentsLike()
-        // await this.postRepository.deleteAllLikes()
-
         await this.dataSourse.query(`
         CREATE OR REPLACE FUNCTION truncate_tables(username IN VARCHAR) RETURNS void AS $$
         DECLARE
@@ -52,9 +35,6 @@ export class TestingController {
     
         SELECT truncate_tables('blank');
         `)
-        // await this.userRepositorySql.deleteAllData()
-        // await this.blogRepositorySql.deleteAllBlogs()
-        // await this.postRepositorySql.deleteAllPosts()
 
         return res.sendStatus(STATUS_CODE.NO_CONTENT)
     }

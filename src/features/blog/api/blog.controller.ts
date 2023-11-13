@@ -1,13 +1,8 @@
 import { Controller, Get, Param, Query, Res, Request, UseGuards } from "@nestjs/common";
 import { Response } from "express";
-import { BlogQueryRepository } from "../infrastructure/mongo/blog.query.repository";
-import { BlogQueryParamType } from "../models/blog.query.param.type";
-import { PostQueryRepository } from "../../post/infrastructure/mongo/post.query.repository";
 import { PostQueryParamType } from "../../post/models/post.query.param.type";
 import { JwtOrNotGuard } from "../../auth/guards/jwt.or.not.guard";
 import { STATUS_CODE } from "../../../utils/enum/status.code";
-import { BlogQueryRepositorySql } from "../infrastructure/sql/blog.query.repository.sql";
-import { PostQueryRepositorySql } from "../../../features/post/infrastructure/sql/post.query.repository.sql";
 import { BlogQueryRepositoryTypeorm } from "../infrastructure/typeorm/blog.query.repository.typeorm";
 import { BlogQueryParamModel } from "../../../features/sa/infrastructure/models/blog.query.param";
 import { PostQueryRepositoryTypeorm } from "../../../features/post/infrastructure/typeorm/post.query.repository.typeorm";
@@ -19,8 +14,6 @@ export class BlogController {
     constructor(
         private blogQueryRepository: BlogQueryRepositoryTypeorm,
         private readonly postQueryRepository: PostQueryRepositoryTypeorm,
-        private blogQueryRepositorySql: BlogQueryRepositorySql,
-        private postQueryRepositorySql: PostQueryRepositorySql
     ) { }
 
     @Get()
@@ -47,13 +40,11 @@ export class BlogController {
         @Query() queryParam: PostQueryParamType,
         @Request() req
     ) {
-        // const blog = await this.blogQueryRepository.findBlogById(id)
         const userId = req.user
 
         const blog = await this.blogQueryRepository.findBlogViewById(id)
         if (!blog) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
-        // const posts = await this.postQueryRepository.findPosts(queryParam, req.user, id)
         const posts = await this.postQueryRepository.findPostByBlogForBlogger(id, queryParam, userId)
 
         return res.status(STATUS_CODE.OK).send(posts)

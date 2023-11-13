@@ -1,5 +1,5 @@
 import { Users } from "../../../user/domain/typeorm/user.entity";
-import { Column, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 
 @Entity()

@@ -1,7 +1,4 @@
 import { CommandHandler } from "@nestjs/cqrs";
-import { UserRepository } from "../../infrastructure/mongo/user.repository";
-import { UserRepositorySql } from "../../infrastructure/sql/user.repository.sql";
-import { UserQueryRepositorySql } from "../../infrastructure/sql/user.query.repository.sql";
 import { UserRepositoryTypeorm } from "../../infrastructure/typeorm/user.repository.typeorm";
 import { UserQueryRepositoryTypeorm } from "../../infrastructure/typeorm/user.query.repository.typeorm";
 
@@ -15,7 +12,6 @@ export class DeleteUserCommand {
 @CommandHandler(DeleteUserCommand)
 export class DeleteUserUseCase {
     constructor(
-        // private userRepository: UserRepository,
         private userRepository: UserRepositoryTypeorm,
         private userQueryRepository: UserQueryRepositoryTypeorm
     ) { }

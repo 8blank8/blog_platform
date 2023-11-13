@@ -1,9 +1,5 @@
 import { CommandHandler } from "@nestjs/cqrs";
-import { CommentQueryRepository } from "../../infrastructure/mongo/comment.query.repository";
-import { CommentRepository } from "../../infrastructure/mongo/comment.repository";
 import { ForbiddenException } from "@nestjs/common";
-import { CommentQueryRepositorySql } from "../../infrastructure/sql/comment.query.repository";
-import { CommentRepositorySql } from "../../infrastructure/sql/comment.repository.sql";
 import { CommentRepositoryTypeorm } from "../../infrastructure/typeorm/comment.repository.typeorm";
 import { CommentQueryRepositoryTypeorm } from "../../infrastructure/typeorm/comment.query.repository.typeorm";
 
@@ -17,8 +13,6 @@ export class DeleteCommentCommand {
 @CommandHandler(DeleteCommentCommand)
 export class DeleteCommentUseCase {
     constructor(
-        // private commentQueryRepository: CommentQueryRepository,
-        // private commentRepository: CommentRepository,
         private commentQueryRepository: CommentQueryRepositoryTypeorm,
         private commentRepository: CommentRepositoryTypeorm
     ) { }

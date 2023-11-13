@@ -18,6 +18,6 @@ export class UpdateBanPostLikeStatusUseCase {
     async execute(command: UpdateBanPostLikeStatusCommand) {
         const { isBanned, userId } = command
 
-        return await this.postRepository.updateBanStatusPostsLikeStatus(userId, isBanned)
+        return this.postRepository.updateBanStatusPostsLikeStatus(userId, isBanned)
     }
 }

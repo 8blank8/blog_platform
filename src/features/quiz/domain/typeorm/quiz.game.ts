@@ -1,6 +1,5 @@
-import { Column, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { QuizQestion } from "./question.entity";
-import { Users } from "../../../user/domain/typeorm/user.entity";
 import { Answer } from "./answer.entity";
 import { QuizScore } from "./quiz.score.entity";
 import { QuizPlayer } from "./quiz.player.entity";
@@ -10,17 +9,11 @@ export class Game {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  // @Column({nullable: false})
-  // firstPlayerUserId: string
-
   @ManyToOne(() => QuizPlayer, user => user.id)
   firstPlayer: QuizPlayer
 
   @Column({ nullable: true, type: 'json' })
   answer: Array<Answer>
-
-  // @Column({nullable: true})
-  // secondPlayerUserId: string
 
   @ManyToOne(() => QuizPlayer, user => user.id)
   secondPlayer: QuizPlayer

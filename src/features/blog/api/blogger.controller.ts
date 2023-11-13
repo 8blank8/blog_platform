@@ -3,13 +3,10 @@ import { JwtAuthGuard } from "../../auth/guards/jwt.guard";
 import { BlogCreateType } from "../models/blog.create.type";
 import { CommandBus } from "@nestjs/cqrs";
 import { CreateBlogCommand } from "../application/useCases/create.blog.use.case";
-// import { BlogQueryRepository } from "../infrastructure/mongo/blog.query.repository";
 import { PostCreateByIdType } from "../models/post.create.by.id.type";
 import { CreatePostByBlogIdCommand } from "../../post/application/useCases/create.post.by.blog.id.use.case";
 import { STATUS_CODE } from "../../../utils/enum/status.code";
 import { Response } from 'express'
-import { PostQueryRepository } from "../../post/infrastructure/mongo/post.query.repository";
-// import { BlogQueryParamType } from "../models/blog.query.param.type";
 import { PostQueryParamType } from "../../post/models/post.query.param.type";
 import { BlogUpdateType } from "../models/blog.update.type";
 import { UpdateBlogCommand } from "../application/useCases/update.blog.use.case";
@@ -19,8 +16,6 @@ import { DeleteBlogCommand } from "../application/useCases/delete.blog.use.case"
 import { DeletePostByBlogIdCommand } from "../application/useCases/delete.post.by.blog.id.use.case";
 import { CommentQueryRepository } from "../../../features/comment/infrastructure/mongo/comment.query.repository";
 import { CommentQueryParam } from "../../../features/comment/models/comment.query.param.type";
-import { BlogQueryRepositorySql } from "../infrastructure/sql/blog.query.repository.sql";
-import { PostQueryRepositorySql } from "../../../features/post/infrastructure/sql/post.query.repository.sql";
 import { BasicAuthGuard } from "../../../features/auth/guards/basic.guard";
 import { BlogQueryRepositoryTypeorm } from "../infrastructure/typeorm/blog.query.repository.typeorm";
 import { BlogQueryParamModel } from "../../../features/sa/infrastructure/models/blog.query.param";
@@ -31,12 +26,9 @@ import { PostQueryRepositoryTypeorm } from "../../../features/post/infrastructur
 export class BloggerController {
     constructor(
         private commandBus: CommandBus,
-        // private blogQueryRepository: BlogQueryRepository,
         private postQueryRepository: PostQueryRepositoryTypeorm,
         private blogQueryRepository: BlogQueryRepositoryTypeorm,
         private commentQueryRepository: CommentQueryRepository,
-        private blogQueryRepositorySql: BlogQueryRepositorySql,
-        private postQueryRepositorySql: PostQueryRepositorySql
     ) { }
 
     @UseGuards(BasicAuthGuard)
@@ -69,10 +61,7 @@ export class BloggerController {
     @Get()
     async getBlogs(
         @Query() queryParam: BlogQueryParamModel,
-        @Request() req
     ) {
-        const userId = req.user
-        // return this.blogQueryRepository.findAllBlogs(queryParam, userId)
         return this.blogQueryRepository.findAllBlogsView(queryParam)
     }
 
@@ -100,11 +89,7 @@ export class BloggerController {
         @Param('id') id: string,
         @Body() updateData: BlogUpdateType,
         @Res() res: Response,
-        // @Request() req
     ) {
-
-        // const userId = req.user
-
         const isUpdate = await this.commandBus.execute(
             new UpdateBlogCommand(updateData, id)
         )
@@ -119,9 +104,7 @@ export class BloggerController {
         @Param() param,
         @Body() inputData: PostUpdateByIdModel,
         @Res() res: Response,
-        @Request() req
     ) {
-        // const userId = req.user
         const blogId = param.blogId
         const postId = param.postId
 
@@ -139,11 +122,7 @@ export class BloggerController {
     async deleteBlog(
         @Param('id') id: string,
         @Res() res: Response,
-        // @Request() req
     ) {
-
-        // const userId = req.user
-
         const isDelete = await this.commandBus.execute(new DeleteBlogCommand(id))
         if (!isDelete) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
@@ -154,10 +133,8 @@ export class BloggerController {
     @Delete(':blogId/posts/:postId')
     async deletePostByBlogId(
         @Param() param,
-        // @Request() req,
         @Res() res: Response
     ) {
-        // const userId = req.user
         const postId = param.postId
         const blogId = param.blogId
 

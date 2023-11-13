@@ -29,10 +29,8 @@ export class QuizPublicController {
         return statistic
     }
 
-    // @UseGuards(JwtAuthGuard)
     @Get('users/top')
     async getTopUsers(
-        @Req() req,
         @Query() queryParam: TopUsersQueryParamModel
     ) {
         const users = await this.quizQueryRepository.findTopUsers(queryParam)
@@ -82,7 +80,7 @@ export class QuizPublicController {
 
         const game = await this.quizQueryRepository.findMyCurrentGameByUserId(player.id)
         if (!game) return res.sendStatus(STATUS_CODE.NOT_FOUND)
-        // console.log(game.firstPlayerProgress.answers)
+
         return res.status(STATUS_CODE.OK).send(game)
     }
 

@@ -1,25 +1,19 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, Res, Request, UseGuards } from "@nestjs/common";
-import { PostQueryRepository } from "../infrastructure/mongo/post.query.repository";
-import { PostCreateType } from "../models/post.create.type";
 import { Response } from "express";
-import { PostService } from "../application/post.service";
 import { PostQueryParamType } from "../models/post.query.param.type";
 import { PostUpdateType } from "../models/post.update.type";
 import { CommentCreateType } from "../../comment/models/comment.create.type";
 import { JwtAuthGuard } from "../../auth/guards/jwt.guard";
 import { CommentQueryParam } from "../../comment/models/comment.query.param.type";
-import { CommentQueryRepository } from "../../comment/infrastructure/mongo/comment.query.repository";
 import { PostLikeStatusType } from "../models/post.like.status.type";
 import { JwtOrNotGuard } from "../../auth/guards/jwt.or.not.guard";
 import { BasicAuthGuard } from "../../auth/guards/basic.guard";
 import { STATUS_CODE } from "../../../utils/enum/status.code";
 import { CommandBus } from "@nestjs/cqrs";
-import { CreatePostCommand } from "../application/useCases/create.post.use.case";
 import { UpdatePostCommand } from "../application/useCases/update.post.use.case";
 import { DeletePostCommand } from "../application/useCases/delete.post.use.case";
 import { CreateCommentForPostCommand } from "../application/useCases/create.comment.for.post";
 import { UpdateLikeStatusForPostCommand } from "../application/useCases/update.like.status.for.post";
-import { ConnectionStates } from "mongoose";
 import { BlogQueryRepository } from "../../../features/blog/infrastructure/mongo/blog.query.repository";
 import { PostQueryRepositorySql } from "../infrastructure/sql/post.query.repository.sql";
 import { CommentQueryRepositorySql } from "../../../features/comment/infrastructure/sql/comment.query.repository";
@@ -32,11 +26,8 @@ export class PostControler {
 
     constructor(
         private postQueryRepository: PostQueryRepositoryTypeorm,
-        private postQueryRepositorySql: PostQueryRepositorySql,
         private commentQueryRepository: CommentQueryRepositoryTypeorm,
         private commandBus: CommandBus,
-        private blogQueryRepository: BlogQueryRepository,
-        private commentQueryRepositorySql: CommentQueryRepositorySql
     ) { }
 
     @UseGuards(JwtOrNotGuard)
@@ -63,24 +54,8 @@ export class PostControler {
         const post = await this.postQueryRepository.findPostByIdForPublic(id, userId)
         if (!post) return res.sendStatus(STATUS_CODE.NOT_FOUND)
 
-        // const blogIsBanned = await this.blogQueryRepository.findBannedBlog(post?.blogId)
-        // if (blogIsBanned) return res.sendStatus(STATUS_CODE.NOT_FOUND)
-
         return res.status(STATUS_CODE.OK).send(post)
     }
-
-    // @UseGuards(BasicAuthGuard)
-    // @Post()
-    // async createPost(
-    //     @Body() inputPostData: PostCreateType,
-    //     @Res() res: Response
-    // ) {
-    //     const postId = await this.commandBus.execute(new CreatePostCommand(inputPostData))
-    //     if (!postId) return res.sendStatus(STATUS_CODE.NOT_FOUND)
-
-    //     const post = await this.postQueryRepository.findPost(postId)
-    //     return res.status(STATUS_CODE.CREATED).send(post)
-    // }
 
     @UseGuards(BasicAuthGuard)
     @Put('/:id')

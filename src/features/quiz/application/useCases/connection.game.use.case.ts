@@ -6,7 +6,6 @@ import { Game } from "../../domain/typeorm/quiz.game";
 import { QuizRepositoryTypeorm } from "../../infrastructure/typeorm/quiz.repository.typeorm";
 import { QuizScore } from "../../domain/typeorm/quiz.score.entity";
 import { QuizPlayer } from "../../domain/typeorm/quiz.player.entity";
-import { v4 as uuidv4 } from 'uuid'
 
 
 export class ConnectionGameCommand {
@@ -32,7 +31,7 @@ export class ConnectionGameUseCase {
 
         let player = await this.quizQueryRepository.findPlayerById(user.id)
 
-        if(player){
+        if (player) {
             player.gamesCount += 1
             await this.quizRepository.savePlayer(player)
         }
@@ -48,7 +47,7 @@ export class ConnectionGameUseCase {
 
         const activeGame = await this.quizQueryRepository.findMyCurrentGameFullByUserId(player.id)
         if (activeGame) throw new ForbiddenException()
-        
+
         const pendingGame = await this.quizQueryRepository.findPendingGame()
 
         const score = new QuizScore()
@@ -58,7 +57,6 @@ export class ConnectionGameUseCase {
             const game = new Game()
 
             game.firstPlayer = player
-            // game.firstPlayerUserId = user.id
             game.pairCreatedDate = new Date().toISOString()
             game.status = 'PendingSecondPlayer'
 
@@ -75,7 +73,6 @@ export class ConnectionGameUseCase {
         const randomQuestion = await this.quizQueryRepository.getFiveRandomQuestion()
 
         pendingGame.secondPlayer = player
-        // pendingGame.secondPlayerUserId = user.id
         pendingGame.startGameDate = new Date().toISOString()
         pendingGame.status = 'Active'
         pendingGame.questions = randomQuestion

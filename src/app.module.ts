@@ -37,7 +37,7 @@ import { BasicStrategy } from './features/auth/strategies/basic-strategy';
 
 import { EmailAdapter } from './utils/adapters/email.adapter';
 import { EmailManager } from './utils/managers/email.manager';
-import { UserIsConfirmed } from './features/auth/models/confirmation.code.type';
+import { UserIsConfirmed } from './utils/custom-validation/confirmation.code.type';
 import { UserExistLogin } from './utils/custom-validation/user.exist.login';
 import { UserExistEmail } from './utils/custom-validation/user.exist.email';
 import { EmailCodeResend } from './utils/custom-validation/email.code.resend';
