@@ -3,7 +3,7 @@ import { SecurityQueryRepository } from "../infrastructure/mongoose/security.que
 import { JwtRefreshTokenGuard } from "../../auth/guards/jwt.refresh.token.guard";
 import { SecurityService } from "../application/security.service";
 import { Response } from 'express'
-import { STATUS_CODE } from "../../../entity/enum/status.code";
+import { STATUS_CODE } from "../../../utils/enum/status.code";
 import { CommandBus } from "@nestjs/cqrs";
 import { DeleteDeviceCommand } from "../application/useCases/delete.device.use.case";
 import { DeleteAllDevicesCommand } from "../application/useCases/delete.all.device.use.case";

@@ -2,7 +2,7 @@ import { Body, Controller, ForbiddenException, Get, HttpStatus, Param, ParseUUID
 import { CommandBus } from "@nestjs/cqrs";
 import { JwtAuthGuard } from "../../../../features/auth/guards/jwt.guard";
 import { Response } from 'express'
-import { STATUS_CODE } from "../../../../entity/enum/status.code";
+import { STATUS_CODE } from "../../../../utils/enum/status.code";
 import { QuizQueryRepositoryTypeorm } from "../../infrastructure/typeorm/quiz.query.repository.typeorm";
 import { AnswerCreateModel } from "../../models/create.answer.model";
 import { ConnectionGameCommand } from "../../application/useCases/connection.game.use.case";

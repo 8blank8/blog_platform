@@ -42,4 +42,7 @@ export class Game {
 
   @Column({ nullable: true })
   finishGameDate: string;
+
+  @Column({ nullable: true })
+  answerTime: Date
 }

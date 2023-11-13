@@ -6,7 +6,7 @@ import { CreateBlogCommand } from "../application/useCases/create.blog.use.case"
 // import { BlogQueryRepository } from "../infrastructure/mongo/blog.query.repository";
 import { PostCreateByIdType } from "../models/post.create.by.id.type";
 import { CreatePostByBlogIdCommand } from "../../post/application/useCases/create.post.by.blog.id.use.case";
-import { STATUS_CODE } from "../../../entity/enum/status.code";
+import { STATUS_CODE } from "../../../utils/enum/status.code";
 import { Response } from 'express'
 import { PostQueryRepository } from "../../post/infrastructure/mongo/post.query.repository";
 // import { BlogQueryParamType } from "../models/blog.query.param.type";

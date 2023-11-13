@@ -5,7 +5,7 @@ import { BlogQueryParamType } from "../models/blog.query.param.type";
 import { PostQueryRepository } from "../../post/infrastructure/mongo/post.query.repository";
 import { PostQueryParamType } from "../../post/models/post.query.param.type";
 import { JwtOrNotGuard } from "../../auth/guards/jwt.or.not.guard";
-import { STATUS_CODE } from "../../../entity/enum/status.code";
+import { STATUS_CODE } from "../../../utils/enum/status.code";
 import { BlogQueryRepositorySql } from "../infrastructure/sql/blog.query.repository.sql";
 import { PostQueryRepositorySql } from "../../../features/post/infrastructure/sql/post.query.repository.sql";
 import { BlogQueryRepositoryTypeorm } from "../infrastructure/typeorm/blog.query.repository.typeorm";

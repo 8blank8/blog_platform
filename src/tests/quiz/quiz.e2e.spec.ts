@@ -3,6 +3,7 @@ import { startTestConfig } from "../utils/start.test.config";
 import { createUserDto } from "../utils/create.user.dto";
 import request from "supertest";
 import { AUTH } from "../enums/base.auth.enum";
+import { async } from "rxjs";
 
 
 describe('quiz', () => {
@@ -176,13 +177,20 @@ describe('quiz', () => {
             await addAnswer(app, accessTokenUser1, '1')
             await addAnswer(app, accessTokenUser1, '1')
             await addAnswer(app, accessTokenUser1, '1')
+            setTimeout(async () => {
+                // await addAnswer(app, accessTokenUser2, '1')
+                // await addAnswer(app, accessTokenUser2, '1')
+                // await addAnswer(app, accessTokenUser2, '2')
+                // await addAnswer(app, accessTokenUser2, '2')
+                // await addAnswer(app, accessTokenUser2, '2')
+            }, 10000)
 
-            await addAnswer(app, accessTokenUser2, '1')
-            await addAnswer(app, accessTokenUser2, '1')
-            await addAnswer(app, accessTokenUser2, '2')
-            await addAnswer(app, accessTokenUser2, '2')
-            await addAnswer(app, accessTokenUser2, '2')
+            const res = await request(app.getHttpServer())
+                .get(`pair-game-quiz/pairs/${responseConnection.body.id}`)
+                .set('Authorization', `Bearer ${accessTokenUser1}`)
 
+            expect(res.status).toBe(HttpStatus.OK)
+            expect(res.body.finishGameDate).not.toBeNull()
 
             const statistic = await request(app.getHttpServer())
                 .get('/pair-game-quiz/users/my-statistic')
@@ -204,8 +212,6 @@ describe('quiz', () => {
             const res = await request(app.getHttpServer())
                 .get('/pair-game-quiz/users/top')
                 .query('sort=avgScores desc')
-
-            console.log(res.body.items)
 
         })
     })

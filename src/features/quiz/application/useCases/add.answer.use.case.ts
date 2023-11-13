@@ -8,6 +8,7 @@ import { QuizRepositoryTypeorm } from "../../infrastructure/typeorm/quiz.reposit
 import { log } from "console";
 import { QuizScore } from "../../domain/typeorm/quiz.score.entity";
 import { QuizPlayer } from "../../domain/typeorm/quiz.player.entity";
+import { Game } from "../../domain/typeorm/quiz.game";
 
 
 export class AddAnswerCommand {
@@ -29,10 +30,6 @@ export class AddAnswerUseCase {
 
         const { inputData, userId } = command
 
-        // const user = await this.userQueryRepository.findUserByIdForSa(userId)
-        // console.log(userId)
-        // if (!user) throw new ForbiddenException()
-
         const player = await this.quizQueryRepository.findPlayerById(userId)
         if (!player) throw new ForbiddenException()
 
@@ -50,8 +47,49 @@ export class AddAnswerUseCase {
             secondPlayerId = game.firstPlayer.id
         }
 
+        if (firstPlayerAnswersCount === 4) {
+            game.answerTime = new Date()
+        }
+
+        console.log({ time: game.answerTime, date: new Date() })
+
+        if (game.answerTime < new Date()) {
+            let answerId: string = ''
+            for (let i = firstPlayerAnswersCount; i <= 4; i++) {
+                const createdAnswer = new Answer()
+                createdAnswer.gameId = game.id
+                createdAnswer.user = player
+                createdAnswer.userId = player.id
+                createdAnswer.question = game.questions[firstPlayerAnswersCount]
+                createdAnswer.questionId = game.questions[firstPlayerAnswersCount].id
+                createdAnswer.addedAt = new Date().toISOString()
+                createdAnswer.answerStatus = 'Incorrect'
+
+                let gameAnswers
+                if (game.answer) {
+                    gameAnswers = [...game.answer, createdAnswer]
+                } else {
+                    gameAnswers = [createdAnswer]
+                }
+
+                game.answer = gameAnswers
+
+                await this.quizRepository.saveGame(game)
+                await this.quizRepository.saveAnswer(createdAnswer)
+                answerId = createdAnswer.id
+            }
+
+            const isFinished = await this.checkFinishGame(player.id)
+            if (isFinished) {
+                game.finishGameDate = new Date().toISOString()
+                game.status = 'Finished'
+                await this.quizRepository.saveGame(game)
+            }
+
+            return answerId
+        }
+
         const createdAnswer = new Answer()
-        // createdAnswer.game = game
         createdAnswer.gameId = game.id
         createdAnswer.user = player
         createdAnswer.userId = player.id
@@ -104,6 +142,14 @@ export class AddAnswerUseCase {
         // console.log(createdAnswer, 'IN UC FOR RETURN')
         return createdAnswer.id
     }
+
+    // private checkExpirationGame(game: Game, player: QuizPlayer) {
+    //     const time = new Date()
+
+    //     if(time > game.answerTime){
+
+    //     }
+    // }
 
     private async checkFinishGame(userId: string) {
         const game = await this.quizQueryRepository.findMyCurrentGameFullByUserId(userId)

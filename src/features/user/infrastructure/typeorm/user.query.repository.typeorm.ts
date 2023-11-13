@@ -5,10 +5,10 @@ import { Brackets, Repository } from "typeorm";
 import { UserViewSqlModel } from "../models/queryRepositorySql/user.view.sql.model";
 import { UserViewForSaModel } from "../models/queryRepositorySql/users.view.for.sa.model";
 import { UserQueryParamType } from "../../models/user.query.param.type";
-import { QUERY_PARAM } from "../../../../entity/enum/query.param.enum";
-import { QUERY_PARAM_SQL } from "../../../../entity/enum/query.param.enum.sql";
+import { QUERY_PARAM } from "../../../../utils/enum/query.param.enum";
+import { QUERY_PARAM_SQL } from "../../../../utils/enum/query.param.enum.sql";
 import { UsersConfirmationEmail } from "../../domain/typeorm/user.confirmation.email.entity";
-import { UserPagination } from '../../../../entity/pagination/user/user.pagination'
+import { UserPagination } from '../../../../utils/pagination/user/user.pagination'
 
 
 @Injectable()

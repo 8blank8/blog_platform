@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Blogs } from "../../domain/typeorm/blog.entity";
 import { Repository } from "typeorm";
 import { BlogQueryParamModel } from "../../../../features/sa/infrastructure/models/blog.query.param";
-import { BlogPagination } from "../../../../entity/pagination/blog/blog.pagination";
+import { BlogPagination } from "../../../../utils/pagination/blog/blog.pagination";
 
 
 @Injectable()

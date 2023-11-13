@@ -1,6 +1,6 @@
 import { BlogQueryParamModel } from "../../../features/sa/infrastructure/models/blog.query.param";
 import { DefaultPagination } from "../default.pagination";
-import { QUERY_PARAM_SQL } from "../../../entity/enum/query.param.enum.sql";
+import { QUERY_PARAM_SQL } from "../../../utils/enum/query.param.enum.sql";
 
 
 export class BlogPagination extends DefaultPagination {

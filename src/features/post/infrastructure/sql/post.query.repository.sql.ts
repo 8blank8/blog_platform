@@ -4,7 +4,7 @@ import { DataSource } from "typeorm";
 import { PostViewSqlModel } from "./models/post.view.sql.model";
 import { PostFullSqlModel } from "./models/post.full.sql.model";
 import { PostQueryParamType } from "../../models/post.query.param.type";
-import { QUERY_PARAM_SQL } from "../../../../entity/enum/query.param.enum.sql";
+import { QUERY_PARAM_SQL } from "../../../../utils/enum/query.param.enum.sql";
 import { PostLikeStatusViewSqlModel } from "./models/post.like.status.view.sql.model";
 
 

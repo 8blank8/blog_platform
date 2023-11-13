@@ -1,6 +1,6 @@
 import { DefaultPagination } from "../default.pagination";
 import { QuizGameQueryParamModel } from "src/features/quiz/models/quiz.game.query.param.model";
-import { QUERY_PARAM_SQL } from "../../../entity/enum/query.param.enum.sql";
+import { QUERY_PARAM_SQL } from "../../../utils/enum/query.param.enum.sql";
 
 
 export class GamePagniation extends DefaultPagination {

@@ -12,7 +12,7 @@ import { CommentQueryRepository } from "../../comment/infrastructure/mongo/comme
 import { PostLikeStatusType } from "../models/post.like.status.type";
 import { JwtOrNotGuard } from "../../auth/guards/jwt.or.not.guard";
 import { BasicAuthGuard } from "../../auth/guards/basic.guard";
-import { STATUS_CODE } from "../../../entity/enum/status.code";
+import { STATUS_CODE } from "../../../utils/enum/status.code";
 import { CommandBus } from "@nestjs/cqrs";
 import { CreatePostCommand } from "../application/useCases/create.post.use.case";
 import { UpdatePostCommand } from "../application/useCases/update.post.use.case";

@@ -6,7 +6,7 @@ import { Blog, BlogDocument } from "../../blog/domain/mongoose/blog.schema";
 import { BlogViewModel } from "./models/blog.view.model";
 import { User, UserDocument } from "../../user/domain/mongoose/user.schema";
 import { BlogQueryParamType } from "../../../features/blog/models/blog.query.param.type";
-import { QUERY_PARAM } from "../../../entity/enum/query.param.enum";
+import { QUERY_PARAM } from "../../../utils/enum/query.param.enum";
 import { BlogQueryParamModel } from "./models/blog.query.param";
 
 

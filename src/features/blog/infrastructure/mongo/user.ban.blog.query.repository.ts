@@ -3,7 +3,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { UserBanBlog, UserBanBlogDocument } from "../../domain/mongoose/user.ban.blog.schema";
 import { FilterQuery, Model } from "mongoose";
 import { UsersBanQueryParamModel } from "../../models/users.ban.query.param.model";
-import { QUERY_PARAM } from "../../../../entity/enum/query.param.enum";
+import { QUERY_PARAM } from "../../../../utils/enum/query.param.enum";
 
 
 @Injectable()

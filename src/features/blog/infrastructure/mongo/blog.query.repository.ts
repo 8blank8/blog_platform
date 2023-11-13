@@ -5,7 +5,7 @@ import { Model } from "mongoose";
 import { BlogDBType } from "../../models/blog.db.type";
 import { BlogViewType } from "../../models/blog.view.type";
 import { BlogQueryParamType } from "../../models/blog.query.param.type";
-import { QUERY_PARAM } from "../../../../entity/enum/query.param.enum";
+import { QUERY_PARAM } from "../../../../utils/enum/query.param.enum";
 
 
 @Injectable()

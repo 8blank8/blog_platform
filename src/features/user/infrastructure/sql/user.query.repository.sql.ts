@@ -8,7 +8,7 @@ import { UserMeViewSqlModel } from "../models/queryRepositorySql/user.me.view.sq
 import { UserConfirmationCodeViewSqlModel } from "../models/queryRepositorySql/user.confirmation.code.view.sql.model";
 import { UserWithConfirmationSqlModel } from "../models/queryRepositorySql/user.with.confirmation.sql.model";
 import { UserQueryParamType } from "../../models/user.query.param.type";
-import { QUERY_PARAM_SQL } from "../../../../entity/enum/query.param.enum.sql";
+import { QUERY_PARAM_SQL } from "../../../../utils/enum/query.param.enum.sql";
 import { UserViewForSaModel } from "../models/queryRepositorySql/users.view.for.sa.model";
 import { UserBannedSqlModel } from "../models/queryRepositorySql/user.banned.sql.model";
 

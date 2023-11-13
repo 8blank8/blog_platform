@@ -5,7 +5,7 @@ import cookieParser from 'cookie-parser'
 import { useContainer } from 'class-validator'
 import { AppModule } from '../../app.module';
 import { HttpExceptionFilter } from '../../exception.filter';
-import { EmailManager } from '../../entity/managers/email.manager';
+import { EmailManager } from '../../utils/managers/email.manager';
 
 export const startTestConfig = async () => {
     let app: INestApplication;

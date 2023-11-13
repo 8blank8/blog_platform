@@ -1,4 +1,4 @@
-import { EmailAdapter } from "../../entity/adapters/email.adapter";
+import { EmailAdapter } from "../../utils/adapters/email.adapter";
 import { Injectable } from '@nestjs/common'
 
 @Injectable()

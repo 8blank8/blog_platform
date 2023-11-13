@@ -6,7 +6,7 @@ import { CommentService } from "../appication/comment.service";
 import { CommentLikeStatusType } from "../models/comment.like.status";
 import { CommentQueryRepository } from "../infrastructure/mongo/comment.query.repository";
 import { JwtOrNotGuard } from "../../auth/guards/jwt.or.not.guard";
-import { STATUS_CODE } from "../../../entity/enum/status.code";
+import { STATUS_CODE } from "../../../utils/enum/status.code";
 import { CommandBus } from "@nestjs/cqrs";
 import { UpdateCommetCommand } from "../appication/useCases/update.comment.use.case";
 import { DeleteCommentCommand } from "../appication/useCases/delete.comment.use.case";

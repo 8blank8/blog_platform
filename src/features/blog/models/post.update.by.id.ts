@@ -1,5 +1,5 @@
 import { IsString, Length, IsNotEmpty, Validate } from "class-validator"
-import { IsNotBlank } from "../../../entity/custom-validation/is.not.blank"
+import { IsNotBlank } from "../../../utils/custom-validation/is.not.blank"
 
 export class PostUpdateByIdModel {
     @IsNotEmpty()

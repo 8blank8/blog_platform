@@ -3,7 +3,7 @@ import { EmailType } from "../../../../features/auth/models/email.type";
 import { v4 as uuidv4 } from 'uuid'
 // import { UserRepository } from "../../infrastructure/user.repository";
 // import { UserQueryRepository } from "../../infrastructure/user.query.repository";
-import { EmailManager } from "../../../../entity/managers/email.manager";
+import { EmailManager } from "../../../../utils/managers/email.manager";
 import { UserQueryRepositorySql } from "../../infrastructure/sql/user.query.repository.sql";
 import { UserRepositorySql } from "../../infrastructure/sql/user.repository.sql";
 import { UserRepositoryTypeorm } from "../../infrastructure/typeorm/user.repository.typeorm";

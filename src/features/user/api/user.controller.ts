@@ -7,7 +7,7 @@ import { BasicAuthGuard } from "../../auth/guards/basic.guard";
 import { CommandBus } from "@nestjs/cqrs";
 import { CreateUserCommand } from "../application/useCases/create.user.use.case";
 import { DeleteUserCommand } from "../application/useCases/delete.user.use.case";
-import { STATUS_CODE } from "../../../entity/enum/status.code";
+import { STATUS_CODE } from "../../../utils/enum/status.code";
 import { UserBanModel } from "../models/user.ban.model";
 import { BannedUserCommand } from "../application/useCases/banned.user.use.case";
 import { UserQueryRepositorySql } from "../infrastructure/sql/user.query.repository.sql";

@@ -3,7 +3,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { Post, PostDocument } from "../../domain/mongoose/post.schema";
 import { PostQueryParamType } from "../../models/post.query.param.type";
-import { QUERY_PARAM } from "../../../../entity/enum/query.param.enum";
+import { QUERY_PARAM } from "../../../../utils/enum/query.param.enum";
 import { PostViewType } from "../../models/post.view.type";
 import { PostLike, PostLikeDocument } from "../../domain/mongoose/post.like.schema";
 import { BlogQueryRepository } from "src/features/blog/infrastructure/mongo/blog.query.repository";

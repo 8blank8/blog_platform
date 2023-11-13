@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString, Length, Matches, Validate } from "class-validator"
-import { UserExistLogin } from "../../../entity/custom-validation/user.exist.login";
-import { UserExistEmail } from "../../../entity/custom-validation/user.exist.email";
+import { UserExistLogin } from "../../../utils/custom-validation/user.exist.login";
+import { UserExistEmail } from "../../../utils/custom-validation/user.exist.email";
 
 
 export class UserCreateType {

@@ -5,7 +5,7 @@ import { CommandBus } from "@nestjs/cqrs";
 import { CreateQuestionCommand } from "../../application/useCases/create.question.use.case";
 import { QuizQueryRepositoryTypeorm } from "../../infrastructure/typeorm/quiz.query.repository.typeorm";
 import { Response } from "express";
-import { STATUS_CODE } from "../../../../entity/enum/status.code";
+import { STATUS_CODE } from "../../../../utils/enum/status.code";
 import { DeleteQuestionCommand } from "../../application/useCases/delete.question.use.case";
 import { UpdateQuestionCommand } from "../../application/useCases/update.question.use.case";
 import { UpdatePublishedQuestModel } from "../../models/update.published.quest.model";

@@ -11,7 +11,7 @@ import { EmailType } from "../models/email.type";
 import { SecurityService } from "../../security/application/security.service";
 import { JwtRefreshTokenGuard } from "../guards/jwt.refresh.token.guard";
 import { ThrottlerGuard } from "@nestjs/throttler";
-import { STATUS_CODE } from "../../../entity/enum/status.code";
+import { STATUS_CODE } from "../../../utils/enum/status.code";
 import { CommandBus } from "@nestjs/cqrs";
 import { CreateDeviceCommand } from "../../security/application/useCases/create.device.use.case";
 import { RegistrationUserCommand } from "../../user/application/useCases/registration.user.use.case";
