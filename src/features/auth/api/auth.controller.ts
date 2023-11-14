@@ -32,7 +32,7 @@ export class AuthController {
   constructor(
     private userQueryRepository: UserQueryRepositoryTypeorm,
     private commandBus: CommandBus,
-  ) { }
+  ) {}
 
   @UseGuards(ThrottlerGuard, LocalAuthGuard)
   @Post('/login')

@@ -24,7 +24,7 @@ export class SaBlogController {
   constructor(
     private commandBus: CommandBus,
     private saQueryRepository: SaQueryRepository,
-  ) { }
+  ) {}
 
   @UseGuards(BasicAuthGuard)
   @Put('blogs/blogId/bind-with-user/userId')

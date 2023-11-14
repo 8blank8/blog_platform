@@ -29,7 +29,7 @@ export class QuizController {
   constructor(
     private commandBus: CommandBus,
     private quizQueryRepository: QuizQueryRepositoryTypeorm,
-  ) { }
+  ) {}
 
   @UseGuards(BasicAuthGuard)
   @Post()

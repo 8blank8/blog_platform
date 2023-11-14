@@ -10,7 +10,7 @@ import { BannedBlogViewSqlModel } from '../../models/banned.blog.view.sql.model'
 
 @Injectable()
 export class BlogQueryRepositorySql {
-  constructor(@InjectDataSource() private dataSource: DataSource) { }
+  constructor(@InjectDataSource() private dataSource: DataSource) {}
 
   async findAllBlogsView(queryParam: BlogQueryParamModel) {
     let {
@@ -33,7 +33,8 @@ export class BlogQueryRepositorySql {
             SELECT "Id", "Name", "Description", "WebsiteUrl", "CreatedAt", "IsMembership"
             FROM public."Blogs"
             WHERE "Name" ILIKE $1
-	        ORDER BY "${sortBy}" ${sortBy !== 'CreatedAt' ? 'COLLATE "C"' : ''
+	        ORDER BY "${sortBy}" ${
+        sortBy !== 'CreatedAt' ? 'COLLATE "C"' : ''
       } ${sortDirection}
 	        OFFSET $2 LIMIT $3;
         `,

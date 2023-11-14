@@ -8,7 +8,7 @@ import { CreateUserForRegistrationSqlModel } from '../../models/create.user.for.
 
 @Injectable()
 export class UserRepositorySql {
-  constructor(@InjectDataSource() private dataSource: DataSource) { }
+  constructor(@InjectDataSource() private dataSource: DataSource) {}
 
   async createUserForAdmin(user: CreateUserForSaSqlModel): Promise<boolean> {
     await this.dataSource.query(

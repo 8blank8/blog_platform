@@ -41,7 +41,7 @@ export class BloggerController {
     private postQueryRepository: PostQueryRepositoryTypeorm,
     private blogQueryRepository: BlogQueryRepositoryTypeorm,
     private commentQueryRepository: CommentQueryRepository,
-  ) { }
+  ) {}
 
   @UseGuards(BasicAuthGuard)
   @Post()

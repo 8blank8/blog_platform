@@ -19,7 +19,7 @@ export class SaQueryRepository {
   constructor(
     @InjectModel(Blog.name) private blogModel: Model<BlogDocument>,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
-  ) { }
+  ) {}
 
   async findAllBlogs(queryParam: BlogQueryParamModel) {
     const {

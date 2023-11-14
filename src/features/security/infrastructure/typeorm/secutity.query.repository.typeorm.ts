@@ -9,7 +9,7 @@ import { DeviceViewSqlModel } from '../../models/device.view.sql.model';
 export class SecurityQueryRepositoryTypeorm {
   constructor(
     @InjectRepository(Devices) private securityRepository: Repository<Devices>,
-  ) { }
+  ) {}
 
   async findDeviceById(deviceId: string): Promise<Devices | null> {
     const queryBuilder = this.securityRepository.createQueryBuilder('d');

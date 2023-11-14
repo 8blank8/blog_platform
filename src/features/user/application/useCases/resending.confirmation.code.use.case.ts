@@ -7,7 +7,7 @@ import { UserRepositoryTypeorm } from '../../infrastructure/typeorm/user.reposit
 import { UserQueryRepositoryTypeorm } from '../../infrastructure/typeorm/user.query.repository.typeorm';
 
 export class ResendingConfirmationCodeCommand {
-  constructor(public email: EmailType) { }
+  constructor(public email: EmailType) {}
 }
 
 @CommandHandler(ResendingConfirmationCodeCommand)
@@ -16,7 +16,7 @@ export class ResendingConfirmationCodeUseCase {
     private userRepository: UserRepositoryTypeorm,
     private userQueryRepository: UserQueryRepositoryTypeorm,
     private emailManager: EmailManager,
-  ) { }
+  ) {}
 
   async execute(command: ResendingConfirmationCodeCommand): Promise<boolean> {
     const { email } = command;

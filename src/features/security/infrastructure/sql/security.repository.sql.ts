@@ -6,7 +6,7 @@ import { CreateDeviceForSqlModel } from '../../models/create.device.for.sql.mode
 
 @Injectable()
 export class SecurityRepositorySql {
-  constructor(@InjectDataSource() private dataSource: DataSource) { }
+  constructor(@InjectDataSource() private dataSource: DataSource) {}
 
   async createDevice(device: CreateDeviceForSqlModel) {
     const { userId, title, lastActiveDate, ip } = device;

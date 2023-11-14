@@ -6,7 +6,7 @@ import { BlogRepositorySql } from '@app/features/blog/infrastructure/sql/blog.re
 import { BlogBanInputDataModel } from '../../models/blog.ban.input.data.model';
 
 export class BlogBanCommand {
-  constructor(public blogId: string, public inputData: BlogBanInputDataModel) { }
+  constructor(public blogId: string, public inputData: BlogBanInputDataModel) {}
 }
 
 @CommandHandler(BlogBanCommand)
@@ -14,7 +14,7 @@ export class BlogBanUseCase {
   constructor(
     private blogQueryRepositorySql: BlogQueryRepositorySql,
     private blogRepositorySql: BlogRepositorySql,
-  ) { }
+  ) {}
 
   async execute(command: BlogBanCommand) {
     const { inputData, blogId } = command;

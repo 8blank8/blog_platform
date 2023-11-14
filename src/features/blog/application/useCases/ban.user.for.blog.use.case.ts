@@ -13,7 +13,7 @@ export class BanUserForBlogCommand {
     public inputData: BanUserForBlogModel,
     public bannedUserId: string,
     public blogUserId: string,
-  ) { }
+  ) {}
 }
 
 @CommandHandler(BanUserForBlogCommand)
@@ -23,7 +23,7 @@ export class BanUserForBlogUseCase {
     private blogQueryRepositorySql: BlogQueryRepositorySql,
     private userBanBlogQueryRepositorySql: UserBanBlogQueryRepositorySql,
     private userBanBlogRepositorySql: UserBanBlogRepositorySql,
-  ) { }
+  ) {}
 
   async execute(command: BanUserForBlogCommand): Promise<boolean> {
     const { inputData, bannedUserId, blogUserId } = command;

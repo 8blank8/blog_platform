@@ -16,7 +16,7 @@ export class CommentQueryRepositoryTypeorm {
     private commentRepository: Repository<PostComments>,
     @InjectRepository(PostCommentLike)
     private commentLikeRepository: Repository<PostCommentLike>,
-  ) { }
+  ) {}
 
   async findCommentsViewByPostId(
     queryParam: CommentQueryParam,

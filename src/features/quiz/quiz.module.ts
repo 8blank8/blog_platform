@@ -45,4 +45,4 @@ import { UserModule } from '../user/user.module';
   ],
   exports: [],
 })
-export class QuizModule { }
+export class QuizModule {}

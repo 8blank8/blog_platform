@@ -6,7 +6,7 @@ import { AuthRefershTokenViewSqlModel } from '../../models/auth.refresh.token.vi
 
 @Injectable()
 export class AuthRepositorySql {
-  constructor(@InjectDataSource() private dataSource: DataSource) { }
+  constructor(@InjectDataSource() private dataSource: DataSource) {}
 
   async postRefreshTokenInBlackList(refreshToken: string) {
     await this.dataSource.query(

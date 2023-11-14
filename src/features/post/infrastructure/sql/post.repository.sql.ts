@@ -7,7 +7,7 @@ import { PostUpdateSqlModel } from '../../models/post.update.sql.model';
 
 @Injectable()
 export class PostRepositorySql {
-  constructor(@InjectDataSource() private dataSource: DataSource) { }
+  constructor(@InjectDataSource() private dataSource: DataSource) {}
 
   async createPost(inputData: PostCreateSqlModel) {
     const { title, shortDescription, content, blogId } = inputData;

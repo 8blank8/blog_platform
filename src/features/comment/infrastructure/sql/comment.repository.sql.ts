@@ -7,7 +7,7 @@ import { CommentCreateLikeSqlModel } from '../../models/comment.create.like.sql.
 
 @Injectable()
 export class CommentRepositorySql {
-  constructor(@InjectDataSource() private dataSource: DataSource) { }
+  constructor(@InjectDataSource() private dataSource: DataSource) {}
 
   async createComment(inputData: CommentCreateSqlModel): Promise<string> {
     const { userId, content, postId, blogId } = inputData;

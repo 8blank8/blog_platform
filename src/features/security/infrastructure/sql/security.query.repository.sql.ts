@@ -6,7 +6,7 @@ import { DeviceViewSqlModel } from '../../models/device.view.sql.model';
 
 @Injectable()
 export class SecurityQueryRepositorySql {
-  constructor(@InjectDataSource() private dataSource: DataSource) { }
+  constructor(@InjectDataSource() private dataSource: DataSource) {}
 
   async findDevicesUserByUserId(userId: string): Promise<DeviceViewSqlModel[]> {
     const devices = await this.dataSource.query(

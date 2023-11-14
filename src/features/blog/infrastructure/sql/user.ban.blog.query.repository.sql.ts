@@ -6,7 +6,7 @@ import { BannedUserForBlogSqlModel } from '../../models/banned.user.for.blog.sql
 
 @Injectable()
 export class UserBanBlogQueryRepositorySql {
-  constructor(@InjectDataSource() private dataSource: DataSource) { }
+  constructor(@InjectDataSource() private dataSource: DataSource) {}
 
   async findBannedUser(
     userId: string,

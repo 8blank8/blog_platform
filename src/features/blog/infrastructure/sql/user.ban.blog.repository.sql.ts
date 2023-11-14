@@ -7,7 +7,7 @@ import { BannedUserForBlogUpdateSqlModel } from '../../models/banned.user.for.bl
 
 @Injectable()
 export class UserBanBlogRepositorySql {
-  constructor(@InjectDataSource() private dataSource: DataSource) { }
+  constructor(@InjectDataSource() private dataSource: DataSource) {}
 
   async createBanUserForBlogger(inputData: BannedUserForBlogCreateSqlModel) {
     const { userId, blogId, isBanned, banReason } = inputData;

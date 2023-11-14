@@ -29,7 +29,7 @@ export class QuizPublicController {
   constructor(
     private commandBus: CommandBus,
     private quizQueryRepository: QuizQueryRepositoryTypeorm,
-  ) { }
+  ) {}
 
   @UseGuards(JwtAuthGuard)
   @Get('users/my-statistic')

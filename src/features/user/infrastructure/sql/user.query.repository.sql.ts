@@ -14,7 +14,7 @@ import { UserBannedSqlModel } from '../../models/user.banned.sql.model';
 
 @Injectable()
 export class UserQueryRepositorySql {
-  constructor(@InjectDataSource() private dataSource: DataSource) { }
+  constructor(@InjectDataSource() private dataSource: DataSource) {}
 
   async findAllUsers(): Promise<UserViewSqlModel[]> {
     const users = await this.dataSource.query(`
@@ -50,13 +50,15 @@ export class UserQueryRepositorySql {
 	        LEFT JOIN "UsersBannedSa" ub
 	        ON u."Id" = ub."UserId"
 	        WHERE (u."Login" ILIKE $1 OR u."Email" ILIKE $2)
-            ${banStatus === 'banned'
-        ? 'AND ub."IsBanned" = true'
-        : banStatus === 'notBanned'
-          ? 'AND ub."IsBanned" is null'
-          : ''
-      }
-	        ORDER BY  u."${sortBy}" ${sortBy !== 'CreatedAt' ? 'COLLATE "C"' : ''
+            ${
+              banStatus === 'banned'
+                ? 'AND ub."IsBanned" = true'
+                : banStatus === 'notBanned'
+                ? 'AND ub."IsBanned" is null'
+                : ''
+            }
+	        ORDER BY  u."${sortBy}" ${
+        sortBy !== 'CreatedAt' ? 'COLLATE "C"' : ''
       } ${sortDirection} 
 	        OFFSET $3 LIMIT $4
         `,
@@ -70,12 +72,13 @@ export class UserQueryRepositorySql {
             LEFT JOIN "UsersBannedSa" ub
             ON u."Id" = ub."UserId"
             WHERE (u."Login" ILIKE $1 OR u."Email" ILIKE $2)
-            ${banStatus === 'banned'
-        ? 'AND ub."IsBanned" = true'
-        : banStatus === 'notBanned'
-          ? 'AND ub."IsBanned" is null'
-          : ''
-      }
+            ${
+              banStatus === 'banned'
+                ? 'AND ub."IsBanned" = true'
+                : banStatus === 'notBanned'
+                ? 'AND ub."IsBanned" is null'
+                : ''
+            }
         `,
       [`%${searchLoginTerm}%`, `%${searchEmailTerm}%`],
     );

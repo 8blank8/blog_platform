@@ -21,7 +21,7 @@ export class BlogController {
   constructor(
     private blogQueryRepository: BlogQueryRepositoryTypeorm,
     private readonly postQueryRepository: PostQueryRepositoryTypeorm,
-  ) { }
+  ) {}
 
   @Get()
   async getBlogs(@Query() queryParam: BlogQueryParamModel) {

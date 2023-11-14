@@ -8,7 +8,7 @@ import { BannedBlogCreateSqlModel } from '../../models/banned.blog.create.sql.mo
 
 @Injectable()
 export class BlogRepositorySql {
-  constructor(@InjectDataSource() private dataSource: DataSource) { }
+  constructor(@InjectDataSource() private dataSource: DataSource) {}
 
   async createBlog(blog: BlogCreateSqlModel) {
     const { name, description, websiteUrl } = blog;
