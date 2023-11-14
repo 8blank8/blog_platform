@@ -1,12 +1,11 @@
+import { CommentFullSqlModel } from '@comment/models/comment.full.sql.model';
+import { CommentLikeViewSqlModel } from '@comment/models/comment.like.view.sql.model';
+import { CommentQueryParam } from '@comment/models/comment.query.param.type';
+import { CommentViewSqlModel } from '@comment/models/comment.view.sql.model';
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
+import { QUERY_PARAM_SQL } from '@src/utils/enum/query.param.enum.sql';
 import { DataSource } from 'typeorm';
-import { QUERY_PARAM_SQL } from '@app/utils/enum/query.param.enum.sql';
-
-import { CommentViewSqlModel } from '../../models/comment.view.sql.model';
-import { CommentQueryParam } from '../../models/comment.query.param.type';
-import { CommentLikeViewSqlModel } from '../../models/comment.like.view.sql.model';
-import { CommentFullSqlModel } from '../../models/comment.full.sql.model';
 
 @Injectable()
 export class CommentQueryRepositorySql {

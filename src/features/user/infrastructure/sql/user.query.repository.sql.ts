@@ -1,16 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
+import { QUERY_PARAM_SQL } from '@src/utils/enum/query.param.enum.sql';
+import { UserBannedSqlModel } from '@user/models/user.banned.sql.model';
+import { UserConfirmationCodeViewSqlModel } from '@user/models/user.confirmation.code.view.sql.model';
+import { UserMeViewSqlModel } from '@user/models/user.me.view.sql.model';
+import { UserQueryParamType } from '@user/models/user.query.param.type';
+import { UserViewSqlModel } from '@user/models/user.view.sql.model';
+import { UserWithConfirmationSqlModel } from '@user/models/user.with.confirmation.sql.model';
+import { UserWithPasswordViewSqlModel } from '@user/models/user.with.password.view.sql.model';
+import { UserViewForSaModel } from '@user/models/users.view.for.sa.model';
 import { DataSource } from 'typeorm';
-import { QUERY_PARAM_SQL } from '@app/utils/enum/query.param.enum.sql';
-
-import { UserViewSqlModel } from '../../models/user.view.sql.model';
-import { UserWithPasswordViewSqlModel } from '../../models/user.with.password.view.sql.model';
-import { UserMeViewSqlModel } from '../../models/user.me.view.sql.model';
-import { UserConfirmationCodeViewSqlModel } from '../../models/user.confirmation.code.view.sql.model';
-import { UserWithConfirmationSqlModel } from '../../models/user.with.confirmation.sql.model';
-import { UserQueryParamType } from '../../models/user.query.param.type';
-import { UserViewForSaModel } from '../../models/users.view.for.sa.model';
-import { UserBannedSqlModel } from '../../models/user.banned.sql.model';
 
 @Injectable()
 export class UserQueryRepositorySql {

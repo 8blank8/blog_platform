@@ -1,3 +1,4 @@
+import { Blogs } from '@blog/domain/typeorm/blog.entity';
 import {
   Column,
   Entity,
@@ -5,8 +6,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Blogs } from '@app/features/blog/domain/typeorm/blog.entity';
-import { PostComments } from '@app/features/comment/domain/typeorm/comment.entitty';
+import { PostComments } from '@comment/domain/typeorm/comment.entitty';
 
 import { PostLikes } from './post.like.entity';
 

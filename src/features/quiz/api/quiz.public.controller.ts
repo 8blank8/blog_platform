@@ -1,3 +1,4 @@
+import { JwtAuthGuard } from '@auth/guards/jwt.guard';
 import {
   Body,
   Controller,
@@ -13,16 +14,14 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
+import { AnswerCreateModel } from '@quiz/models/create.answer.model';
+import { QuizGameQueryParamModel } from '@quiz/models/quiz.game.query.param.model';
+import { TopUsersQueryParamModel } from '@quiz/models/top.users.query.param.model';
+import { QuizQueryRepositoryTypeorm } from '@quiz/repository/typeorm/quiz.query.repository.typeorm';
+import { AddAnswerCommand } from '@quiz/usecases/add.answer.use.case';
+import { ConnectionGameCommand } from '@quiz/usecases/connection.game.use.case';
+import { STATUS_CODE } from '@src/utils/enum/status.code';
 import { Response } from 'express';
-import { JwtAuthGuard } from '@app/features/auth/guards/jwt.guard';
-import { STATUS_CODE } from '@app/utils/enum/status.code';
-
-import { QuizQueryRepositoryTypeorm } from '../infrastructure/typeorm/quiz.query.repository.typeorm';
-import { AnswerCreateModel } from '../models/create.answer.model';
-import { ConnectionGameCommand } from '../application/useCases/connection.game.use.case';
-import { AddAnswerCommand } from '../application/useCases/add.answer.use.case';
-import { QuizGameQueryParamModel } from '../models/quiz.game.query.param.model';
-import { TopUsersQueryParamModel } from '../models/top.users.query.param.model';
 
 @Controller('pair-game-quiz')
 export class QuizPublicController {

@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { UserDocument } from '@user/domain/mongoose/user.schema';
 import { HydratedDocument } from 'mongoose';
-import { UserDocument } from '@app/features/user/domain/mongoose/user.schema';
 import { v4 as uuidv4 } from 'uuid';
 
 class CommentatorInfo {

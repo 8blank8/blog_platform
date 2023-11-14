@@ -1,8 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { PostUpdateType } from '@post/models/post.update.type';
 import { HydratedDocument } from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
-
-import { PostUpdateType } from '../../models/post.update.type';
 
 @Schema()
 export class Post {

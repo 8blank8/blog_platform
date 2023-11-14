@@ -8,13 +8,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { PostQueryParamType } from '@app/features/post/models/post.query.param.type';
-import { JwtOrNotGuard } from '@app/features/auth/guards/jwt.or.not.guard';
-import { STATUS_CODE } from '@app/utils/enum/status.code';
-import { BlogQueryParamModel } from '@app/features/sa/models/blog.query.param';
-import { PostQueryRepositoryTypeorm } from '@app/features/post/infrastructure/typeorm/post.query.repository.typeorm';
-
-import { BlogQueryRepositoryTypeorm } from '../infrastructure/typeorm/blog.query.repository.typeorm';
+import { PostQueryParamType } from '@post/models/post.query.param.type';
+import { JwtOrNotGuard } from '@auth/guards/jwt.or.not.guard';
+import { STATUS_CODE } from '@src/utils/enum/status.code';
+import { BlogQueryParamModel } from '@sa/models/blog.query.param';
+import { PostQueryRepositoryTypeorm } from '@post/repository/typeorm/post.query.repository.typeorm';
+import { BlogQueryRepositoryTypeorm } from '@blog/repository/typeorm/blog.query.repository.typeorm';
 
 @Controller('blogs')
 export class BlogController {

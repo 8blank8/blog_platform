@@ -1,12 +1,11 @@
 import { CommandHandler } from '@nestjs/cqrs';
 import { ForbiddenException } from '@nestjs/common';
-import { UserQueryRepositorySql } from '@app/features/user/infrastructure/sql/user.query.repository.sql';
-
-import { BanUserForBlogModel } from '../../models/ban.user.for.blog.model';
-import { BlogQueryRepositorySql } from '../../infrastructure/sql/blog.query.repository.sql';
-import { UserBanBlogQueryRepositorySql } from '../../infrastructure/sql/user.ban.blog.query.repository.sql';
-import { UserBanBlogRepositorySql } from '../../infrastructure/sql/user.ban.blog.repository.sql';
-import { BannedUserForBlogCreateSqlModel } from '../../models/banned.user.for.blog.create.sql.model';
+import { UserQueryRepositorySql } from '@user/repository/sql/user.query.repository.sql';
+import { BanUserForBlogModel } from '@blog/models/ban.user.for.blog.model';
+import { BlogQueryRepositorySql } from '@blog/repository/sql/blog.query.repository.sql';
+import { UserBanBlogQueryRepositorySql } from '@blog/repository/sql/user.ban.blog.query.repository.sql';
+import { UserBanBlogRepositorySql } from '@blog/repository/sql/user.ban.blog.repository.sql';
+import { BannedUserForBlogCreateSqlModel } from '@blog/models/banned.user.for.blog.create.sql.model';
 
 export class BanUserForBlogCommand {
   constructor(

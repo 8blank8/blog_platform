@@ -1,15 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { QUERY_PARAM } from '@app/utils/enum/query.param.enum';
-
-import { Post, PostDocument } from '../../domain/mongoose/post.schema';
-import { PostQueryParamType } from '../../models/post.query.param.type';
-import { PostViewType } from '../../models/post.view.type';
 import {
   PostLike,
   PostLikeDocument,
-} from '../../domain/mongoose/post.like.schema';
+} from '@post/domain/mongoose/post.like.schema';
+import { Post, PostDocument } from '@post/domain/mongoose/post.schema';
+import { PostQueryParamType } from '@post/models/post.query.param.type';
+import { PostViewType } from '@post/models/post.view.type';
+import { QUERY_PARAM } from '@src/utils/enum/query.param.enum';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class PostQueryRepository {

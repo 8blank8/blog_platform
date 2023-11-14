@@ -1,3 +1,4 @@
+import { BasicAuthGuard } from '@auth/guards/basic.guard';
 import {
   Body,
   Controller,
@@ -11,18 +12,16 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
+import { CreateQuestionModel } from '@quiz/models/create.question.model';
+import { QuestionQueryParam } from '@quiz/models/question.query.param';
+import { UpdatePublishedQuestModel } from '@quiz/models/update.published.quest.model';
+import { QuizQueryRepositoryTypeorm } from '@quiz/repository/typeorm/quiz.query.repository.typeorm';
+import { CreateQuestionCommand } from '@quiz/usecases/create.question.use.case';
+import { DeleteQuestionCommand } from '@quiz/usecases/delete.question.use.case';
+import { UpdatePublishedQuestCommand } from '@quiz/usecases/update.published.quest.use.case';
+import { UpdateQuestionCommand } from '@quiz/usecases/update.question.use.case';
+import { STATUS_CODE } from '@src/utils/enum/status.code';
 import { Response } from 'express';
-import { BasicAuthGuard } from '@app/features/auth/guards/basic.guard';
-import { STATUS_CODE } from '@app/utils/enum/status.code';
-
-import { CreateQuestionModel } from '../models/create.question.model';
-import { CreateQuestionCommand } from '../application/useCases/create.question.use.case';
-import { QuizQueryRepositoryTypeorm } from '../infrastructure/typeorm/quiz.query.repository.typeorm';
-import { DeleteQuestionCommand } from '../application/useCases/delete.question.use.case';
-import { UpdateQuestionCommand } from '../application/useCases/update.question.use.case';
-import { UpdatePublishedQuestModel } from '../models/update.published.quest.model';
-import { UpdatePublishedQuestCommand } from '../application/useCases/update.published.quest.use.case';
-import { QuestionQueryParam } from '../models/question.query.param';
 
 @Controller('sa/quiz/questions')
 export class QuizController {

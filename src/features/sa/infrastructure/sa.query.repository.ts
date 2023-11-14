@@ -1,18 +1,11 @@
+import { Blog, BlogDocument } from '@blog/domain/mongoose/blog.schema';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { BlogQueryParamModel } from '@sa/models/blog.query.param';
+import { BlogViewModel } from '@sa/models/blog.view.model';
+import { QUERY_PARAM } from '@src/utils/enum/query.param.enum';
+import { User, UserDocument } from '@user/domain/mongoose/user.schema';
 import { Model } from 'mongoose';
-import {
-  Blog,
-  BlogDocument,
-} from '@app/features/blog/domain/mongoose/blog.schema';
-import {
-  User,
-  UserDocument,
-} from '@app/features/user/domain/mongoose/user.schema';
-import { QUERY_PARAM } from '@app/utils/enum/query.param.enum';
-
-import { BlogViewModel } from '../models/blog.view.model';
-import { BlogQueryParamModel } from '../models/blog.query.param';
 
 @Injectable()
 export class SaQueryRepository {

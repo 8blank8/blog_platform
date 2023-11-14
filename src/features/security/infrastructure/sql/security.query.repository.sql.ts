@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
+import { DeviceViewSqlModel } from '@security/models/device.view.sql.model';
 import { DataSource } from 'typeorm';
-
-import { DeviceViewSqlModel } from '../../models/device.view.sql.model';
 
 @Injectable()
 export class SecurityQueryRepositorySql {

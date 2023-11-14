@@ -1,8 +1,7 @@
 import { CommandHandler } from '@nestjs/cqrs';
-
-import { BlogUpdateType } from '../../models/blog.update.type';
-import { BlogRepositoryTypeorm } from '../../infrastructure/typeorm/blog.repository.typeorm';
-import { BlogQueryRepositoryTypeorm } from '../../infrastructure/typeorm/blog.query.repository.typeorm';
+import { BlogUpdateType } from '@blog/models/blog.update.type';
+import { BlogRepositoryTypeorm } from '@blog/repository/typeorm/blog.repository.typeorm';
+import { BlogQueryRepositoryTypeorm } from '@blog/repository/typeorm/blog.query.repository.typeorm';
 
 export class UpdateBlogCommand {
   constructor(public updateData: BlogUpdateType, public id: string) {}

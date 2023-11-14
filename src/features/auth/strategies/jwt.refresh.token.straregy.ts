@@ -2,9 +2,8 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
-import { setting_env } from '@app/setting.env';
-
-import { AuthRepositoryTypeorm } from '../infrastructure/typeorm/auth.repository.typeorm';
+import { setting_env } from '@src/setting.env';
+import { AuthRepositoryTypeorm } from '@auth/repository/typeorm/auth.repository.typeorm';
 
 @Injectable()
 export class JwtRefreshTokenStrategy extends PassportStrategy(

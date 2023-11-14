@@ -1,8 +1,7 @@
+import { BlogQueryRepository } from '@blog/repository/mongo/blog.query.repository';
 import { CommandHandler } from '@nestjs/cqrs';
-import { BlogQueryRepository } from '@app/features/blog/infrastructure/mongo/blog.query.repository';
-
-import { PostCreateType } from '../../models/post.create.type';
-import { PostRepository } from '../../infrastructure/mongo/post.repository';
+import { PostCreateType } from '@post/models/post.create.type';
+import { PostRepository } from '@post/repository/mongo/post.repository';
 
 export class CreatePostCommand {
   constructor(public inputPostData: PostCreateType) {}

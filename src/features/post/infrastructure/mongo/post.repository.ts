@@ -1,14 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-
-import { PostCreateType } from '../../models/post.create.type';
-import { Post, PostDocument } from '../../domain/mongoose/post.schema';
 import {
   PostLike,
   PostLikeDocument,
-} from '../../domain/mongoose/post.like.schema';
-import { PostLikeStatusType } from '../../models/post.like.status.type';
+} from '@post/domain/mongoose/post.like.schema';
+import { Post, PostDocument } from '@post/domain/mongoose/post.schema';
+import { PostCreateType } from '@post/models/post.create.type';
+import { PostLikeStatusType } from '@post/models/post.like.status.type';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class PostRepository {

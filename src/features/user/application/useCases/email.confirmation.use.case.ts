@@ -1,8 +1,7 @@
 import { CommandHandler } from '@nestjs/cqrs';
-import { ConfirmationCodeType } from '@app/utils/custom-validation/confirmation.code.type';
-
-import { UserRepositoryTypeorm } from '../../infrastructure/typeorm/user.repository.typeorm';
-import { UserQueryRepositoryTypeorm } from '../../infrastructure/typeorm/user.query.repository.typeorm';
+import { ConfirmationCodeType } from '@src/utils/custom-validation/confirmation.code.type';
+import { UserQueryRepositoryTypeorm } from '@user/repository/typeorm/user.query.repository.typeorm';
+import { UserRepositoryTypeorm } from '@user/repository/typeorm/user.repository.typeorm';
 
 export class EmailConfirmationCommand {
   constructor(public code: ConfirmationCodeType) {}

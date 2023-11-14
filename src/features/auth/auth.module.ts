@@ -3,6 +3,7 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
+import { SecurityModule } from '@security/security.module';
 
 import { AuthController } from './api/auth.controller';
 import { UserModule } from '../user/user.module';
@@ -21,7 +22,6 @@ import { BasicStrategy } from './strategies/basic-strategy';
 import { JwtRefreshTokenStrategy } from './strategies/jwt.refresh.token.straregy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
-import { SecurityModule } from '../security/security.module';
 
 @Module({
   imports: [

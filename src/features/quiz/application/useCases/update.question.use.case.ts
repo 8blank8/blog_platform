@@ -1,8 +1,7 @@
 import { CommandHandler } from '@nestjs/cqrs';
-
-import { CreateQuestionModel } from '../../models/create.question.model';
-import { QuizQueryRepositoryTypeorm } from '../../infrastructure/typeorm/quiz.query.repository.typeorm';
-import { QuizRepositoryTypeorm } from '../../infrastructure/typeorm/quiz.repository.typeorm';
+import { CreateQuestionModel } from '@quiz/models/create.question.model';
+import { QuizQueryRepositoryTypeorm } from '@quiz/repository/typeorm/quiz.query.repository.typeorm';
+import { QuizRepositoryTypeorm } from '@quiz/repository/typeorm/quiz.repository.typeorm';
 
 export class UpdateQuestionCommand {
   constructor(public id: string, public inputData: CreateQuestionModel) {}

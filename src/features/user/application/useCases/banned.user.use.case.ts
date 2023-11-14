@@ -1,9 +1,8 @@
 import { CommandHandler } from '@nestjs/cqrs';
-
-import { UserBanModel } from '../../models/user.ban.model';
-import { UserQueryRepositorySql } from '../../infrastructure/sql/user.query.repository.sql';
-import { UserRepositorySql } from '../../infrastructure/sql/user.repository.sql';
-import { UpdateBannedUserForSqlModel } from '../../models/update.banned.user.for.sql.model';
+import { UpdateBannedUserForSqlModel } from '@user/models/update.banned.user.for.sql.model';
+import { UserBanModel } from '@user/models/user.ban.model';
+import { UserQueryRepositorySql } from '@user/repository/sql/user.query.repository.sql';
+import { UserRepositorySql } from '@user/repository/sql/user.repository.sql';
 
 export class BannedUserCommand {
   constructor(public inputData: UserBanModel, public userId: string) {}

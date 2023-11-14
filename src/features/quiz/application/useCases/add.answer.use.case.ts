@@ -1,10 +1,9 @@
 import { CommandHandler } from '@nestjs/cqrs';
 import { ForbiddenException } from '@nestjs/common';
-
-import { AnswerCreateModel } from '../../models/create.answer.model';
-import { QuizQueryRepositoryTypeorm } from '../../infrastructure/typeorm/quiz.query.repository.typeorm';
-import { Answer } from '../../domain/typeorm/answer.entity';
-import { QuizRepositoryTypeorm } from '../../infrastructure/typeorm/quiz.repository.typeorm';
+import { AnswerCreateModel } from '@quiz/models/create.answer.model';
+import { QuizQueryRepositoryTypeorm } from '@quiz/repository/typeorm/quiz.query.repository.typeorm';
+import { QuizRepositoryTypeorm } from '@quiz/repository/typeorm/quiz.repository.typeorm';
+import { Answer } from '@quiz/domain/typeorm/answer.entity';
 
 export class AddAnswerCommand {
   constructor(public inputData: AnswerCreateModel, public userId: string) {}

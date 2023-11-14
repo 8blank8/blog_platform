@@ -13,22 +13,21 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { CommandBus } from '@nestjs/cqrs';
-import { CommentCreateType } from '@app/features/comment/models/comment.create.type';
-import { JwtAuthGuard } from '@app/features/auth/guards/jwt.guard';
-import { CommentQueryParam } from '@app/features/comment/models/comment.query.param.type';
-import { JwtOrNotGuard } from '@app/features/auth/guards/jwt.or.not.guard';
-import { BasicAuthGuard } from '@app/features/auth/guards/basic.guard';
-import { STATUS_CODE } from '@app/utils/enum/status.code';
-import { CommentQueryRepositoryTypeorm } from '@app/features/comment/infrastructure/typeorm/comment.query.repository.typeorm';
-
-import { PostQueryParamType } from '../models/post.query.param.type';
-import { PostUpdateType } from '../models/post.update.type';
-import { PostLikeStatusType } from '../models/post.like.status.type';
-import { UpdatePostCommand } from '../application/useCases/update.post.use.case';
-import { DeletePostCommand } from '../application/useCases/delete.post.use.case';
-import { CreateCommentForPostCommand } from '../application/useCases/create.comment.for.post';
-import { UpdateLikeStatusForPostCommand } from '../application/useCases/update.like.status.for.post';
-import { PostQueryRepositoryTypeorm } from '../infrastructure/typeorm/post.query.repository.typeorm';
+import { PostQueryRepositoryTypeorm } from '@post/repository/typeorm/post.query.repository.typeorm';
+import { CommentQueryRepositoryTypeorm } from '@comment/repository/typeorm/comment.query.repository.typeorm';
+import { JwtOrNotGuard } from '@auth/guards/jwt.or.not.guard';
+import { PostQueryParamType } from '@post/models/post.query.param.type';
+import { STATUS_CODE } from '@src/utils/enum/status.code';
+import { BasicAuthGuard } from '@auth/guards/basic.guard';
+import { PostUpdateType } from '@post/models/post.update.type';
+import { UpdatePostCommand } from '@post/usecases/update.post.use.case';
+import { DeletePostCommand } from '@post/usecases/delete.post.use.case';
+import { JwtAuthGuard } from '@auth/guards/jwt.guard';
+import { CommentCreateType } from '@comment/models/comment.create.type';
+import { CreateCommentForPostCommand } from '@post/usecases/create.comment.for.post';
+import { CommentQueryParam } from '@comment/models/comment.query.param.type';
+import { PostLikeStatusType } from '@post/models/post.like.status.type';
+import { UpdateLikeStatusForPostCommand } from '@post/usecases/update.like.status.for.post';
 
 @Controller('posts')
 export class PostControler {

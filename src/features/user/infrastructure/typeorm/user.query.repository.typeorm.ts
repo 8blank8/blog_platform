@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UserPagination } from '@src/utils/pagination/user/user.pagination';
+import { UsersConfirmationEmail } from '@user/domain/typeorm/user.confirmation.email.entity';
+import { Users } from '@user/domain/typeorm/user.entity';
+import { UserQueryParamType } from '@user/models/user.query.param.type';
 import { Repository } from 'typeorm';
-import { UserPagination } from '@app/utils/pagination/user/user.pagination';
-
-import { Users } from '../../domain/typeorm/user.entity';
-import { UserQueryParamType } from '../../models/user.query.param.type';
-import { UsersConfirmationEmail } from '../../domain/typeorm/user.confirmation.email.entity';
 
 @Injectable()
 export class UserQueryRepositoryTypeorm {
@@ -69,14 +68,6 @@ export class UserQueryRepositoryTypeorm {
   }
 
   async findAllUsers(queryParam: UserQueryParamType) {
-    // const sortDirection = queryParam.sortDirection === 'asc' ? QUERY_PARAM_SQL.SORT_DIRECTION_ASC : QUERY_PARAM_SQL.SORT_DIRECTION_DESC
-    // const searchLoginTerm = queryParam.searchLoginTerm !== undefined ? `%${queryParam.searchLoginTerm}%` : `%${QUERY_PARAM.SEARCH_NAME_TERM}%`
-    // const searchEmailTerm = queryParam.searchEmailTerm !== undefined ? `%${queryParam.searchEmailTerm}%` : `%${QUERY_PARAM.SEARCH_NAME_TERM}%`
-    // const sortBy = queryParam.sortBy !== undefined ? queryParam.sortBy : QUERY_PARAM.SORT_BY
-    // const pageSize = queryParam.pageSize ?? QUERY_PARAM.PAGE_SIZE
-    // const offset = queryParam.pageNumber !== undefined ? ((queryParam.pageNumber - 1) * pageSize) : ((QUERY_PARAM.PAGE_NUMBER - 1) * pageSize)
-    // const pageNumber = queryParam.pageNumber ?? QUERY_PARAM.PAGE_NUMBER
-
     const pagination = new UserPagination(queryParam).getPaginationUserForSql();
 
     const {

@@ -1,8 +1,7 @@
 import { CommandHandler } from '@nestjs/cqrs';
-
-import { BlogCreateType } from '../../models/blog.create.type';
-import { Blogs } from '../../domain/typeorm/blog.entity';
-import { BlogRepositoryTypeorm } from '../../infrastructure/typeorm/blog.repository.typeorm';
+import { BlogCreateType } from '@blog/models/blog.create.type';
+import { Blogs } from '@blog/domain/typeorm/blog.entity';
+import { BlogRepositoryTypeorm } from '@blog/repository/typeorm/blog.repository.typeorm';
 
 export class CreateBlogCommand {
   constructor(public blog: BlogCreateType) {}

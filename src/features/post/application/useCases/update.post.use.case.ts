@@ -1,8 +1,7 @@
 import { CommandHandler } from '@nestjs/cqrs';
-
-import { PostUpdateType } from '../../models/post.update.type';
-import { PostQueryRepository } from '../../infrastructure/mongo/post.query.repository';
-import { PostRepository } from '../../infrastructure/mongo/post.repository';
+import { PostUpdateType } from '@post/models/post.update.type';
+import { PostQueryRepository } from '@post/repository/mongo/post.query.repository';
+import { PostRepository } from '@post/repository/mongo/post.repository';
 
 export class UpdatePostCommand {
   constructor(public id: string, public inputData: PostUpdateType) {}

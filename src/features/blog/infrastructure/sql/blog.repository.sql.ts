@@ -1,10 +1,9 @@
+import { BannedBlogCreateSqlModel } from '@blog/models/banned.blog.create.sql.model';
+import { BlogCreateSqlModel } from '@blog/models/blog.create.sql.model';
+import { BlogUpdateSqlModel } from '@blog/models/blog.update.sql.model';
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-
-import { BlogCreateSqlModel } from '../../models/blog.create.sql.model';
-import { BlogUpdateSqlModel } from '../../models/blog.update.sql.model';
-import { BannedBlogCreateSqlModel } from '../../models/banned.blog.create.sql.model';
 
 @Injectable()
 export class BlogRepositorySql {

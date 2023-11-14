@@ -1,9 +1,8 @@
+import { CommentCreateLikeSqlModel } from '@comment/models/comment.create.like.sql.model';
+import { CommentCreateSqlModel } from '@comment/models/comment.create.sql.model';
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-
-import { CommentCreateSqlModel } from '../../models/comment.create.sql.model';
-import { CommentCreateLikeSqlModel } from '../../models/comment.create.like.sql.model';
 
 @Injectable()
 export class CommentRepositorySql {

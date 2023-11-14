@@ -2,6 +2,8 @@ import { Module, forwardRef } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CqrsModule } from '@nestjs/cqrs';
+import { UserModule } from '@user/user.module';
+import { PostModule } from '@post/post.module';
 
 import { BlogController } from './api/blog.controller';
 import { BloggerUserController } from './api/blogger.user.controller';
@@ -28,8 +30,6 @@ import { UserBanBlogQueryRepositorySql } from './infrastructure/sql/user.ban.blo
 import { UserBanBlogRepositorySql } from './infrastructure/sql/user.ban.blog.repository.sql';
 import { BlogRepositoryTypeorm } from './infrastructure/typeorm/blog.repository.typeorm';
 import { BlogQueryRepositoryTypeorm } from './infrastructure/typeorm/blog.query.repository.typeorm';
-import { PostModule } from '../post/post.module';
-import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [

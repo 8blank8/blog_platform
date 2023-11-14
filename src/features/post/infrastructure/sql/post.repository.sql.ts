@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
+import { PostCreateSqlModel } from '@post/models/post.create.sql.model';
+import { PostUpdateSqlModel } from '@post/models/post.update.sql.model';
 import { DataSource } from 'typeorm';
-
-import { PostCreateSqlModel } from '../../models/post.create.sql.model';
-import { PostUpdateSqlModel } from '../../models/post.update.sql.model';
 
 @Injectable()
 export class PostRepositorySql {

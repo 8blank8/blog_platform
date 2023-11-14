@@ -13,26 +13,25 @@ import {
 } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { Response } from 'express';
-import { JwtAuthGuard } from '@app/features/auth/guards/jwt.guard';
-import { CreatePostByBlogIdCommand } from '@app/features/post/application/useCases/create.post.by.blog.id.use.case';
-import { STATUS_CODE } from '@app/utils/enum/status.code';
-import { PostQueryParamType } from '@app/features/post/models/post.query.param.type';
-import { CommentQueryRepository } from '@app/features/comment/infrastructure/mongo/comment.query.repository';
-import { CommentQueryParam } from '@app/features/comment/models/comment.query.param.type';
-import { BasicAuthGuard } from '@app/features/auth/guards/basic.guard';
-import { BlogQueryParamModel } from '@app/features/sa/models/blog.query.param';
-import { PostQueryRepositoryTypeorm } from '@app/features/post/infrastructure/typeorm/post.query.repository.typeorm';
-
-import { BlogCreateType } from '../models/blog.create.type';
-import { CreateBlogCommand } from '../application/useCases/create.blog.use.case';
-import { PostCreateByIdType } from '../models/post.create.by.id.type';
-import { BlogUpdateType } from '../models/blog.update.type';
-import { UpdateBlogCommand } from '../application/useCases/update.blog.use.case';
-import { PostUpdateByIdModel } from '../models/post.update.by.id';
-import { UpdatePostByBlogIdCommand } from '../application/useCases/update.post.by.blog.id.use.case';
-import { DeleteBlogCommand } from '../application/useCases/delete.blog.use.case';
-import { DeletePostByBlogIdCommand } from '../application/useCases/delete.post.by.blog.id.use.case';
-import { BlogQueryRepositoryTypeorm } from '../infrastructure/typeorm/blog.query.repository.typeorm';
+import { JwtAuthGuard } from '@auth/guards/jwt.guard';
+import { CreatePostByBlogIdCommand } from '@post/usecases/create.post.by.blog.id.use.case';
+import { STATUS_CODE } from '@src/utils/enum/status.code';
+import { PostQueryParamType } from '@post/models/post.query.param.type';
+import { CommentQueryRepository } from '@comment/repository/mongo/comment.query.repository';
+import { CommentQueryParam } from '@comment/models/comment.query.param.type';
+import { BasicAuthGuard } from '@auth/guards/basic.guard';
+import { BlogQueryParamModel } from '@sa/models/blog.query.param';
+import { PostQueryRepositoryTypeorm } from '@post/repository/typeorm/post.query.repository.typeorm';
+import { BlogCreateType } from '@blog/models/blog.create.type';
+import { CreateBlogCommand } from '@blog/usecases/create.blog.use.case';
+import { PostCreateByIdType } from '@blog/models/post.create.by.id.type';
+import { BlogUpdateType } from '@blog/models/blog.update.type';
+import { UpdateBlogCommand } from '@blog/usecases/update.blog.use.case';
+import { PostUpdateByIdModel } from '@blog/models/post.update.by.id';
+import { UpdatePostByBlogIdCommand } from '@blog/usecases/update.post.by.blog.id.use.case';
+import { DeleteBlogCommand } from '@blog/usecases/delete.blog.use.case';
+import { DeletePostByBlogIdCommand } from '@blog/usecases/delete.post.by.blog.id.use.case';
+import { BlogQueryRepositoryTypeorm } from '@blog/repository/typeorm/blog.query.repository.typeorm';
 
 @Controller('sa/blogs')
 export class BloggerController {

@@ -1,7 +1,7 @@
+import { BlogQueryRepositorySql } from '@blog/repository/sql/blog.query.repository.sql';
+import { BlogRepositorySql } from '@blog/repository/sql/blog.repository.sql';
 import { CommandHandler } from '@nestjs/cqrs';
-import { BlogQueryRepositorySql } from '@app/features/blog/infrastructure/sql/blog.query.repository.sql';
-import { BlogRepositorySql } from '@app/features/blog/infrastructure/sql/blog.repository.sql';
-import { UserQueryRepositorySql } from '@app/features/user/infrastructure/sql/user.query.repository.sql';
+import { UserQueryRepositorySql } from '@user/repository/sql/user.query.repository.sql';
 
 export class BindUserForBlogCommand {
   constructor(public userId: string, public blogId: string) {}

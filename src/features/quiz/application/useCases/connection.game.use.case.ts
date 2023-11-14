@@ -1,12 +1,11 @@
 import { CommandHandler } from '@nestjs/cqrs';
 import { ForbiddenException } from '@nestjs/common';
-import { UserQueryRepositoryTypeorm } from '@app/features/user/infrastructure/typeorm/user.query.repository.typeorm';
-
-import { QuizQueryRepositoryTypeorm } from '../../infrastructure/typeorm/quiz.query.repository.typeorm';
-import { Game } from '../../domain/typeorm/quiz.game';
-import { QuizRepositoryTypeorm } from '../../infrastructure/typeorm/quiz.repository.typeorm';
-import { QuizScore } from '../../domain/typeorm/quiz.score.entity';
-import { QuizPlayer } from '../../domain/typeorm/quiz.player.entity';
+import { UserQueryRepositoryTypeorm } from '@user/repository/typeorm/user.query.repository.typeorm';
+import { QuizQueryRepositoryTypeorm } from '@quiz/repository/typeorm/quiz.query.repository.typeorm';
+import { QuizRepositoryTypeorm } from '@quiz/repository/typeorm/quiz.repository.typeorm';
+import { QuizPlayer } from '@quiz/domain/typeorm/quiz.player.entity';
+import { QuizScore } from '@quiz/domain/typeorm/quiz.score.entity';
+import { Game } from '@quiz/domain/typeorm/quiz.game';
 
 export class ConnectionGameCommand {
   constructor(public userId: string) {}

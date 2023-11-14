@@ -1,10 +1,9 @@
+import { PostCommentLike } from '@comment/domain/typeorm/comment.like.entity';
+import { CommentLikeStatusType } from '@comment/models/comment.like.status';
+import { CommentQueryRepositoryTypeorm } from '@comment/repository/typeorm/comment.query.repository.typeorm';
+import { CommentRepositoryTypeorm } from '@comment/repository/typeorm/comment.repository.typeorm';
 import { CommandHandler } from '@nestjs/cqrs';
-import { UserQueryRepositoryTypeorm } from '@app/features/user/infrastructure/typeorm/user.query.repository.typeorm';
-
-import { CommentLikeStatusType } from '../../models/comment.like.status';
-import { CommentQueryRepositoryTypeorm } from '../../infrastructure/typeorm/comment.query.repository.typeorm';
-import { CommentRepositoryTypeorm } from '../../infrastructure/typeorm/comment.repository.typeorm';
-import { PostCommentLike } from '../../domain/typeorm/comment.like.entity';
+import { UserQueryRepositoryTypeorm } from '@user/repository/typeorm/user.query.repository.typeorm';
 
 export class UpdateLikeStatusCommentCommand {
   constructor(

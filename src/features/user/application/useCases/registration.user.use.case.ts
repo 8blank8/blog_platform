@@ -1,13 +1,12 @@
 import { CommandHandler } from '@nestjs/cqrs';
 import { v4 as uuidv4 } from 'uuid';
 import bcrypt from 'bcrypt';
-import { EmailManager } from '@app/utils/managers/email.manager';
-
-import { UserCreateType } from '../../models/user.create.type';
-import { UserRepositoryTypeorm } from '../../infrastructure/typeorm/user.repository.typeorm';
-import { Users } from '../../domain/typeorm/user.entity';
-import { UsersPassword } from '../../domain/typeorm/user.password.entity';
-import { UsersConfirmationEmail } from '../../domain/typeorm/user.confirmation.email.entity';
+import { UserCreateType } from '@user/models/user.create.type';
+import { UserRepositoryTypeorm } from '@user/repository/typeorm/user.repository.typeorm';
+import { EmailManager } from '@src/utils/managers/email.manager';
+import { Users } from '@user/domain/typeorm/user.entity';
+import { UsersPassword } from '@user/domain/typeorm/user.password.entity';
+import { UsersConfirmationEmail } from '@user/domain/typeorm/user.confirmation.email.entity';
 
 export class RegistrationUserCommand {
   constructor(public user: UserCreateType) {}

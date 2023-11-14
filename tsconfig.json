@@ -20,26 +20,149 @@
     "noFallthroughCasesInSwitch": false,
     "baseUrl": "./src",
     "paths": {
-      "@app/*": [
-        "*"
+      "@utils/*": [
+        "features/utils/*"
+      ],
+      "@auth/api/*": [
+        "features/auth/api/*"
+      ],
+      "@auth/usecases/*": [
+        "features/auth/application/useCases/*"
+      ],
+      "@auth/service/*": [
+        "features/auth/application/*"
+      ],
+      "@auth/domain/*": [
+        "features/auth/domain/*"
+      ],
+      "@auth/guards/*": [
+        "features/auth/guards/*"
+      ],
+      "@auth/models/*": [
+        "features/auth/models/*"
+      ],
+      "@auth/strategies/*": [
+        "features/auth/strategies/*"
+      ],
+      "@auth/repository/*": [
+        "features/auth/infrastructure/*"
       ],
       "@auth/*": [
         "features/auth/*"
       ],
+      "@blog/api/*": [
+        "features/blog/api/*"
+      ],
+      "@blog/usecases/*": [
+        "features/blog/application/useCases/*"
+      ],
+      "@blog/service/*": [
+        "features/blog/application/*"
+      ],
+      "@blog/domain/*": [
+        "features/blog/domain/*"
+      ],
+      "@blog/models/*": [
+        "features/blog/models/*"
+      ],
+      "@blog/repository/*": [
+        "features/blog/infrastructure/*"
+      ],
       "@blog/*": [
         "features/blog/*"
+      ],
+      "@comment/api/*": [
+        "features/comment/api/*"
+      ],
+      "@comment/usecases/*": [
+        "features/comment/application/useCases/*"
+      ],
+      "@comment/service/*": [
+        "features/comment/application/*"
+      ],
+      "@comment/domain/*": [
+        "features/comment/domain/*"
+      ],
+      "@comment/models/*": [
+        "features/comment/models/*"
+      ],
+      "@comment/repository/*": [
+        "features/comment/infrastructure/*"
       ],
       "@comment/*": [
         "features/comment/*"
       ],
+      "@post/api/*": [
+        "features/post/api/*"
+      ],
+      "@post/usecases/*": [
+        "features/post/application/useCases/*"
+      ],
+      "@post/service/*": [
+        "features/post/application/*"
+      ],
+      "@post/domain/*": [
+        "features/post/domain/*"
+      ],
+      "@post/models/*": [
+        "features/post/models/*"
+      ],
+      "@post/repository/*": [
+        "features/post/infrastructure/*"
+      ],
       "@post/*": [
         "features/post/*"
+      ],
+      "@quiz/api/*": [
+        "features/quiz/api/*"
+      ],
+      "@quiz/usecases/*": [
+        "features/quiz/application/useCases/*"
+      ],
+      "@quiz/domain/*": [
+        "features/quiz/domain/*"
+      ],
+      "@quiz/models/*": [
+        "features/quiz/models/*"
+      ],
+      "@quiz/repository/*": [
+        "features/quiz/infrastructure/*"
       ],
       "@quiz/*": [
         "features/quiz/*"
       ],
+      "@sa/api/*": [
+        "features/sa/api/*"
+      ],
+      "@sa/usecases/*": [
+        "features/sa/application/useCases/*"
+      ],
+      "@sa/models/*": [
+        "features/sa/models/*"
+      ],
+      "@posast/repository/*": [
+        "features/sa/infrastructure/*"
+      ],
       "@sa/*": [
         "features/sa/*"
+      ],
+      "@security/api/*": [
+        "features/security/api/*"
+      ],
+      "@security/usecases/*": [
+        "features/security/application/useCases/*"
+      ],
+      "@security/service/*": [
+        "features/security/application/*"
+      ],
+      "@security/domain/*": [
+        "features/security/domain/*"
+      ],
+      "@security/models/*": [
+        "features/security/models/*"
+      ],
+      "@security/repository/*": [
+        "features/security/infrastructure/*"
       ],
       "@security/*": [
         "features/security/*"
@@ -47,14 +170,32 @@
       "@testing/*": [
         "features/testing/*"
       ],
+      "@user/api/*": [
+        "features/user/api/*"
+      ],
+      "@user/usecases/*": [
+        "features/user/application/useCases/*"
+      ],
+      "@user/service/*": [
+        "features/user/application/*"
+      ],
+      "@user/domain/*": [
+        "features/user/domain/*"
+      ],
+      "@user/models/*": [
+        "features/user/models/*"
+      ],
+      "@user/repository/*": [
+        "features/user/infrastructure/*"
+      ],
       "@user/*": [
         "features/user/*"
       ],
       "@features/*": [
         "features/*"
       ],
-      "@utils/*": [
-        "features/utils/*"
+      "@src/*": [
+        "*"
       ],
     },
   },

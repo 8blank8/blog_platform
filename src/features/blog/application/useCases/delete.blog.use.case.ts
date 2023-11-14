@@ -1,7 +1,6 @@
 import { CommandHandler } from '@nestjs/cqrs';
-
-import { BlogRepositoryTypeorm } from '../../infrastructure/typeorm/blog.repository.typeorm';
-import { BlogQueryRepositoryTypeorm } from '../../infrastructure/typeorm/blog.query.repository.typeorm';
+import { BlogRepositoryTypeorm } from '@blog/repository/typeorm/blog.repository.typeorm';
+import { BlogQueryRepositoryTypeorm } from '@blog/repository/typeorm/blog.query.repository.typeorm';
 
 export class DeleteBlogCommand {
   constructor(public id: string) {}

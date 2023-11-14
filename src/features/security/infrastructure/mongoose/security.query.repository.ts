@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import {
+  Device,
+  DeviceDocument,
+} from '@security/domain/mongoose/device.schema';
+import { DeviceViewType } from '@security/models/device.view.type';
 import { Model } from 'mongoose';
-
-import { Device, DeviceDocument } from '../../domain/mongoose/device.schema';
-import { DeviceViewType } from '../../models/device.view.type';
 
 @Injectable()
 export class SecurityQueryRepository {

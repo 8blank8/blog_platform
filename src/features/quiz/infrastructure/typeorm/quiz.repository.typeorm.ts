@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Answer } from '@quiz/domain/typeorm/answer.entity';
+import { QuizQestion } from '@quiz/domain/typeorm/question.entity';
+import { Game } from '@quiz/domain/typeorm/quiz.game';
+import { QuizPlayer } from '@quiz/domain/typeorm/quiz.player.entity';
+import { QuizScore } from '@quiz/domain/typeorm/quiz.score.entity';
 import { Repository } from 'typeorm';
-
-import { QuizQestion } from '../../domain/typeorm/question.entity';
-import { Game } from '../../domain/typeorm/quiz.game';
-import { Answer } from '../../domain/typeorm/answer.entity';
-import { QuizScore } from '../../domain/typeorm/quiz.score.entity';
-import { QuizPlayer } from '../../domain/typeorm/quiz.player.entity';
 
 @Injectable()
 export class QuizRepositoryTypeorm {

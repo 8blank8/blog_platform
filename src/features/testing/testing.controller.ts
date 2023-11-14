@@ -2,7 +2,7 @@ import { Controller, Delete, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { STATUS_CODE } from '@app/utils/enum/status.code';
+import { STATUS_CODE } from '@src/utils/enum/status.code';
 
 @Controller('/testing')
 export class TestingController {

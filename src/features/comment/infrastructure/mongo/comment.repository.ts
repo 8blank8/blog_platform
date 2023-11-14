@@ -1,14 +1,16 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-
-import { CommentDocument, Comment } from '../../domain/mongoose/comment.schema';
-import { CommentCreateType } from '../../models/comment.create.type';
 import {
   CommentLike,
   CommentLikeDocument,
-} from '../../domain/mongoose/comment.like.schema';
-import { CommentLikeStatusType } from '../../models/comment.like.status';
+} from '@comment/domain/mongoose/comment.like.schema';
+import {
+  CommentDocument,
+  Comment,
+} from '@comment/domain/mongoose/comment.schema';
+import { CommentCreateType } from '@comment/models/comment.create.type';
+import { CommentLikeStatusType } from '@comment/models/comment.like.status';
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class CommentRepository {

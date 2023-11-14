@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import {
+  Device,
+  DeviceDocument,
+} from '@security/domain/mongoose/device.schema';
 import { Model } from 'mongoose';
-
-import { Device, DeviceDocument } from '../../domain/mongoose/device.schema';
 
 @Injectable()
 export class SecurityRepository {

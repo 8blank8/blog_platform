@@ -1,9 +1,8 @@
+import { PostCreateByIdType } from '@blog/models/post.create.by.id.type';
+import { BlogQueryRepositoryTypeorm } from '@blog/repository/typeorm/blog.query.repository.typeorm';
 import { CommandHandler } from '@nestjs/cqrs';
-import { PostCreateByIdType } from '@app/features/blog/models/post.create.by.id.type';
-import { BlogQueryRepositoryTypeorm } from '@app/features/blog/infrastructure/typeorm/blog.query.repository.typeorm';
-
-import { PostRepositoryTypeorm } from '../../infrastructure/typeorm/post.repository.typeorm';
-import { Posts } from '../../domain/typeorm/post.entity';
+import { Posts } from '@post/domain/typeorm/post.entity';
+import { PostRepositoryTypeorm } from '@post/repository/typeorm/post.repository.typeorm';
 
 export class CreatePostByBlogIdCommand {
   constructor(

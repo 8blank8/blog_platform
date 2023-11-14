@@ -1,8 +1,7 @@
 import { CommandHandler } from '@nestjs/cqrs';
 import { ForbiddenException } from '@nestjs/common';
-
-import { SecurityRepositoryTypeorm } from '../../infrastructure/typeorm/security.repository.typeorm';
-import { SecurityQueryRepositoryTypeorm } from '../../infrastructure/typeorm/secutity.query.repository.typeorm';
+import { SecurityRepositoryTypeorm } from '@security/repository/typeorm/security.repository.typeorm';
+import { SecurityQueryRepositoryTypeorm } from '@security/repository/typeorm/secutity.query.repository.typeorm';
 
 export class DeleteDeviceCommand {
   constructor(public deviceId: string, public userId: string) {}

@@ -1,5 +1,5 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Users } from '@app/features/user/domain/typeorm/user.entity';
+import { Users } from '@user/domain/typeorm/user.entity';
 
 import { PostComments } from './comment.entitty';
 

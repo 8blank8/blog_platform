@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { QUERY_PARAM } from '@src/utils/enum/query.param.enum';
+import { User, UserDocument } from '@user/domain/mongoose/user.schema';
+import { UserQueryParamType } from '@user/models/user.query.param.type';
+import { UserViewType } from '@user/models/user.view.type';
 import { Model } from 'mongoose';
-import { QUERY_PARAM } from '@app/utils/enum/query.param.enum';
-
-import { User, UserDocument } from '../../domain/mongoose/user.schema';
-import { UserViewType } from '../../models/user.view.type';
-import { UserQueryParamType } from '../../models/user.query.param.type';
 
 @Injectable()
 export class UserQueryRepository {

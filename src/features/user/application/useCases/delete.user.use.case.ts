@@ -1,7 +1,6 @@
 import { CommandHandler } from '@nestjs/cqrs';
-
-import { UserRepositoryTypeorm } from '../../infrastructure/typeorm/user.repository.typeorm';
-import { UserQueryRepositoryTypeorm } from '../../infrastructure/typeorm/user.query.repository.typeorm';
+import { UserQueryRepositoryTypeorm } from '@user/repository/typeorm/user.query.repository.typeorm';
+import { UserRepositoryTypeorm } from '@user/repository/typeorm/user.repository.typeorm';
 
 export class DeleteUserCommand {
   constructor(public id: string) {}

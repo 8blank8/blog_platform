@@ -1,10 +1,9 @@
 import { CommandHandler } from '@nestjs/cqrs';
-import { UserQueryRepositoryTypeorm } from '@app/features/user/infrastructure/typeorm/user.query.repository.typeorm';
-
-import { PostLikeStatusType } from '../../models/post.like.status.type';
-import { PostQueryRepositoryTypeorm } from '../../infrastructure/typeorm/post.query.repository.typeorm';
-import { PostRepositoryTypeorm } from '../../infrastructure/typeorm/post.repository.typeorm';
-import { PostLikes } from '../../domain/typeorm/post.like.entity';
+import { PostLikes } from '@post/domain/typeorm/post.like.entity';
+import { PostLikeStatusType } from '@post/models/post.like.status.type';
+import { PostQueryRepositoryTypeorm } from '@post/repository/typeorm/post.query.repository.typeorm';
+import { PostRepositoryTypeorm } from '@post/repository/typeorm/post.repository.typeorm';
+import { UserQueryRepositoryTypeorm } from '@user/repository/typeorm/user.query.repository.typeorm';
 
 export class UpdateLikeStatusForPostCommand {
   constructor(

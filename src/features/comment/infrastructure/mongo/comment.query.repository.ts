@@ -1,17 +1,19 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model } from 'mongoose';
-import { QUERY_PARAM } from '@app/utils/enum/query.param.enum';
-import { PostQueryRepository } from '@app/features/post/infrastructure/mongo/post.query.repository';
-import { BlogQueryRepository } from '@app/features/blog/infrastructure/mongo/blog.query.repository';
-
-import { Comment, CommentDocument } from '../../domain/mongoose/comment.schema';
-import { CommentQueryParam } from '../../models/comment.query.param.type';
+import { BlogQueryRepository } from '@blog/repository/mongo/blog.query.repository';
 import {
   CommentLike,
   CommentLikeDocument,
-} from '../../domain/mongoose/comment.like.schema';
-import { CommentViewType } from '../../models/comment.view.type';
+} from '@comment/domain/mongoose/comment.like.schema';
+import {
+  CommentDocument,
+  Comment,
+} from '@comment/domain/mongoose/comment.schema';
+import { CommentQueryParam } from '@comment/models/comment.query.param.type';
+import { CommentViewType } from '@comment/models/comment.view.type';
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { PostQueryRepository } from '@post/repository/mongo/post.query.repository';
+import { QUERY_PARAM } from '@src/utils/enum/query.param.enum';
+import { FilterQuery, Model } from 'mongoose';
 
 @Injectable()
 export class CommentQueryRepository {

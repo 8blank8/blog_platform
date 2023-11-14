@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
+import { CreateUserForSaSqlModel } from '@user/models/create.user.for..sa.sql.model';
+import { CreateUserForRegistrationSqlModel } from '@user/models/create.user.for.registration.sql.model';
+import { UpdateBannedUserForSqlModel } from '@user/models/update.banned.user.for.sql.model';
 import { DataSource } from 'typeorm';
-
-import { CreateUserForSaSqlModel } from '../../models/create.user.for..sa.sql.model';
-import { UpdateBannedUserForSqlModel } from '../../models/update.banned.user.for.sql.model';
-import { CreateUserForRegistrationSqlModel } from '../../models/create.user.for.registration.sql.model';
 
 @Injectable()
 export class UserRepositorySql {

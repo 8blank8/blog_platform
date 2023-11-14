@@ -12,16 +12,15 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { CommandBus } from '@nestjs/cqrs';
-import { BasicAuthGuard } from '@app/features/auth/guards/basic.guard';
-import { STATUS_CODE } from '@app/utils/enum/status.code';
-
-import { UserCreateType } from '../models/user.create.type';
-import { UserQueryParamType } from '../models/user.query.param.type';
-import { CreateUserCommand } from '../application/useCases/create.user.use.case';
-import { DeleteUserCommand } from '../application/useCases/delete.user.use.case';
-import { UserBanModel } from '../models/user.ban.model';
-import { BannedUserCommand } from '../application/useCases/banned.user.use.case';
-import { UserQueryRepositoryTypeorm } from '../infrastructure/typeorm/user.query.repository.typeorm';
+import { UserQueryRepositoryTypeorm } from '@user/repository/typeorm/user.query.repository.typeorm';
+import { BasicAuthGuard } from '@auth/guards/basic.guard';
+import { UserCreateType } from '@user/models/user.create.type';
+import { CreateUserCommand } from '@user/usecases/create.user.use.case';
+import { UserQueryParamType } from '@user/models/user.query.param.type';
+import { DeleteUserCommand } from '@user/usecases/delete.user.use.case';
+import { STATUS_CODE } from '@src/utils/enum/status.code';
+import { UserBanModel } from '@user/models/user.ban.model';
+import { BannedUserCommand } from '@user/usecases/banned.user.use.case';
 
 @Controller('sa/users')
 export class UserController {

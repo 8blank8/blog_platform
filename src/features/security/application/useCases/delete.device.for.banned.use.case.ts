@@ -1,6 +1,5 @@
 import { CommandHandler } from '@nestjs/cqrs';
-
-import { SecurityRepository } from '../../infrastructure/mongoose/security.repository';
+import { SecurityRepository } from '@security/repository/mongoose/security.repository';
 
 export class DeleteDeviceForBannedCommand {
   constructor(public userId: string) {}

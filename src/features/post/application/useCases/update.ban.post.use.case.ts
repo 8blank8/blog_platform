@@ -1,6 +1,5 @@
 import { CommandHandler } from '@nestjs/cqrs';
-
-import { PostRepository } from '../../infrastructure/mongo/post.repository';
+import { PostRepository } from '@post/repository/mongo/post.repository';
 
 export class UpdateBanPostCommand {
   constructor(public isBanned: boolean, public userId: string) {}

@@ -1,20 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Answer } from '@quiz/domain/typeorm/answer.entity';
+import { QuizQestion } from '@quiz/domain/typeorm/question.entity';
+import { Game } from '@quiz/domain/typeorm/quiz.game';
+import { QuizPlayer } from '@quiz/domain/typeorm/quiz.player.entity';
+import { QuizScore } from '@quiz/domain/typeorm/quiz.score.entity';
+import { PlayerStatisticViewModel } from '@quiz/models/player.statistic.view.model';
+import { QuestionQueryParam } from '@quiz/models/question.query.param';
+import { QuizGameQueryParamModel } from '@quiz/models/quiz.game.query.param.model';
+import { TopUsersQueryParamModel } from '@quiz/models/top.users.query.param.model';
+import { TopUsersViewModel } from '@quiz/models/top.users.view.model';
+import { GamePagniation } from '@src/utils/pagination/game/game.pagination';
+import { TopUsersPagniation } from '@src/utils/pagination/game/top.user.pagination';
+import { QuestPagniation } from '@src/utils/pagination/quest/quest.pagination';
 import { Repository } from 'typeorm';
-import { QuestPagniation } from '@app/utils/pagination/quest/quest.pagination';
-import { GamePagniation } from '@app/utils/pagination/game/game.pagination';
-import { TopUsersPagniation } from '@app/utils/pagination/game/top.user.pagination';
-
-import { QuizQestion } from '../../domain/typeorm/question.entity';
-import { QuestionQueryParam } from '../../models/question.query.param';
-import { Game } from '../../domain/typeorm/quiz.game';
-import { Answer } from '../../domain/typeorm/answer.entity';
-import { QuizScore } from '../../domain/typeorm/quiz.score.entity';
-import { QuizPlayer } from '../../domain/typeorm/quiz.player.entity';
-import { PlayerStatisticViewModel } from '../../models/player.statistic.view.model';
-import { QuizGameQueryParamModel } from '../../models/quiz.game.query.param.model';
-import { TopUsersQueryParamModel } from '../../models/top.users.query.param.model';
-import { TopUsersViewModel } from '../../models/top.users.view.model';
 
 @Injectable()
 export class QuizQueryRepositoryTypeorm {

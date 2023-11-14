@@ -1,9 +1,8 @@
 import { CommandHandler } from '@nestjs/cqrs';
-import { PostQueryRepositoryTypeorm } from '@app/features/post/infrastructure/typeorm/post.query.repository.typeorm';
-import { PostRepositoryTypeorm } from '@app/features/post/infrastructure/typeorm/post.repository.typeorm';
-
-import { PostUpdateByIdModel } from '../../models/post.update.by.id';
-import { BlogQueryRepositoryTypeorm } from '../../infrastructure/typeorm/blog.query.repository.typeorm';
+import { PostQueryRepositoryTypeorm } from '@post/repository/typeorm/post.query.repository.typeorm';
+import { PostRepositoryTypeorm } from '@post/repository/typeorm/post.repository.typeorm';
+import { PostUpdateByIdModel } from '@blog/models/post.update.by.id';
+import { BlogQueryRepositoryTypeorm } from '@blog/repository/typeorm/blog.query.repository.typeorm';
 
 export class UpdatePostByBlogIdCommand {
   constructor(

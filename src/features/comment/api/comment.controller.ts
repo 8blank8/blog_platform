@@ -11,16 +11,15 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { CommandBus } from '@nestjs/cqrs';
-import { JwtAuthGuard } from '@app/features/auth/guards/jwt.guard';
-import { JwtOrNotGuard } from '@app/features/auth/guards/jwt.or.not.guard';
-import { STATUS_CODE } from '@app/utils/enum/status.code';
-
-import { CommentLikeStatusType } from '../models/comment.like.status';
-import { CommentCreateType } from '../models/comment.create.type';
-import { UpdateCommetCommand } from '../appication/useCases/update.comment.use.case';
-import { DeleteCommentCommand } from '../appication/useCases/delete.comment.use.case';
-import { UpdateLikeStatusCommentCommand } from '../appication/useCases/update.like.status.comment.use.case';
-import { CommentQueryRepositoryTypeorm } from '../infrastructure/typeorm/comment.query.repository.typeorm';
+import { JwtOrNotGuard } from '@auth/guards/jwt.or.not.guard';
+import { CommentQueryRepositoryTypeorm } from '@comment/repository/typeorm/comment.query.repository.typeorm';
+import { STATUS_CODE } from '@src/utils/enum/status.code';
+import { JwtAuthGuard } from '@auth/guards/jwt.guard';
+import { CommentCreateType } from '@comment/models/comment.create.type';
+import { UpdateCommetCommand } from '@comment/appication/useCases/update.comment.use.case';
+import { DeleteCommentCommand } from '@comment/appication/useCases/delete.comment.use.case';
+import { CommentLikeStatusType } from '@comment/models/comment.like.status';
+import { UpdateLikeStatusCommentCommand } from '@comment/appication/useCases/update.like.status.comment.use.case';
 
 @Controller('/comments')
 export class CommentController {

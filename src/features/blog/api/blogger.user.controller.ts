@@ -12,14 +12,13 @@ import {
 } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { Response } from 'express';
-import { JwtAuthGuard } from '@app/features/auth/guards/jwt.guard';
-import { STATUS_CODE } from '@app/utils/enum/status.code';
-
-import { BanUserForBlogModel } from '../models/ban.user.for.blog.model';
-import { BanUserForBlogCommand } from '../application/useCases/ban.user.for.blog.use.case';
-import { UsersBanQueryParamModel } from '../models/users.ban.query.param.model';
-import { UserBanBlogQueryRepository } from '../infrastructure/mongo/user.ban.blog.query.repository';
-import { BlogQueryRepository } from '../infrastructure/mongo/blog.query.repository';
+import { JwtAuthGuard } from '@auth/guards/jwt.guard';
+import { STATUS_CODE } from '@src/utils/enum/status.code';
+import { BanUserForBlogModel } from '@blog/models/ban.user.for.blog.model';
+import { BanUserForBlogCommand } from '@blog/usecases/ban.user.for.blog.use.case';
+import { UsersBanQueryParamModel } from '@blog/models/users.ban.query.param.model';
+import { UserBanBlogQueryRepository } from '@blog/repository/mongo/user.ban.blog.query.repository';
+import { BlogQueryRepository } from '@blog/repository/mongo/blog.query.repository';
 
 @Controller('blogger/users')
 export class BloggerUserController {

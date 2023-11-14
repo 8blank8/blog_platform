@@ -1,9 +1,8 @@
 import { CommandHandler } from '@nestjs/cqrs';
 import { ForbiddenException } from '@nestjs/common';
-
-import { CommentCreateType } from '../../models/comment.create.type';
-import { CommentQueryRepositoryTypeorm } from '../../infrastructure/typeorm/comment.query.repository.typeorm';
-import { CommentRepositoryTypeorm } from '../../infrastructure/typeorm/comment.repository.typeorm';
+import { CommentCreateType } from '@comment/models/comment.create.type';
+import { CommentQueryRepositoryTypeorm } from '@comment/repository/typeorm/comment.query.repository.typeorm';
+import { CommentRepositoryTypeorm } from '@comment/repository/typeorm/comment.repository.typeorm';
 
 export class UpdateCommetCommand {
   constructor(
