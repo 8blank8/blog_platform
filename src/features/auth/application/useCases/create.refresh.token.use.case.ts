@@ -1,40 +1,38 @@
-import { CommandHandler } from "@nestjs/cqrs";
-import { JwtService } from "@nestjs/jwt";
-import { setting_env } from "../../../../setting.env";
-import { SecurityQueryRepositoryTypeorm } from "../../../../features/security/infrastructure/typeorm/secutity.query.repository.typeorm";
-import { SecurityRepositoryTypeorm } from "../../../../features/security/infrastructure/typeorm/security.repository.typeorm";
-
+import { CommandHandler } from '@nestjs/cqrs';
+import { JwtService } from '@nestjs/jwt';
+import { setting_env } from '../../../../setting.env';
+import { SecurityQueryRepositoryTypeorm } from '../../../../features/security/infrastructure/typeorm/secutity.query.repository.typeorm';
+import { SecurityRepositoryTypeorm } from '../../../../features/security/infrastructure/typeorm/security.repository.typeorm';
 
 export class CreateRefreshTokenCommand {
-    constructor(
-        public userId: string,
-        public deviceId: string
-    ) { }
+  constructor(public userId: string, public deviceId: string) {}
 }
 
 @CommandHandler(CreateRefreshTokenCommand)
 export class CreateRefreshTokenUseCase {
-    constructor(
-        private securityQueryRepository: SecurityQueryRepositoryTypeorm,
-        private securityRepository: SecurityRepositoryTypeorm,
-        private jwtService: JwtService,
-    ) { }
+  constructor(
+    private securityQueryRepository: SecurityQueryRepositoryTypeorm,
+    private securityRepository: SecurityRepositoryTypeorm,
+    private jwtService: JwtService,
+  ) {}
 
-    async execute(command: CreateRefreshTokenCommand): Promise<string | boolean> {
+  async execute(command: CreateRefreshTokenCommand): Promise<string | boolean> {
+    const { userId, deviceId } = command;
 
-        const { userId, deviceId } = command
+    const device = await this.securityQueryRepository.findDeviceById(deviceId);
+    if (!device) return false;
 
-        const device = await this.securityQueryRepository.findDeviceById(deviceId)
-        if (!device) return false
+    device.lastActiveDate = new Date().toISOString();
 
-        device.lastActiveDate = new Date().toISOString()
+    await this.securityRepository.saveDevice(device);
 
-        await this.securityRepository.saveDevice(device)
-
-        const refreshToken = this.jwtService.sign(
-            { userId: userId, deviceId: device.id },
-            { expiresIn: setting_env.JWT_REFRESH_EXP, secret: setting_env.JWT_SECRET }
-        )
-        return refreshToken
-    }
+    const refreshToken = this.jwtService.sign(
+      { userId: userId, deviceId: device.id },
+      {
+        expiresIn: setting_env.JWT_REFRESH_EXP,
+        secret: setting_env.JWT_SECRET,
+      },
+    );
+    return refreshToken;
+  }
 }

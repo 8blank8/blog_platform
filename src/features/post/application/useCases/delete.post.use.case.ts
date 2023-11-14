@@ -1,23 +1,17 @@
-import { CommandHandler } from "@nestjs/cqrs";
-import { PostRepository } from "../../infrastructure/mongo/post.repository";
-
+import { CommandHandler } from '@nestjs/cqrs';
+import { PostRepository } from '../../infrastructure/mongo/post.repository';
 
 export class DeletePostCommand {
-    constructor(
-        public id: string
-    ) { }
+  constructor(public id: string) {}
 }
 
 @CommandHandler(DeletePostCommand)
 export class DeletePostUseCase {
-    constructor(
-        private postRepository: PostRepository,
-    ) { }
+  constructor(private postRepository: PostRepository) {}
 
-    async execute(command: DeletePostCommand) {
+  async execute(command: DeletePostCommand) {
+    const { id } = command;
 
-        const { id } = command
-
-        return this.postRepository.deletePost(id)
-    }
+    return this.postRepository.deletePost(id);
+  }
 }

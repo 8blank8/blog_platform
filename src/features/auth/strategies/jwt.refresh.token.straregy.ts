@@ -5,40 +5,39 @@ import { Request } from 'express';
 import { setting_env } from '../../../setting.env';
 import { AuthRepositoryTypeorm } from '../infrastructure/typeorm/auth.repository.typeorm';
 
-
 @Injectable()
 export class JwtRefreshTokenStrategy extends PassportStrategy(
-    Strategy,
-    'jwt-refresh-token',
-
+  Strategy,
+  'jwt-refresh-token',
 ) {
-    constructor(
-        private authRepository: AuthRepositoryTypeorm
-    ) {
-        super({
-            jwtFromRequest: ExtractJwt.fromExtractors([(req: Request) => {
-                const data = req.cookies.refreshToken
-                if (!data) return null
+  constructor(private authRepository: AuthRepositoryTypeorm) {
+    super({
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        (req: Request) => {
+          const data = req.cookies.refreshToken;
+          if (!data) return null;
 
-                return data
-            }]),
-            secretOrKey: setting_env.JWT_SECRET,
-            ignoreExpiration: false,
-            passReqToCallback: true
-        });
+          return data;
+        },
+      ]),
+      secretOrKey: setting_env.JWT_SECRET,
+      ignoreExpiration: false,
+      passReqToCallback: true,
+    });
+  }
+
+  async validate(req: Request, payload: any) {
+    if (payload === null) new UnauthorizedException();
+
+    const refreshToken = req.cookies.refreshToken;
+
+    const isToken = await this.authRepository.findRefreshTokenInBlackList(
+      refreshToken,
+    );
+    if (!isToken) {
+      return { userId: payload.userId, deviceId: payload.deviceId };
     }
 
-    async validate(req: Request, payload: any) {
-        if (payload === null) new UnauthorizedException()
-
-        const refreshToken = req.cookies.refreshToken
-
-        const isToken = await this.authRepository.findRefreshTokenInBlackList(refreshToken)
-        if (!isToken) {
-            return { userId: payload.userId, deviceId: payload.deviceId };
-        }
-
-        new UnauthorizedException()
-    }
+    new UnauthorizedException();
+  }
 }
-

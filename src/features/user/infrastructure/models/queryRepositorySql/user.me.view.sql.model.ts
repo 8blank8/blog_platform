@@ -1,5 +1,5 @@
 export class UserMeViewSqlModel {
-    email: string
-    login: string
-    userId: string
+  email: string;
+  login: string;
+  userId: string;
 }

@@ -1,5 +1,5 @@
 export class BannedBlogViewSqlModel {
-    id: string
-    blogId: string
-    isBanned: boolean
+  id: string;
+  blogId: string;
+  isBanned: boolean;
 }

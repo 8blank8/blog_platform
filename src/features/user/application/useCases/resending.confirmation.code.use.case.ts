@@ -1,42 +1,47 @@
-import { CommandHandler } from "@nestjs/cqrs";
-import { EmailType } from "../../../auth/api/models/email.type";
-import { v4 as uuidv4 } from 'uuid'
-import { EmailManager } from "../../../../utils/managers/email.manager";
-import { UserRepositoryTypeorm } from "../../infrastructure/typeorm/user.repository.typeorm";
-import { UserQueryRepositoryTypeorm } from "../../infrastructure/typeorm/user.query.repository.typeorm";
-
+import { CommandHandler } from '@nestjs/cqrs';
+import { EmailType } from '../../../auth/api/models/email.type';
+import { v4 as uuidv4 } from 'uuid';
+import { EmailManager } from '../../../../utils/managers/email.manager';
+import { UserRepositoryTypeorm } from '../../infrastructure/typeorm/user.repository.typeorm';
+import { UserQueryRepositoryTypeorm } from '../../infrastructure/typeorm/user.query.repository.typeorm';
 
 export class ResendingConfirmationCodeCommand {
-    constructor(
-        public email: EmailType
-    ) { }
+  constructor(public email: EmailType) {}
 }
 
 @CommandHandler(ResendingConfirmationCodeCommand)
 export class ResendingConfirmationCodeUseCase {
-    constructor(
-        private userRepository: UserRepositoryTypeorm,
-        private userQueryRepository: UserQueryRepositoryTypeorm,
-        private emailManager: EmailManager
-    ) { }
+  constructor(
+    private userRepository: UserRepositoryTypeorm,
+    private userQueryRepository: UserQueryRepositoryTypeorm,
+    private emailManager: EmailManager,
+  ) {}
 
-    async execute(command: ResendingConfirmationCodeCommand): Promise<boolean> {
+  async execute(command: ResendingConfirmationCodeCommand): Promise<boolean> {
+    const { email } = command;
 
-        const { email } = command
+    const user =
+      await this.userQueryRepository.findUserByEmailWithConfirmationEmail(
+        email.email,
+      );
+    if (!user || user.confirmationInfo.isConfirmed === true) return false;
 
-        const user = await this.userQueryRepository.findUserByEmailWithConfirmationEmail(email.email)
-        if (!user || user.confirmationInfo.isConfirmed === true) return false
+    const confirmationCode = uuidv4();
 
-        const confirmationCode = uuidv4()
+    const userConfirmation =
+      await this.userQueryRepository.findConfirmationCodeUser(
+        user.confirmationInfo.code,
+      );
+    if (!userConfirmation) return false;
 
-        const userConfirmation = await this.userQueryRepository.findConfirmationCodeUser(user.confirmationInfo.code)
-        if (!userConfirmation) return false
+    userConfirmation.code = confirmationCode;
+    await this.userRepository.saveUserConfirmation(userConfirmation);
 
-        userConfirmation.code = confirmationCode
-        await this.userRepository.saveUserConfirmation(userConfirmation)
+    this.emailManager.sendEmailConfirmationMessage(
+      user.email,
+      confirmationCode,
+    );
 
-        this.emailManager.sendEmailConfirmationMessage(user.email, confirmationCode)
-
-        return true
-    }
+    return true;
+  }
 }

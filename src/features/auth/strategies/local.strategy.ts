@@ -6,18 +6,18 @@ import { ValidateUserCommand } from '../application/useCases/validate.user.use.c
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
-    constructor(
-        private commandBus: CommandBus
-    ) {
-        super({ usernameField: 'loginOrEmail' });
-    }
+  constructor(private commandBus: CommandBus) {
+    super({ usernameField: 'loginOrEmail' });
+  }
 
-    async validate(username: string, password: string): Promise<any> {
-        const user = await this.commandBus.execute(new ValidateUserCommand(username, password));
+  async validate(username: string, password: string): Promise<any> {
+    const user = await this.commandBus.execute(
+      new ValidateUserCommand(username, password),
+    );
 
-        if (!user) {
-            throw new UnauthorizedException();
-        }
-        return user;
+    if (!user) {
+      throw new UnauthorizedException();
     }
+    return user;
+  }
 }

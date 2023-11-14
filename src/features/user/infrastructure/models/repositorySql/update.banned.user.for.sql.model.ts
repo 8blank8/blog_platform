@@ -1,6 +1,5 @@
-
 export class UpdateBannedUserForSqlModel {
-    userId: string
-    isBanned: boolean
-    banReason: string
+  userId: string;
+  isBanned: boolean;
+  banReason: string;
 }

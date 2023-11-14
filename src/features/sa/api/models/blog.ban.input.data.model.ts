@@ -1,9 +1,7 @@
-import { IsBoolean, IsNotEmpty } from "class-validator";
-
+import { IsBoolean, IsNotEmpty } from 'class-validator';
 
 export class BlogBanInputDataModel {
-
-    @IsNotEmpty()
-    @IsBoolean()
-    isBanned: boolean
+  @IsNotEmpty()
+  @IsBoolean()
+  isBanned: boolean;
 }

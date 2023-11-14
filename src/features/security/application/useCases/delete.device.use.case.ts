@@ -1,34 +1,29 @@
-import { CommandHandler } from "@nestjs/cqrs";
-import { ForbiddenException } from "@nestjs/common";
-import { SecurityRepositoryTypeorm } from "../../infrastructure/typeorm/security.repository.typeorm";
-import { SecurityQueryRepositoryTypeorm } from "../../infrastructure/typeorm/secutity.query.repository.typeorm";
-
+import { CommandHandler } from '@nestjs/cqrs';
+import { ForbiddenException } from '@nestjs/common';
+import { SecurityRepositoryTypeorm } from '../../infrastructure/typeorm/security.repository.typeorm';
+import { SecurityQueryRepositoryTypeorm } from '../../infrastructure/typeorm/secutity.query.repository.typeorm';
 
 export class DeleteDeviceCommand {
-    constructor(
-        public deviceId: string,
-        public userId: string
-    ) { }
+  constructor(public deviceId: string, public userId: string) {}
 }
 
 @CommandHandler(DeleteDeviceCommand)
 export class DeleteDeviceUseCase {
-    constructor(
-        private securityRepository: SecurityRepositoryTypeorm,
-        private securityQueryRepository: SecurityQueryRepositoryTypeorm
-    ) { }
+  constructor(
+    private securityRepository: SecurityRepositoryTypeorm,
+    private securityQueryRepository: SecurityQueryRepositoryTypeorm,
+  ) {}
 
-    async execute(command: DeleteDeviceCommand): Promise<boolean> {
+  async execute(command: DeleteDeviceCommand): Promise<boolean> {
+    const { deviceId, userId } = command;
 
-        const { deviceId, userId } = command
+    const device = await this.securityQueryRepository.findDeviceById(deviceId);
+    if (!device) return false;
 
-        const device = await this.securityQueryRepository.findDeviceById(deviceId)
-        if (!device) return false
+    if (device.user.id !== userId) throw new ForbiddenException();
 
-        if (device.user.id !== userId) throw new ForbiddenException()
+    await this.securityRepository.deleteDeviceById(device.id);
 
-        await this.securityRepository.deleteDeviceById(device.id)
-
-        return true
-    }
+    return true;
+  }
 }

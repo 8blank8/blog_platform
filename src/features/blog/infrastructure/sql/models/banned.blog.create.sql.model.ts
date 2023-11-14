@@ -1,4 +1,4 @@
 export class BannedBlogCreateSqlModel {
-    blogId: string
-    isBanned: boolean
+  blogId: string;
+  isBanned: boolean;
 }

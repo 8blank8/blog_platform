@@ -1,60 +1,65 @@
-import { Injectable } from "@nestjs/common";
-import { InjectDataSource } from "@nestjs/typeorm";
-import { DataSource } from "typeorm";
-import { PostViewSqlModel } from "./models/post.view.sql.model";
-import { PostFullSqlModel } from "./models/post.full.sql.model";
-import { PostQueryParamType } from "../../models/post.query.param.type";
-import { QUERY_PARAM_SQL } from "../../../../utils/enum/query.param.enum.sql";
-import { PostLikeStatusViewSqlModel } from "./models/post.like.status.view.sql.model";
-
+import { Injectable } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
+import { PostViewSqlModel } from './models/post.view.sql.model';
+import { PostFullSqlModel } from './models/post.full.sql.model';
+import { PostQueryParamType } from '../../models/post.query.param.type';
+import { QUERY_PARAM_SQL } from '../../../../utils/enum/query.param.enum.sql';
+import { PostLikeStatusViewSqlModel } from './models/post.like.status.view.sql.model';
 
 @Injectable()
 export class PostQueryRepositorySql {
-    constructor(@InjectDataSource() private dataSource: DataSource) { }
+  constructor(@InjectDataSource() private dataSource: DataSource) {}
 
-    async findPostByBlogForBlogger(blogId: string): Promise<PostViewSqlModel[]> {
-        const posts = await this.dataSource.query(`
+  async findPostByBlogForBlogger(blogId: string): Promise<PostViewSqlModel[]> {
+    const posts = await this.dataSource.query(
+      `
             SELECT pt."Id", pt."Title", pt."ShortDescription", pt."Content", 
 		            pt."BlogId", pt."UserId", pt."CreatedAt", b."Name" as "BlogName"
 	        FROM public."Posts" as pt
 	        LEFT JOIN "Blogs" as b ON pt."BlogId" = b."Id"
             WHERE "BlogId" = $1
-        `, [blogId])
+        `,
+      [blogId],
+    );
 
-        return posts.map(this._mapPostForBlogger)
-    }
+    return posts.map(this._mapPostForBlogger);
+  }
 
-    async findPostFullById(postId: string): Promise<PostFullSqlModel> {
-        const post = await this.dataSource.query(`
+  async findPostFullById(postId: string): Promise<PostFullSqlModel> {
+    const post = await this.dataSource.query(
+      `
             SELECT "Id", "Title", "ShortDescription", "Content", "BlogId", "UserId", "CreatedAt"
 	        FROM public."Posts"
 	        WHERE "Id" = $1;
-        `, [postId])
+        `,
+      [postId],
+    );
 
-        return post.map(this._mapPostFull)[0]
+    return post.map(this._mapPostFull)[0];
+  }
+
+  async findPostsForPublic(queryParam: PostQueryParamType, userId?: string) {
+    let {
+      sortBy = QUERY_PARAM_SQL.SORT_BY,
+      sortDirection = QUERY_PARAM_SQL.SORT_DIRECTION_DESC,
+      pageNumber = QUERY_PARAM_SQL.PAGE_NUMBER,
+      pageSize = QUERY_PARAM_SQL.PAGE_SIZE,
+    } = queryParam;
+
+    const page = (+pageNumber - 1) * +pageSize;
+
+    if (sortBy) {
+      const [first, ...last] = sortBy.split('');
+      sortBy = first.toUpperCase() + last.join('');
     }
 
-    async findPostsForPublic(queryParam: PostQueryParamType, userId?: string) {
+    if (sortBy === 'BlogName') {
+      sortBy = 'Name';
+    }
 
-        let {
-            sortBy = QUERY_PARAM_SQL.SORT_BY,
-            sortDirection = QUERY_PARAM_SQL.SORT_DIRECTION_DESC,
-            pageNumber = QUERY_PARAM_SQL.PAGE_NUMBER,
-            pageSize = QUERY_PARAM_SQL.PAGE_SIZE
-        } = queryParam
-
-        const page = (+pageNumber - 1) * +pageSize
-
-        if (sortBy) {
-            const [first, ...last] = sortBy.split('')
-            sortBy = first.toUpperCase() + last.join('')
-        }
-
-        if (sortBy === 'BlogName') {
-            sortBy = "Name"
-        }
-
-        const posts = await this.dataSource.query(`
+    const posts = await this.dataSource.query(
+      `
             SELECT ps."Id", ps."Title", ps."ShortDescription", ps."Content", 
     	        ps."BlogId", ps."UserId", ps."CreatedAt", b."Name" as "BlogName",
                 (
@@ -78,49 +83,59 @@ export class PostQueryRepositorySql {
                     ORDER BY pl."AddedAt" DESC
                     LIMIT 3
                 ) as "NewestLikes"
-                ${userId ?
-                `,(
+                ${
+                  userId
+                    ? `,(
                     SELECT "LikeStatus" as "MyStatus"
                     FROM "PostsLike"
                     WHERE "UserId" = '${userId}' AND "PostId" = ps."Id"
                 )`
-                : ''
-            }
+                    : ''
+                }
             FROM public."Posts" as ps
             LEFT JOIN "Blogs" as b ON ps."BlogId" = b."Id"
-            ORDER BY "${sortBy}" ${sortBy !== "CreatedAt" ? 'COLLATE "C"' : ''} ${sortDirection}
+            ORDER BY "${sortBy}" ${
+        sortBy !== 'CreatedAt' ? 'COLLATE "C"' : ''
+      } ${sortDirection}
             OFFSET $1 LIMIT $2;
-        `, [page, pageSize])
+        `,
+      [page, pageSize],
+    );
 
-        const totalCount = await this.dataSource.query(`
+    const totalCount = await this.dataSource.query(`
                 SELECT COUNT(*) FROM "Posts"
-            `)
+            `);
 
-        return {
-            pagesCount: Math.ceil(totalCount[0].count / +pageSize),
-            page: +pageNumber,
-            pageSize: +pageSize,
-            totalCount: +totalCount[0].count,
-            items: posts.map(this._mapPostForBlogger)
-        }
+    return {
+      pagesCount: Math.ceil(totalCount[0].count / +pageSize),
+      page: +pageNumber,
+      pageSize: +pageSize,
+      totalCount: +totalCount[0].count,
+      items: posts.map(this._mapPostForBlogger),
+    };
+  }
+
+  async findPostsByBlogId(
+    queryParam: PostQueryParamType,
+    blogId: string,
+    userId?: string,
+  ) {
+    let {
+      sortBy = QUERY_PARAM_SQL.SORT_BY,
+      sortDirection = QUERY_PARAM_SQL.SORT_DIRECTION_DESC,
+      pageNumber = QUERY_PARAM_SQL.PAGE_NUMBER,
+      pageSize = QUERY_PARAM_SQL.PAGE_SIZE,
+    } = queryParam;
+
+    const page = (+pageNumber - 1) * +pageSize;
+
+    if (sortBy) {
+      const [first, ...last] = sortBy.split('');
+      sortBy = first.toUpperCase() + last.join('');
     }
 
-    async findPostsByBlogId(queryParam: PostQueryParamType, blogId: string, userId?: string) {
-        let {
-            sortBy = QUERY_PARAM_SQL.SORT_BY,
-            sortDirection = QUERY_PARAM_SQL.SORT_DIRECTION_DESC,
-            pageNumber = QUERY_PARAM_SQL.PAGE_NUMBER,
-            pageSize = QUERY_PARAM_SQL.PAGE_SIZE
-        } = queryParam
-
-        const page = (+pageNumber - 1) * +pageSize
-
-        if (sortBy) {
-            const [first, ...last] = sortBy.split('')
-            sortBy = first.toUpperCase() + last.join('')
-        }
-
-        const posts = await this.dataSource.query(`
+    const posts = await this.dataSource.query(
+      `
             SELECT ps."Id", ps."Title", ps."ShortDescription", ps."Content", 
     	        ps."BlogId", ps."UserId", ps."CreatedAt", b."Name" as "BlogName",
                 (
@@ -144,38 +159,49 @@ export class PostQueryRepositorySql {
                     ORDER BY pl."AddedAt" DESC
                     LIMIT 3
                 ) as "NewestLikes"
-                ${userId ?
-                `,(
+                ${
+                  userId
+                    ? `,(
                     SELECT "LikeStatus" as "MyStatus"
                     FROM "PostsLike"
                     WHERE "UserId" = '${userId}' AND "PostId" = ps."Id"
                 )`
-                : ''
-            }
+                    : ''
+                }
             FROM public."Posts" as ps
             LEFT JOIN "Blogs" as b ON ps."BlogId" = b."Id"
             WHERE ps."BlogId" = $3
-            ORDER BY "${sortBy}" ${sortBy !== "CreatedAt" ? 'COLLATE "C"' : ''} ${sortDirection}
+            ORDER BY "${sortBy}" ${
+        sortBy !== 'CreatedAt' ? 'COLLATE "C"' : ''
+      } ${sortDirection}
             OFFSET $1 LIMIT $2;
-        `, [page, pageSize, blogId])
+        `,
+      [page, pageSize, blogId],
+    );
 
-        const totalCount = await this.dataSource.query(`
+    const totalCount = await this.dataSource.query(
+      `
                 SELECT COUNT(*) FROM "Posts"
                 WHERE "BlogId" = $1;
-            `, [blogId])
+            `,
+      [blogId],
+    );
 
-        return {
-            pagesCount: Math.ceil(totalCount[0].count / +pageSize),
-            page: +pageNumber,
-            pageSize: +pageSize,
-            totalCount: +totalCount[0].count,
-            items: posts.map(this._mapPostForBlogger)
-        }
+    return {
+      pagesCount: Math.ceil(totalCount[0].count / +pageSize),
+      page: +pageNumber,
+      pageSize: +pageSize,
+      totalCount: +totalCount[0].count,
+      items: posts.map(this._mapPostForBlogger),
+    };
+  }
 
-    }
-
-    async findPostByIdForPublic(postId: string, userId?: string): Promise<PostViewSqlModel> {
-        const post = await this.dataSource.query(`
+  async findPostByIdForPublic(
+    postId: string,
+    userId?: string,
+  ): Promise<PostViewSqlModel> {
+    const post = await this.dataSource.query(
+      `
             SELECT ps."Id", ps."Title", ps."ShortDescription", ps."Content", 
     	        ps."BlogId", ps."UserId", ps."CreatedAt", b."Name" as "BlogName",
                 (
@@ -199,82 +225,90 @@ export class PostQueryRepositorySql {
                     ORDER BY pl."AddedAt" DESC
                     LIMIT 3
                 ) as "NewestLikes"
-                ${userId ?
-                `,(
+                ${
+                  userId
+                    ? `,(
                     SELECT "LikeStatus" as "MyStatus"
                     FROM "PostsLike"
                     WHERE "UserId" = '${userId}' AND "PostId" = ps."Id"
                 )`
-                : ''
-            }
+                    : ''
+                }
             FROM public."Posts" as ps
             LEFT JOIN "Blogs" as b ON ps."BlogId" = b."Id"
             WHERE ps."Id" = $1
-        `, [postId])
+        `,
+      [postId],
+    );
 
-        return post.map(this._mapPostForBlogger)[0]
-    }
+    return post.map(this._mapPostForBlogger)[0];
+  }
 
-    async findLikeStatusPost(userId: string, postId: string): Promise<PostLikeStatusViewSqlModel> {
-        const likeStatus = await this.dataSource.query(`
+  async findLikeStatusPost(
+    userId: string,
+    postId: string,
+  ): Promise<PostLikeStatusViewSqlModel> {
+    const likeStatus = await this.dataSource.query(
+      `
             SELECT "Id", "UserId", "LikeStatus", "PostId", "AddedAt"
             FROM public."PostsLike"
             WHERE "UserId" = $1 AND "PostId" = $2;
-        `, [userId, postId])
+        `,
+      [userId, postId],
+    );
 
-        return likeStatus.map(this._mapLikeStatusPost)[0]
-    }
+    return likeStatus.map(this._mapLikeStatusPost)[0];
+  }
 
-    _mapLikeStatusPost(postLikeStatus): PostLikeStatusViewSqlModel {
+  _mapLikeStatusPost(postLikeStatus): PostLikeStatusViewSqlModel {
+    return {
+      id: postLikeStatus.Id,
+      userId: postLikeStatus.UserId,
+      likeStatus: postLikeStatus.LikeStatus,
+      postId: postLikeStatus.PostId,
+      addedAt: postLikeStatus.AddedAt,
+    };
+  }
+
+  _mapPostFull(post): PostFullSqlModel {
+    return {
+      id: post.Id,
+      title: post.Title,
+      shortDescription: post.ShortDescription,
+      content: post.Content,
+      blogId: post.BlogId,
+      userId: post.UserId,
+      createdAt: post.CreatedAt,
+    };
+  }
+
+  _mapPostForBlogger(post): PostViewSqlModel {
+    let newestLikes = [];
+
+    if (post.NewestLikes.length !== 0) {
+      newestLikes = post.NewestLikes.map((item) => {
         return {
-            id: postLikeStatus.Id,
-            userId: postLikeStatus.UserId,
-            likeStatus: postLikeStatus.LikeStatus,
-            postId: postLikeStatus.PostId,
-            addedAt: postLikeStatus.AddedAt
-        }
+          addedAt: new Date(item.addedAt).toISOString(),
+          userId: item.userId,
+          login: item.login,
+        };
+      });
     }
 
-    _mapPostFull(post): PostFullSqlModel {
-        return {
-            id: post.Id,
-            title: post.Title,
-            shortDescription: post.ShortDescription,
-            content: post.Content,
-            blogId: post.BlogId,
-            userId: post.UserId,
-            createdAt: post.CreatedAt
-        }
-    }
-
-    _mapPostForBlogger(post): PostViewSqlModel {
-
-        let newestLikes = []
-
-        if (post.NewestLikes.length !== 0) {
-            newestLikes = post.NewestLikes.map(item => {
-                return {
-                    addedAt: new Date(item.addedAt).toISOString(),
-                    userId: item.userId,
-                    login: item.login
-                }
-            })
-        }
-
-        return {
-            id: post.Id,
-            title: post.Title,
-            shortDescription: post.ShortDescription,
-            content: post.Content,
-            blogId: post.BlogId,
-            blogName: post.BlogName,
-            createdAt: post.CreatedAt,
-            extendedLikesInfo: {
-                likesCount: +post.LikesCount,
-                dislikesCount: +post.DislikesCount,
-                myStatus: post.MyStatus ?? 'None',
-                newestLikes: newestLikes
-            }
-        }
-    }
+    return {
+      id: post.Id,
+      title: post.Title,
+      shortDescription: post.ShortDescription,
+      content: post.Content,
+      blogId: post.BlogId,
+      blogName: post.BlogName,
+      createdAt: post.CreatedAt,
+      extendedLikesInfo: {
+        likesCount: +post.LikesCount,
+        dislikesCount: +post.DislikesCount,
+        myStatus: post.MyStatus ?? 'None',
+        newestLikes: newestLikes,
+      },
+    };
+  }
 }

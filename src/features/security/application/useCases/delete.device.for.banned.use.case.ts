@@ -1,23 +1,17 @@
-import { CommandHandler } from "@nestjs/cqrs";
-import { SecurityRepository } from "../../infrastructure/mongoose/security.repository";
-
+import { CommandHandler } from '@nestjs/cqrs';
+import { SecurityRepository } from '../../infrastructure/mongoose/security.repository';
 
 export class DeleteDeviceForBannedCommand {
-    constructor(
-        public userId: string
-    ) { }
+  constructor(public userId: string) {}
 }
 
 @CommandHandler(DeleteDeviceForBannedCommand)
 export class DeleteDeviceForBannedUseCase {
+  constructor(private securityRepository: SecurityRepository) {}
 
-    constructor(
-        private securityRepository: SecurityRepository
-    ) { }
+  async execute(command: DeleteDeviceForBannedCommand) {
+    const { userId } = command;
 
-    async execute(command: DeleteDeviceForBannedCommand) {
-        const { userId } = command
-
-        return await this.securityRepository.deleteDeviceForBanned(userId)
-    }
+    return await this.securityRepository.deleteDeviceForBanned(userId);
+  }
 }

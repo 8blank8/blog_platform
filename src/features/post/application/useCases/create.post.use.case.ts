@@ -1,36 +1,35 @@
-import { CommandHandler } from "@nestjs/cqrs";
-import { PostCreateType } from "../../models/post.create.type";
-import { PostRepository } from "../../infrastructure/mongo/post.repository";
-import { BlogQueryRepository } from "../../../../features/blog/infrastructure/mongo/blog.query.repository";
+import { CommandHandler } from '@nestjs/cqrs';
+import { PostCreateType } from '../../models/post.create.type';
+import { PostRepository } from '../../infrastructure/mongo/post.repository';
+import { BlogQueryRepository } from '../../../../features/blog/infrastructure/mongo/blog.query.repository';
 
 export class CreatePostCommand {
-    constructor(
-        public inputPostData: PostCreateType
-    ) { }
+  constructor(public inputPostData: PostCreateType) {}
 }
 
 @CommandHandler(CreatePostCommand)
 export class CreatePostUseCase {
-    constructor(
-        private postRepository: PostRepository,
-        private blogQueryRepository: BlogQueryRepository,
-    ) { }
+  constructor(
+    private postRepository: PostRepository,
+    private blogQueryRepository: BlogQueryRepository,
+  ) {}
 
-    async execute(command: CreatePostCommand): Promise<string | null> {
+  async execute(command: CreatePostCommand): Promise<string | null> {
+    const { inputPostData } = command;
 
-        const { inputPostData } = command
+    const blog = await this.blogQueryRepository.findBlogDocumentById(
+      inputPostData.blogId,
+    );
+    if (!blog) return null;
 
-        const blog = await this.blogQueryRepository.findBlogDocumentById(inputPostData.blogId)
-        if (!blog) return null
+    const newPost = await this.postRepository.createPost(inputPostData);
+    newPost.addId();
+    newPost.addBlogName(blog.name);
+    newPost.addCreatedAt();
+    newPost.setUserId(blog.userId);
 
-        const newPost = await this.postRepository.createPost(inputPostData)
-        newPost.addId()
-        newPost.addBlogName(blog.name)
-        newPost.addCreatedAt()
-        newPost.setUserId(blog.userId)
+    await this.postRepository.savePost(newPost);
 
-        await this.postRepository.savePost(newPost)
-
-        return newPost.id
-    }
+    return newPost.id;
+  }
 }

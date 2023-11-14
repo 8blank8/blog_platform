@@ -1,7 +1,7 @@
 export class BlogQueryParamType {
-    searchNameTerm: string | undefined
-    sortBy: string | undefined
-    sortDirection: 'asc' | 'desc' | undefined
-    pageNumber: number | undefined
-    pageSize: number | undefined
+  searchNameTerm: string | undefined;
+  sortBy: string | undefined;
+  sortDirection: 'asc' | 'desc' | undefined;
+  pageNumber: number | undefined;
+  pageSize: number | undefined;
 }

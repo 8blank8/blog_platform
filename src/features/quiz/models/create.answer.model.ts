@@ -1,7 +1,7 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class AnswerCreateModel {
-    @IsNotEmpty()
-    @IsString()
-    answer: string
+  @IsNotEmpty()
+  @IsString()
+  answer: string;
 }

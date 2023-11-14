@@ -1,6 +1,6 @@
 export class BlogUpdateSqlModel {
-    name: string
-    description: string
-    websiteUrl: string
-    blogId: string
+  name: string;
+  description: string;
+  websiteUrl: string;
+  blogId: string;
 }

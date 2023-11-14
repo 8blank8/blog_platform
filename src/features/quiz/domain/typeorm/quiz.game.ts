@@ -1,28 +1,34 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { QuizQestion } from "./question.entity";
-import { Answer } from "./answer.entity";
-import { QuizScore } from "./quiz.score.entity";
-import { QuizPlayer } from "./quiz.player.entity";
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { QuizQestion } from './question.entity';
+import { Answer } from './answer.entity';
+import { QuizScore } from './quiz.score.entity';
+import { QuizPlayer } from './quiz.player.entity';
 
 @Entity()
 export class Game {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => QuizPlayer, user => user.id)
-  firstPlayer: QuizPlayer
+  @ManyToOne(() => QuizPlayer, (user) => user.id)
+  firstPlayer: QuizPlayer;
 
   @Column({ nullable: true, type: 'json' })
-  answer: Array<Answer>
+  answer: Array<Answer>;
 
-  @ManyToOne(() => QuizPlayer, user => user.id)
-  secondPlayer: QuizPlayer
+  @ManyToOne(() => QuizPlayer, (user) => user.id)
+  secondPlayer: QuizPlayer;
 
-  @OneToMany(() => QuizScore, score => score.game)
-  score: QuizScore[]
+  @OneToMany(() => QuizScore, (score) => score.game)
+  score: QuizScore[];
 
   @Column({ nullable: true, type: 'json' })
-  questions: Array<QuizQestion>
+  questions: Array<QuizQestion>;
 
   @Column()
   status: 'PendingSecondPlayer' | 'Active' | 'Finished';
@@ -37,5 +43,5 @@ export class Game {
   finishGameDate: string;
 
   @Column({ nullable: true })
-  answerTime: Date
+  answerTime: Date;
 }

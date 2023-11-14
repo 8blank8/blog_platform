@@ -1,3 +1,3 @@
 export class AuthRefershTokenViewSqlModel {
-    refreshToken: string
+  refreshToken: string;
 }

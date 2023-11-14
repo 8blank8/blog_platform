@@ -1,100 +1,100 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument } from "mongoose";
-import { UserDocument } from "src/features/user/domain/mongoose/user.schema";
-import { v4 as uuidv4 } from 'uuid'
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument } from 'mongoose';
+import { UserDocument } from '@app/features/user/domain/mongoose/user.schema';
+import { v4 as uuidv4 } from 'uuid';
 
 class CommentatorInfo {
-    @Prop({
-        required: true
-    })
-    userId: string
+  @Prop({
+    required: true,
+  })
+  userId: string;
 
-    @Prop({
-        required: true
-    })
-    userLogin: string
+  @Prop({
+    required: true,
+  })
+  userLogin: string;
 
-    @Prop({
-        default: false
-    })
-    userIsBanned: boolean
+  @Prop({
+    default: false,
+  })
+  userIsBanned: boolean;
 }
 
 @Schema()
 export class Comment {
-    @Prop({
-        required: true
-    })
-    id: string
+  @Prop({
+    required: true,
+  })
+  id: string;
 
-    @Prop({
-        required: true
-    })
-    content: string
+  @Prop({
+    required: true,
+  })
+  content: string;
 
-    @Prop({
-        required: true,
-    })
-    commentatorInfo: CommentatorInfo
+  @Prop({
+    required: true,
+  })
+  commentatorInfo: CommentatorInfo;
 
-    @Prop({
-        required: true
-    })
-    createdAt: string
+  @Prop({
+    required: true,
+  })
+  createdAt: string;
 
-    @Prop({
-        required: true
-    })
-    postId: string
+  @Prop({
+    required: true,
+  })
+  postId: string;
 
-    @Prop({
-        required: true
-    })
-    blogId: string
+  @Prop({
+    required: true,
+  })
+  blogId: string;
 
-    addCreatedAt() {
-        this.createdAt = new Date().toISOString()
-    }
+  addCreatedAt() {
+    this.createdAt = new Date().toISOString();
+  }
 
-    addId() {
-        this.id = uuidv4()
-    }
+  addId() {
+    this.id = uuidv4();
+  }
 
-    addCommentatorInfo(user: UserDocument) {
-        this.commentatorInfo = {
-            userId: user.id,
-            userLogin: user.login,
-            userIsBanned: false
-        }
-    }
+  addCommentatorInfo(user: UserDocument) {
+    this.commentatorInfo = {
+      userId: user.id,
+      userLogin: user.login,
+      userIsBanned: false,
+    };
+  }
 
-    updateContent(inputData: string) {
-        this.content = inputData
-    }
+  updateContent(inputData: string) {
+    this.content = inputData;
+  }
 
-    addPostId(postId: string) {
-        this.postId = postId
-    }
+  addPostId(postId: string) {
+    this.postId = postId;
+  }
 
-    addBlogId(blogId: string) {
-        this.blogId = blogId
-    }
+  addBlogId(blogId: string) {
+    this.blogId = blogId;
+  }
 
-    setUserIsBanned(isBanned: boolean) {
-        this.commentatorInfo.userIsBanned = isBanned
-    }
+  setUserIsBanned(isBanned: boolean) {
+    this.commentatorInfo.userIsBanned = isBanned;
+  }
 }
 
-export const CommentSchema = SchemaFactory.createForClass(Comment)
+export const CommentSchema = SchemaFactory.createForClass(Comment);
 
 CommentSchema.methods = {
-    addCreatedAt: Comment.prototype.addCreatedAt,
-    addId: Comment.prototype.addId,
-    addCommentatorInfo: Comment.prototype.addCommentatorInfo,
-    updateContent: Comment.prototype.updateContent,
-    addPostId: Comment.prototype.addPostId,
-    setUserIsBanned: Comment.prototype.setUserIsBanned,
-    addBlogId: Comment.prototype.addBlogId
-}
+  addCreatedAt: Comment.prototype.addCreatedAt,
+  addId: Comment.prototype.addId,
+  addCommentatorInfo: Comment.prototype.addCommentatorInfo,
+  updateContent: Comment.prototype.updateContent,
+  addPostId: Comment.prototype.addPostId,
+  setUserIsBanned: Comment.prototype.setUserIsBanned,
+  addBlogId: Comment.prototype.addBlogId,
+};
 
-export type CommentDocument = HydratedDocument<Comment>
+export type CommentDocument = HydratedDocument<Comment>;

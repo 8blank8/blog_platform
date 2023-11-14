@@ -1,31 +1,26 @@
-import { DefaultPagination } from "../default.pagination";
-import { QuizGameQueryParamModel } from "src/features/quiz/models/quiz.game.query.param.model";
-import { QUERY_PARAM_SQL } from "../../../utils/enum/query.param.enum.sql";
-
+import { DefaultPagination } from '../default.pagination';
+import { QuizGameQueryParamModel } from '@app/features/quiz/models/quiz.game.query.param.model';
 
 export class GamePagniation extends DefaultPagination {
-    constructor(
-        private queryParam: QuizGameQueryParamModel
-    ) {
-        super(
-            queryParam.pageSize,
-            queryParam.pageNumber,
-            queryParam.sortBy,
-            queryParam.sortDirection
-        );
-    }
+  constructor(private queryParam: QuizGameQueryParamModel) {
+    super(
+      queryParam.pageSize,
+      queryParam.pageNumber,
+      queryParam.sortBy,
+      queryParam.sortDirection,
+    );
+  }
 
-    getGamePaginationForSql() {
+  getGamePaginationForSql() {
+    const defaultPagination = this.getDefaultPagination();
+    const sortDirection = this.getSortDirectionForSql();
 
-        const defaultPagination = this.getDefaultPagination()
-        const sortDirection = this.getSortDirectionForSql()
+    const sortBy = this.queryParam.sortBy ?? 'pairCreatedDate';
 
-        const sortBy = this.queryParam.sortBy ?? "pairCreatedDate"
-
-        return {
-            ...defaultPagination,
-            ...sortDirection,
-            sortBy: `"${sortBy}"`
-        }
-    }
+    return {
+      ...defaultPagination,
+      ...sortDirection,
+      sortBy: `"${sortBy}"`,
+    };
+  }
 }

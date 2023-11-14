@@ -1,13 +1,13 @@
 export class UserViewType {
-    id: string
-    login: string
-    email: string
-    createdAt: string
-    banInfo: BanInfo
+  id: string;
+  login: string;
+  email: string;
+  createdAt: string;
+  banInfo: BanInfo;
 }
 
 class BanInfo {
-    isBanned: boolean
-    banDate: string | null
-    banReason: string | null
+  isBanned: boolean;
+  banDate: string | null;
+  banReason: string | null;
 }

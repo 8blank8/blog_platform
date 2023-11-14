@@ -1,6 +1,6 @@
 export class BannedUserForBlogUpdateSqlModel {
-    userId: string
-    blogId: string
-    isBanned: boolean
-    banReason: string | null
+  userId: string;
+  blogId: string;
+  isBanned: boolean;
+  banReason: string | null;
 }

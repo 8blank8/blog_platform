@@ -1,20 +1,18 @@
-import { Users } from "../../../../features/user/domain/typeorm/user.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { PostComments } from "./comment.entitty";
-
+import { Users } from '../../../../features/user/domain/typeorm/user.entity';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { PostComments } from './comment.entitty';
 
 @Entity()
 export class PostCommentLike {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @PrimaryGeneratedColumn('uuid')
-    id: string
+  @Column({ nullable: false })
+  likeStatus: 'Like' | 'Dislike' | 'None';
 
-    @Column({ nullable: false })
-    likeStatus: 'Like' | 'Dislike' | 'None'
+  @ManyToOne(() => Users, (user) => user.id)
+  user: Users;
 
-    @ManyToOne(() => Users, user => user.id)
-    user: Users
-
-    @ManyToOne(() => PostComments, postComment => postComment.id)
-    comment: PostComments
+  @ManyToOne(() => PostComments, (postComment) => postComment.id)
+  comment: PostComments;
 }

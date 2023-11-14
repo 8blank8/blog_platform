@@ -1,151 +1,134 @@
 import { ConfigModule } from '@nestjs/config';
-const configModule = ConfigModule.forRoot({})
-
+const configModule = ConfigModule.forRoot({});
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { CqrsModule } from '@nestjs/cqrs/dist';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { setting_env } from './setting.env';
 
-import { Blog, BlogSchema } from './features/blog/domain/mongoose/blog.schema';
-import { BlogRepository } from './features/blog/infrastructure/mongo/blog.repository';
+// Controllers
+import { AppController } from './app.controller';
 import { BlogController } from './features/blog/api/blog.controller';
-import { BlogService } from './features/blog/application/blog.service';
-import { BlogQueryRepository } from './features/blog/infrastructure/mongo/blog.query.repository';
-
-import { Post, PostSchema } from './features/post/domain/mongoose/post.schema';
-import { PostQueryRepository } from './features/post/infrastructure/mongo/post.query.repository';
 import { PostControler } from './features/post/api/post.controller';
-import { PostService } from './features/post/application/post.service';
-import { PostRepository } from './features/post/infrastructure/mongo/post.repository';
-
 import { UserController } from './features/user/api/user.controller';
+import { TestingController } from './features/testing/testing.controller';
+import { AuthController } from './features/auth/api/auth.controller';
+import { CommentController } from './features/comment/api/comment.controller';
+import { SecurityController } from './features/security/api/security.controller';
+import { BloggerUserController } from './features/blog/api/blogger.user.controller';
+import { SaBlogController } from './features/sa/api/sa.blog.controller';
+import { QuizController } from './features/quiz/api/sa/quiz.sa.controller';
+import { QuizPublicController } from './features/quiz/api/public/quiz.public.controller';
+import { BloggerController } from './features/blog/api/blogger.controller';
+const controllers = [
+  AppController,
+  // BlogController,
+  // PostControler,
+  // UserController,
+  // AuthController,
+  // CommentController,
+  // SecurityController,
+  // TestingController,
+  // BloggerController,
+  // SaBlogController,
+  // BloggerUserController,
+  // QuizController,
+  // QuizPublicController
+];
+
+// Services
+import { AppService } from './app.service';
+import { BlogService } from './features/blog/application/blog.service';
+import { PostService } from './features/post/application/post.service';
 import { UserService } from './features/user/application/user.service';
+import { AuthService } from './features/auth/application/auth.service';
+import { CommentService } from './features/comment/appication/comment.service';
+import { SecurityService } from './features/security/application/security.service';
+const services = [
+  AppService,
+  // BlogService,
+  // PostService,
+  // UserService,
+  // AuthService,
+  // CommentService,
+  // SecurityService
+];
+
+// MongooseSchemes
+import { Blog, BlogSchema } from './features/blog/domain/mongoose/blog.schema';
+import { Post, PostSchema } from './features/post/domain/mongoose/post.schema';
+import { User, UserSchema } from './features/user/domain/mongoose/user.schema';
+import {
+  Comment,
+  CommentSchema,
+} from './features/comment/domain/mongoose/comment.schema';
+import {
+  CommentLike,
+  CommentLikeSchema,
+} from './features/comment/domain/mongoose/comment.like.schema';
+import {
+  PostLike,
+  PostLikeSchema,
+} from './features/post/domain/mongoose/post.like.schema';
+import { Auth, AuthSchema } from './features/auth/domain/mongoose/auth.schema';
+import {
+  UserBanBlog,
+  UserBanBlogSchema,
+} from './features/blog/domain/mongoose/user.ban.blog.schema';
+import {
+  Device,
+  DeviceSchema,
+} from './features/security/domain/mongoose/device.schema';
+const mongooseSchema = [
+  // { name: Blog.name, schema: BlogSchema },
+  // { name: Post.name, schema: PostSchema },
+  // { name: User.name, schema: UserSchema },
+  // { name: Comment.name, schema: CommentSchema },
+  // { name: CommentLike.name, schema: CommentLikeSchema },
+  // { name: PostLike.name, schema: PostLikeSchema },
+  // { name: Device.name, schema: DeviceSchema },
+  // { name: Auth.name, schema: AuthSchema },
+  // { name: UserBanBlog.name, schema: UserBanBlogSchema }
+];
+
+// Repositories
+import { BlogRepository } from './features/blog/infrastructure/mongo/blog.repository';
+import { BlogQueryRepository } from './features/blog/infrastructure/mongo/blog.query.repository';
+import { PostQueryRepository } from './features/post/infrastructure/mongo/post.query.repository';
+import { PostRepository } from './features/post/infrastructure/mongo/post.repository';
 import { UserRepository } from './features/user/infrastructure/mongo/user.repository';
 import { UserQueryRepository } from './features/user/infrastructure/mongo/user.query.repository';
-
-import { TestingController } from './features/testing/testing.controller';
-import { User, UserSchema } from './features/user/domain/mongoose/user.schema';
-
-import { AuthController } from './features/auth/api/auth.controller';
-import { AuthService } from './features/auth/application/auth.service';
-
-import { JwtModule } from '@nestjs/jwt'
-import { LocalStrategy } from './features/auth/strategies/local.strategy';
-import { PassportModule } from '@nestjs/passport';
-import { JwtStrategy } from './features/auth/strategies/jwt.strategy';
-import { BasicStrategy } from './features/auth/strategies/basic-strategy';
-
-import { EmailAdapter } from './utils/adapters/email.adapter';
-import { EmailManager } from './utils/managers/email.manager';
-import { UserIsConfirmed } from './utils/custom-validation/confirmation.code.type';
-import { UserExistLogin } from './utils/custom-validation/user.exist.login';
-import { UserExistEmail } from './utils/custom-validation/user.exist.email';
-import { EmailCodeResend } from './utils/custom-validation/email.code.resend';
-import { CommentController } from './features/comment/api/comment.controller';
 import { CommentRepository } from './features/comment/infrastructure/mongo/comment.repository';
 import { CommentQueryRepository } from './features/comment/infrastructure/mongo/comment.query.repository';
-import { Comment, CommentSchema } from './features/comment/domain/mongoose/comment.schema';
-import { CommentService } from './features/comment/appication/comment.service';
-import { CommentLike, CommentLikeSchema } from './features/comment/domain/mongoose/comment.like.schema';
-import { PostLike, PostLikeSchema } from './features/post/domain/mongoose/post.like.schema';
-import { CheckBlogId } from './utils/custom-validation/check.blogId';
-import { IsNotBlank } from './utils/custom-validation/is.not.blank';
-import { LikeStatus } from './utils/custom-validation/like.status';
-import { Device, DeviceSchema } from './features/security/domain/mongoose/device.schema';
-import { SecurityController } from './features/security/api/security.controller';
 import { SecurityQueryRepository } from './features/security/infrastructure/mongoose/security.query.repository';
-import { SecurityService } from './features/security/application/security.service';
 import { SecurityRepository } from './features/security/infrastructure/mongoose/security.repository';
-import { JwtRefreshTokenStrategy } from './features/auth/strategies/jwt.refresh.token.straregy';
-import { ThrottlerModule } from '@nestjs/throttler';
-import { setting_env } from './setting.env';
-import { Auth, AuthSchema } from './features/auth/domain/mongoose/auth.schema';
 import { AuthRepository } from './features/auth/infrastructure/mongoose/auth.repository';
 import { AuthQueryRepository } from './features/auth/infrastructure/mongoose/auth.query.repository';
-
-import { CqrsModule } from '@nestjs/cqrs/dist';
-
-
-
-
-import { DeleteCommentUseCase } from './features/comment/appication/useCases/delete.comment.use.case';
-import { UpdateCommentUseCase } from './features/comment/appication/useCases/update.comment.use.case';
-import { UpdateLikeStatusCommentUseCase } from './features/comment/appication/useCases/update.like.status.comment.use.case'
-import { UpdateBanCommentUseCase } from './features/comment/appication/useCases/update.ban.comment.use.case';
-import { UpdateBanCommentLikeStatusUseCase } from './features/comment/appication/useCases/update.ban.comment.like.status.use.case';
-const commentUseCase = [
-  DeleteCommentUseCase, UpdateCommentUseCase, UpdateLikeStatusCommentUseCase,
-  UpdateBanCommentUseCase, UpdateBanCommentLikeStatusUseCase
-]
-
-
-import { CreatePostUseCase } from './features/post/application/useCases/create.post.use.case';
-import { CreatePostByBlogIdUseCase } from './features/post/application/useCases/create.post.by.blog.id.use.case';
-import { UpdatePostUseCase } from './features/post/application/useCases/update.post.use.case';
-import { DeletePostUseCase } from './features/post/application/useCases/delete.post.use.case';
-import { CreateCommentForPostUseCase } from './features/post/application/useCases/create.comment.for.post';
-import { UpdateLikeStatusForPostUseCase } from './features/post/application/useCases/update.like.status.for.post';
-import { UpdateBanPostUseCase } from './features/post/application/useCases/update.ban.post.use.case';
-import { UpdateBanPostLikeStatusUseCase } from './features/post/application/useCases/update.ban.post.like.status.use.case';
-const postUseCase = [
-  CreatePostUseCase, CreatePostByBlogIdUseCase, UpdatePostUseCase,
-  DeletePostUseCase, CreateCommentForPostUseCase, UpdateLikeStatusForPostUseCase,
-  UpdateBanPostUseCase, UpdateBanPostLikeStatusUseCase
-]
-
-
-import { CreateDeviceUseCase } from './features/security/application/useCases/create.device.use.case';
-import { DeleteDeviceUseCase } from './features/security/application/useCases/delete.device.use.case';
-import { DeleteAllDevicesUseCase } from './features/security/application/useCases/delete.all.device.use.case';
-import { DeleteDeviceForBannedUseCase } from './features/security/application/useCases/delete.device.for.banned.use.case';
-const securityUseCase = [
-  CreateDeviceUseCase, DeleteDeviceUseCase, DeleteAllDevicesUseCase, DeleteDeviceForBannedUseCase
-]
-
-
-import { CreateUserUseCase } from './features/user/application/useCases/create.user.use.case';
-import { RegistrationUserUseCase } from './features/user/application/useCases/registration.user.use.case';
-import { EmailConfirmationUseCase } from './features/user/application/useCases/email.confirmation.use.case';
-import { ResendingConfirmationCodeUseCase } from './features/user/application/useCases/resending.confirmation.code.use.case';
-import { DeleteUserUseCase } from './features/user/application/useCases/delete.user.use.case';
-const userUseCase = [
-  CreateUserUseCase, RegistrationUserUseCase, EmailConfirmationUseCase,
-  ResendingConfirmationCodeUseCase, DeleteUserUseCase
-]
-
-
-import { ValidateUserUseCase } from './features/auth/application/useCases/validate.user.use.case';
-import { LoginUserUseCase } from './features/auth/application/useCases/login.user.use.case';
-import { CreateRefreshTokenUseCase } from './features/auth/application/useCases/create.refresh.token.use.case';
-import { AddRefreshTokenInBlackListUseCase } from './features/auth/application/useCases/add.refresh.token.in.black.list.use.case';
-import { BloggerController } from './features/blog/api/blogger.controller';
-const authUseCase = [
-  ValidateUserUseCase, LoginUserUseCase, CreateRefreshTokenUseCase,
-  AddRefreshTokenInBlackListUseCase
-]
-
-import { CreateBlogUseCase } from './features/blog/application/useCases/create.blog.use.case';
-import { UpdateBlogUseCase } from './features/blog/application/useCases/update.blog.use.case';
-import { DeleteBlogUseCase } from './features/blog/application/useCases/delete.blog.use.case';
-import { DeletePostByBlogIdUseCase } from './features/blog/application/useCases/delete.post.by.blog.id.use.case';
-import { UpdatePostByBlogIdUseCase } from './features/blog/application/useCases/update.post.by.blog.id.use.case';
-import { SaBlogController } from './features/sa/api/sa.blog.controller';
-const bloggerUseCase = [
-  DeletePostByBlogIdUseCase, UpdatePostByBlogIdUseCase,
-  CreateBlogUseCase, UpdateBlogUseCase, DeleteBlogUseCase
-]
-
-import { BindUserForBlogUseCase } from './features/sa/application/useCases/bind.user.for.blog.use.case';
 import { SaQueryRepository } from './features/sa/infrastructure/sa.query.repository';
-import { BannedUserUseCase } from './features/user/application/useCases/banned.user.use.case';
-import { UserBanBlog, UserBanBlogSchema } from './features/blog/domain/mongoose/user.ban.blog.schema';
 import { UserBanBlogRepository } from './features/blog/infrastructure/mongo/user.ban.blog.repository';
-import { BloggerUserController } from './features/blog/api/blogger.user.controller';
-import { BanUserForBlogUseCase } from './features/blog/application/useCases/ban.user.for.blog.use.case';
 import { UserBanBlogQueryRepository } from './features/blog/infrastructure/mongo/user.ban.blog.query.repository';
-import { BlogBanUseCase } from './features/sa/application/useCases/blog.ban.use.case';
-// import { TypeOrmModule } from '@nestjs/typeorm';
-import { TypeOrmModule } from '@nestjs/typeorm'
+const repositories = [
+  // BlogRepository,
+  // BlogQueryRepository,
+  // PostQueryRepository,
+  // PostRepository,
+  // UserRepository,
+  // UserQueryRepository,
+  // CommentRepository,
+  // CommentQueryRepository,
+  // SecurityQueryRepository,
+  // SecurityRepository,
+  // AuthRepository,
+  // AuthQueryRepository,
+  // SaQueryRepository,
+  // UserBanBlogRepository,
+  // UserBanBlogQueryRepository
+];
+
+// SQL repositories
 import { UserQueryRepositorySql } from './features/user/infrastructure/sql/user.query.repository.sql';
 import { UserRepositorySql } from './features/user/infrastructure/sql/user.repository.sql';
 import { SecurityQueryRepositorySql } from './features/security/infrastructure/sql/security.query.repository.sql';
@@ -159,7 +142,198 @@ import { UserBanBlogQueryRepositorySql } from './features/blog/infrastructure/sq
 import { UserBanBlogRepositorySql } from './features/blog/infrastructure/sql/user.ban.blog.repository.sql';
 import { CommentRepositorySql } from './features/comment/infrastructure/sql/comment.repository.sql';
 import { CommentQueryRepositorySql } from './features/comment/infrastructure/sql/comment.query.repository';
-import { BlackListRefreshToken } from './features/auth/domain/typeorm/auth.entity';
+const sqlRepositories = [
+  // UserQueryRepositorySql,
+  // UserRepositorySql,
+  // SecurityRepositorySql,
+  // SecurityQueryRepositorySql,
+  // AuthRepositorySql,
+  // BlogRepositorySql,
+  // BlogQueryRepositorySql,
+  // PostRepositorySql,
+  // PostQueryRepositorySql,
+  // UserBanBlogQueryRepositorySql,
+  // UserBanBlogRepositorySql,
+  // CommentRepositorySql,
+  // CommentQueryRepositorySql
+];
+
+// Typeorm repositories
+import { UserRepositoryTypeorm } from './features/user/infrastructure/typeorm/user.repository.typeorm';
+import { UserQueryRepositoryTypeorm } from './features/user/infrastructure/typeorm/user.query.repository.typeorm';
+import { SecurityQueryRepositoryTypeorm } from './features/security/infrastructure/typeorm/secutity.query.repository.typeorm';
+import { BlogRepositoryTypeorm } from './features/blog/infrastructure/typeorm/blog.repository.typeorm';
+import { BlogQueryRepositoryTypeorm } from './features/blog/infrastructure/typeorm/blog.query.repository.typeorm';
+import { PostRepositoryTypeorm } from './features/post/infrastructure/typeorm/post.repository.typeorm';
+import { PostQueryRepositoryTypeorm } from './features/post/infrastructure/typeorm/post.query.repository.typeorm';
+import { CommentQueryRepositoryTypeorm } from './features/comment/infrastructure/typeorm/comment.query.repository.typeorm';
+import { CommentRepositoryTypeorm } from './features/comment/infrastructure/typeorm/comment.repository.typeorm';
+import { QuizQueryRepositoryTypeorm } from './features/quiz/infrastructure/typeorm/quiz.query.repository.typeorm';
+import { QuizRepositoryTypeorm } from './features/quiz/infrastructure/typeorm/quiz.repository.typeorm';
+import { AuthRepositoryTypeorm } from './features/auth/infrastructure/typeorm/auth.repository.typeorm';
+import { SecurityRepositoryTypeorm } from './features/security/infrastructure/typeorm/security.repository.typeorm';
+const typeOrmRepositories = [
+  // UserRepositoryTypeorm,
+  // UserQueryRepositoryTypeorm,
+  // SecurityQueryRepositoryTypeorm,
+  // BlogRepositoryTypeorm,
+  // BlogQueryRepositoryTypeorm,
+  // PostRepositoryTypeorm,
+  // PostQueryRepositoryTypeorm,
+  // CommentQueryRepositoryTypeorm,
+  // CommentRepositoryTypeorm,
+  // QuizQueryRepositoryTypeorm,
+  // QuizRepositoryTypeorm,
+  // AuthRepositoryTypeorm,
+  // SecurityRepositoryTypeorm,
+];
+
+// Strategies
+import { LocalStrategy } from './features/auth/strategies/local.strategy';
+import { JwtStrategy } from './features/auth/strategies/jwt.strategy';
+import { BasicStrategy } from './features/auth/strategies/basic-strategy';
+import { JwtRefreshTokenStrategy } from './features/auth/strategies/jwt.refresh.token.straregy';
+const strategies = [
+  // LocalStrategy,
+  // JwtStrategy,
+  // BasicStrategy,
+  // JwtRefreshTokenStrategy
+];
+
+// Adapters
+import { EmailAdapter } from './utils/adapters/email.adapter';
+import { EmailManager } from './utils/managers/email.manager';
+const adapters = [EmailAdapter, EmailManager];
+
+// Validations
+import { UserIsConfirmed } from './utils/custom-validation/confirmation.code.type';
+import { UserExistLogin } from './utils/custom-validation/user.exist.login';
+import { UserExistEmail } from './utils/custom-validation/user.exist.email';
+import { EmailCodeResend } from './utils/custom-validation/email.code.resend';
+import { CheckBlogId } from './utils/custom-validation/check.blogId';
+import { IsNotBlank } from './utils/custom-validation/is.not.blank';
+import { LikeStatus } from './utils/custom-validation/like.status';
+const validation = [
+  UserIsConfirmed,
+  UserExistEmail,
+  UserExistLogin,
+  EmailCodeResend,
+  CheckBlogId,
+  IsNotBlank,
+  LikeStatus,
+];
+
+// comment use cases
+// import { DeleteCommentUseCase } from './features/comment/appication/useCases/delete.comment.use.case';
+// import { UpdateCommentUseCase } from './features/comment/appication/useCases/update.comment.use.case';
+// import { UpdateLikeStatusCommentUseCase } from './features/comment/appication/useCases/update.like.status.comment.use.case'
+// import { UpdateBanCommentUseCase } from './features/comment/appication/useCases/update.ban.comment.use.case';
+// import { UpdateBanCommentLikeStatusUseCase } from './features/comment/appication/useCases/update.ban.comment.like.status.use.case';
+// const commentUseCase = [
+// DeleteCommentUseCase,
+// UpdateCommentUseCase,
+// UpdateLikeStatusCommentUseCase,
+// UpdateBanCommentUseCase,
+// UpdateBanCommentLikeStatusUseCase
+// ]
+
+// post use cases
+// import { CreatePostUseCase } from './features/post/application/useCases/create.post.use.case';
+// import { CreatePostByBlogIdUseCase } from './features/post/application/useCases/create.post.by.blog.id.use.case';
+// import { UpdatePostUseCase } from './features/post/application/useCases/update.post.use.case';
+// import { DeletePostUseCase } from './features/post/application/useCases/delete.post.use.case';
+// import { CreateCommentForPostUseCase } from './features/post/application/useCases/create.comment.for.post';
+// import { UpdateLikeStatusForPostUseCase } from './features/post/application/useCases/update.like.status.for.post';
+// import { UpdateBanPostUseCase } from './features/post/application/useCases/update.ban.post.use.case';
+// import { UpdateBanPostLikeStatusUseCase } from './features/post/application/useCases/update.ban.post.like.status.use.case';
+// const postUseCase = [
+// CreatePostUseCase,
+// CreatePostByBlogIdUseCase,
+// UpdatePostUseCase,
+// DeletePostUseCase,
+// CreateCommentForPostUseCase,
+// UpdateLikeStatusForPostUseCase,
+// UpdateBanPostUseCase,
+// UpdateBanPostLikeStatusUseCase
+// ]
+
+// device use cases
+import { CreateDeviceUseCase } from './features/security/application/useCases/create.device.use.case';
+import { DeleteDeviceUseCase } from './features/security/application/useCases/delete.device.use.case';
+import { DeleteAllDevicesUseCase } from './features/security/application/useCases/delete.all.device.use.case';
+import { DeleteDeviceForBannedUseCase } from './features/security/application/useCases/delete.device.for.banned.use.case';
+const securityUseCase = [
+  // CreateDeviceUseCase,
+  // DeleteDeviceUseCase,
+  // DeleteAllDevicesUseCase,
+  // DeleteDeviceForBannedUseCase
+];
+
+// use use cases
+import { CreateUserUseCase } from './features/user/application/useCases/create.user.use.case';
+import { RegistrationUserUseCase } from './features/user/application/useCases/registration.user.use.case';
+import { EmailConfirmationUseCase } from './features/user/application/useCases/email.confirmation.use.case';
+import { ResendingConfirmationCodeUseCase } from './features/user/application/useCases/resending.confirmation.code.use.case';
+import { DeleteUserUseCase } from './features/user/application/useCases/delete.user.use.case';
+const userUseCase = [
+  // CreateUserUseCase,
+  // RegistrationUserUseCase,
+  // EmailConfirmationUseCase,
+  // ResendingConfirmationCodeUseCase,
+  // DeleteUserUseCase
+];
+
+// auth use cases
+// import { ValidateUserUseCase } from './features/auth/application/useCases/validate.user.use.case';
+// import { LoginUserUseCase } from './features/auth/application/useCases/login.user.use.case';
+// import { CreateRefreshTokenUseCase } from './features/auth/application/useCases/create.refresh.token.use.case';
+// import { AddRefreshTokenInBlackListUseCase } from './features/auth/application/useCases/add.refresh.token.in.black.list.use.case';
+// const authUseCase = [
+//   ValidateUserUseCase,
+//   LoginUserUseCase,
+//   CreateRefreshTokenUseCase,
+//   AddRefreshTokenInBlackListUseCase
+// ]
+
+// blog use cases
+// import { CreateBlogUseCase } from './features/blog/application/useCases/create.blog.use.case';
+// import { UpdateBlogUseCase } from './features/blog/application/useCases/update.blog.use.case';
+// import { DeleteBlogUseCase } from './features/blog/application/useCases/delete.blog.use.case';
+// import { DeletePostByBlogIdUseCase } from './features/blog/application/useCases/delete.post.by.blog.id.use.case';
+// import { UpdatePostByBlogIdUseCase } from './features/blog/application/useCases/update.post.by.blog.id.use.case';
+// import { BanUserForBlogUseCase } from './features/blog/application/useCases/ban.user.for.blog.use.case';
+// const bloggerUseCase = [
+// DeletePostByBlogIdUseCase,
+// UpdatePostByBlogIdUseCase,
+// CreateBlogUseCase,
+// UpdateBlogUseCase,
+// DeleteBlogUseCase,
+// BanUserForBlogUseCase
+// ]
+
+// sa use cases
+import { BlogBanUseCase } from './features/sa/application/useCases/blog.ban.use.case';
+import { BindUserForBlogUseCase } from './features/sa/application/useCases/bind.user.for.blog.use.case';
+import { BannedUserUseCase } from './features/user/application/useCases/banned.user.use.case';
+const saUseCase = [BindUserForBlogUseCase, BannedUserUseCase, BlogBanUseCase];
+
+// quiz use cases
+import { CreateQuestionUseCase } from './features/quiz/application/useCases/create.question.use.case';
+import { DeleteQuestionUseCase } from './features/quiz/application/useCases/delete.question.use.case';
+import { UpdateQuestionUseCase } from './features/quiz/application/useCases/update.question.use.case';
+import { UpdatePublishedQuestUseCase } from './features/quiz/application/useCases/update.published.quest.use.case';
+import { ConnectionGameUseCase } from './features/quiz/application/useCases/connection.game.use.case';
+import { AddAnswerUseCase } from './features/quiz/application/useCases/add.answer.use.case';
+const quizUseCase = [
+  // CreateQuestionUseCase,
+  // DeleteQuestionUseCase,
+  // UpdateQuestionUseCase,
+  // UpdatePublishedQuestUseCase,
+  // ConnectionGameUseCase,
+  // AddAnswerUseCase
+];
+
+// Entities
 import { Users } from './features/user/domain/typeorm/user.entity';
 import { Blogs } from './features/blog/domain/typeorm/blog.entity';
 import { Posts } from './features/post/domain/typeorm/post.entity';
@@ -169,37 +343,40 @@ import { PostCommentLike } from './features/comment/domain/typeorm/comment.like.
 import { Devices } from './features/security/domain/typeorm/devices.entity';
 import { UsersConfirmationEmail } from './features/user/domain/typeorm/user.confirmation.email.entity';
 import { UsersPassword } from './features/user/domain/typeorm/user.password.entity';
-import { UserRepositoryTypeorm } from './features/user/infrastructure/typeorm/user.repository.typeorm';
-import { UserQueryRepositoryTypeorm } from './features/user/infrastructure/typeorm/user.query.repository.typeorm';
-import { SecurityRepositoryTypeorm } from './features/security/infrastructure/typeorm/security.repository.typeorm';
-import { SecurityQueryRepositoryTypeorm } from './features/security/infrastructure/typeorm/secutity.query.repository.typeorm';
-import { AuthRepositoryTypeorm } from './features/auth/infrastructure/typeorm/auth.repository.typeorm';
-import { BlogRepositoryTypeorm } from './features/blog/infrastructure/typeorm/blog.repository.typeorm';
-import { BlogQueryRepositoryTypeorm } from './features/blog/infrastructure/typeorm/blog.query.repository.typeorm';
-import { PostRepositoryTypeorm } from './features/post/infrastructure/typeorm/post.repository.typeorm';
-import { PostQueryRepositoryTypeorm } from './features/post/infrastructure/typeorm/post.query.repository.typeorm';
-import { CommentQueryRepositoryTypeorm } from './features/comment/infrastructure/typeorm/comment.query.repository.typeorm';
-import { CommentRepositoryTypeorm } from './features/comment/infrastructure/typeorm/comment.repository.typeorm';
-import { QuizController } from './features/quiz/api/sa/quiz.sa.controller';
-import { QuizQueryRepositoryTypeorm } from './features/quiz/infrastructure/typeorm/quiz.query.repository.typeorm';
-import { QuizRepositoryTypeorm } from './features/quiz/infrastructure/typeorm/quiz.repository.typeorm';
 import { QuizQestion } from './features/quiz/domain/typeorm/question.entity';
-import { CreateQuestionUseCase } from './features/quiz/application/useCases/create.question.use.case';
-import { DeleteQuestionUseCase } from './features/quiz/application/useCases/delete.question.use.case';
-import { UpdateQuestionUseCase } from './features/quiz/application/useCases/update.question.use.case';
-import { UpdatePublishedQuestUseCase } from './features/quiz/application/useCases/update.published.quest.use.case';
-import { QuizPublicController } from './features/quiz/api/public/quiz.public.controller';
 import { Game } from './features/quiz/domain/typeorm/quiz.game';
 import { Answer } from './features/quiz/domain/typeorm/answer.entity';
-import { ConnectionGameUseCase } from './features/quiz/application/useCases/connection.game.use.case';
-import { AddAnswerUseCase } from './features/quiz/application/useCases/add.answer.use.case';
 import { QuizScore } from './features/quiz/domain/typeorm/quiz.score.entity';
 import { QuizPlayer } from './features/quiz/domain/typeorm/quiz.player.entity';
+import { BlackListRefreshToken } from './features/auth/domain/typeorm/auth.entity';
+const typeormEntity = [
+  // Users,
+  // Blogs,
+  // Posts,
+  // PostLikes,
+  // PostComments,
+  // PostCommentLike,
+  // Devices,
+  // UsersConfirmationEmail,
+  // UsersPassword,
+  // QuizQestion,
+  // Game,
+  // Answer,
+  // QuizScore,
+  // QuizPlayer,
+  // BlackListRefreshToken
+];
 
-const saUseCase = [
-  BindUserForBlogUseCase, BannedUserUseCase
-]
-
+// Modules
+import { AuthModule } from './features/auth/auth.module';
+import { UserModule } from './features/user/user.module';
+import { BlogModule } from './features/blog/blog.module';
+import { CommentModule } from './features/comment/comment.module';
+import { PostModule } from './features/post/post.module';
+import { QuizModule } from './features/quiz/quiz.module';
+import { SecurityModule } from './features/security/security.module';
+import { TestingModule } from '@nestjs/testing';
+import { SaModule } from './features/sa/sa.module';
 
 @Module({
   imports: [
@@ -216,67 +393,45 @@ const saUseCase = [
       autoLoadEntities: true,
       synchronize: true,
     }),
-    TypeOrmModule.forFeature([
-      BlackListRefreshToken, Users, Blogs, Posts, PostLikes,
-      PostComments, PostCommentLike, Devices, UsersConfirmationEmail,
-      UsersPassword, QuizQestion, Game, Answer, QuizScore, QuizPlayer
-    ]),
+    TypeOrmModule.forFeature(typeormEntity),
     MongooseModule.forRoot(setting_env.MONGO_URL),
-    MongooseModule.forFeature([
-      { name: Blog.name, schema: BlogSchema },
-      { name: Post.name, schema: PostSchema },
-      { name: User.name, schema: UserSchema },
-      { name: Comment.name, schema: CommentSchema },
-      { name: CommentLike.name, schema: CommentLikeSchema },
-      { name: PostLike.name, schema: PostLikeSchema },
-      { name: Device.name, schema: DeviceSchema },
-      { name: Auth.name, schema: AuthSchema },
-      { name: UserBanBlog.name, schema: UserBanBlogSchema }
-    ]),
+    MongooseModule.forFeature(mongooseSchema),
     ThrottlerModule.forRoot({
       ttl: +setting_env.TTL,
       limit: +setting_env.LIMIT,
     }),
     PassportModule,
-    JwtModule.register({})
+    JwtModule.register({}),
+
+    AuthModule,
+    UserModule,
+    BlogModule,
+    CommentModule,
+    PostModule,
+    QuizModule,
+    SecurityModule,
+    TestingModule,
+    // SaModule
   ],
-  controllers: [
-    AppController, BlogController, PostControler,
-    UserController, AuthController, CommentController,
-    SecurityController, TestingController, BloggerController,
-    SaBlogController, BloggerUserController, QuizController, QuizPublicController
-  ],
+  controllers: [...controllers],
   providers: [
-    AppService,
-    BlogRepository, BlogService, BlogQueryRepository,
-    PostQueryRepository, PostService, PostRepository,
-    UserService, UserRepository, UserQueryRepository,
-    AuthService, AuthRepository, AuthQueryRepository,
-    LocalStrategy, JwtStrategy, BasicStrategy, JwtRefreshTokenStrategy,
-    EmailManager, EmailAdapter,
-    UserExistLogin, UserExistEmail, UserIsConfirmed, EmailCodeResend, CheckBlogId, IsNotBlank, LikeStatus,
-    CommentRepository, CommentQueryRepository, CommentService,
-    SecurityService, SecurityQueryRepository, SecurityRepository,
-    SaQueryRepository, UserBanBlogRepository, BanUserForBlogUseCase,
-    UserBanBlogQueryRepository, BlogBanUseCase,
+    ...services,
+    ...typeOrmRepositories,
+    ...sqlRepositories,
+    ...repositories,
 
-    UserQueryRepositorySql, UserRepositorySql, SecurityQueryRepositorySql, SecurityRepositorySql,
-    AuthRepositorySql, BlogRepositorySql, BlogQueryRepositorySql, PostRepositorySql,
-    PostQueryRepositorySql, UserBanBlogQueryRepositorySql, UserBanBlogRepositorySql,
-    CommentRepositorySql, CommentQueryRepositorySql,
+    ...validation,
+    ...adapters,
+    ...strategies,
 
-    UserRepositoryTypeorm, UserQueryRepositoryTypeorm, SecurityRepositoryTypeorm, SecurityQueryRepositoryTypeorm,
-    AuthRepositoryTypeorm, BlogRepositoryTypeorm, BlogQueryRepositoryTypeorm, PostRepositoryTypeorm,
-    PostQueryRepositoryTypeorm, CommentQueryRepositoryTypeorm, CommentRepositoryTypeorm,
-
-    QuizQueryRepositoryTypeorm, QuizRepositoryTypeorm,
-
-    ...bloggerUseCase, ...commentUseCase, ...postUseCase, ...securityUseCase,
-    ...userUseCase, ...authUseCase, ...saUseCase,
-    CreateQuestionUseCase, DeleteQuestionUseCase, UpdateQuestionUseCase, UpdatePublishedQuestUseCase,
-
-    ConnectionGameUseCase, AddAnswerUseCase
+    // ...bloggerUseCase,
+    // ...commentUseCase,
+    // ...postUseCase,
+    ...securityUseCase,
+    ...userUseCase,
+    // ...authUseCase,
+    ...saUseCase,
+    ...quizUseCase,
   ],
 })
-
-export class AppModule { }
+export class AppModule {}

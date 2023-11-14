@@ -10,13 +10,52 @@
     "target": "ES2021",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
+    // "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
-  }
+    "noFallthroughCasesInSwitch": false,
+    "baseUrl": "./src",
+    "paths": {
+      "@app/*": [
+        "*"
+      ],
+      "@auth/*": [
+        "features/auth/*"
+      ],
+      "@blog/*": [
+        "features/blog/*"
+      ],
+      "@comment/*": [
+        "features/comment/*"
+      ],
+      "@post/*": [
+        "features/post/*"
+      ],
+      "@quiz/*": [
+        "features/quiz/*"
+      ],
+      "@sa/*": [
+        "features/sa/*"
+      ],
+      "@security/*": [
+        "features/security/*"
+      ],
+      "@testing/*": [
+        "features/testing/*"
+      ],
+      "@user/*": [
+        "features/user/*"
+      ],
+      "@features/*": [
+        "features/*"
+      ],
+      "@utils/*": [
+        "features/utils/*"
+      ],
+    },
+  },
 }

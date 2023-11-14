@@ -1,7 +1,7 @@
 export class UserDBType {
-    id: string
-    login: string
-    email: string
-    createdAt: string
-    passwordHash: string
+  id: string;
+  login: string;
+  email: string;
+  createdAt: string;
+  passwordHash: string;
 }

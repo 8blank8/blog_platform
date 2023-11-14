@@ -1,29 +1,25 @@
-import { CommandHandler } from "@nestjs/cqrs";
-import { QuizQueryRepositoryTypeorm } from "../../infrastructure/typeorm/quiz.query.repository.typeorm";
-import { QuizRepositoryTypeorm } from "../../infrastructure/typeorm/quiz.repository.typeorm";
-
+import { CommandHandler } from '@nestjs/cqrs';
+import { QuizQueryRepositoryTypeorm } from '../../infrastructure/typeorm/quiz.query.repository.typeorm';
+import { QuizRepositoryTypeorm } from '../../infrastructure/typeorm/quiz.repository.typeorm';
 
 export class DeleteQuestionCommand {
-    constructor(
-        public id: string
-    ) { }
+  constructor(public id: string) {}
 }
 
 @CommandHandler(DeleteQuestionCommand)
 export class DeleteQuestionUseCase {
-    constructor(
-        private quizQueryRepository: QuizQueryRepositoryTypeorm,
-        private quizRepository: QuizRepositoryTypeorm
-    ) { }
+  constructor(
+    private quizQueryRepository: QuizQueryRepositoryTypeorm,
+    private quizRepository: QuizRepositoryTypeorm,
+  ) {}
 
-    async execute(command: DeleteQuestionCommand): Promise<boolean> {
+  async execute(command: DeleteQuestionCommand): Promise<boolean> {
+    const { id } = command;
 
-        const { id } = command
+    const quest = await this.quizQueryRepository.findQuestById(id);
+    if (!quest) return false;
 
-        const quest = await this.quizQueryRepository.findQuestById(id)
-        if (!quest) return false
-
-        await this.quizRepository.deleteQuest(id)
-        return true
-    }
+    await this.quizRepository.deleteQuest(id);
+    return true;
+  }
 }
