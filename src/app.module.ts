@@ -34,12 +34,9 @@ import { AppService } from './app.service';
 
 const controllers = [AppController];
 
-const services = [AppService]
+const services = [AppService];
 
-const adapters = [
-  EmailAdapter,
-  EmailManager
-];
+const adapters = [EmailAdapter, EmailManager];
 
 const validation = [
   UserIsConfirmed,
@@ -50,11 +47,7 @@ const validation = [
   IsNotBlank,
   LikeStatus,
 ];
-const saUseCase = [
-  BindUserForBlogUseCase,
-  BannedUserUseCase,
-  BlogBanUseCase
-];
+const saUseCase = [BindUserForBlogUseCase, BannedUserUseCase, BlogBanUseCase];
 
 @Module({
   imports: [
