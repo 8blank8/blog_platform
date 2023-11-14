@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CqrsModule } from '@nestjs/cqrs';
+import { EmailManager } from '@src/utils/managers/email.manager';
+import { EmailAdapter } from '@src/utils/adapters/email.adapter';
 
 import { UserRepositoryTypeorm } from './infrastructure/typeorm/user.repository.typeorm';
 import { UserQueryRepositoryTypeorm } from './infrastructure/typeorm/user.query.repository.typeorm';
@@ -20,8 +22,6 @@ import { UserRepository } from './infrastructure/mongo/user.repository';
 import { UserQueryRepository } from './infrastructure/mongo/user.query.repository';
 import { UserRepositorySql } from './infrastructure/sql/user.repository.sql';
 import { UserQueryRepositorySql } from './infrastructure/sql/user.query.repository.sql';
-import { EmailManager } from '@src/utils/managers/email.manager';
-import { EmailAdapter } from '@src/utils/adapters/email.adapter';
 
 @Module({
   imports: [
@@ -58,4 +58,4 @@ import { EmailAdapter } from '@src/utils/adapters/email.adapter';
     UserRepositorySql,
   ],
 })
-export class UserModule { }
+export class UserModule {}

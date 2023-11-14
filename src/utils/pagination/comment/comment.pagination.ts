@@ -1,5 +1,5 @@
-
 import { CommentQueryParam } from '@comment/models/comment.query.param.type';
+
 import { DefaultPagination } from '../default.pagination';
 
 export class CommentPagniation extends DefaultPagination {
