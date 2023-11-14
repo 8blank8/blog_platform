@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
-import { DeviceViewSqlModel } from '../models/queryRepositorySql/device.view.sql.model';
+import { DeviceViewSqlModel } from '../../models/device.view.sql.model';
 
 @Injectable()
 export class SecurityQueryRepositorySql {
-  constructor(@InjectDataSource() private dataSource: DataSource) {}
+  constructor(@InjectDataSource() private dataSource: DataSource) { }
 
   async findDevicesUserByUserId(userId: string): Promise<DeviceViewSqlModel[]> {
     const devices = await this.dataSource.query(

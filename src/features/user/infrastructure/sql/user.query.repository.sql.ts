@@ -3,18 +3,18 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { QUERY_PARAM_SQL } from '@app/utils/enum/query.param.enum.sql';
 
-import { UserViewSqlModel } from '../models/queryRepositorySql/user.view.sql.model';
-import { UserWithPasswordViewSqlModel } from '../models/queryRepositorySql/user.with.password.view.sql.model';
-import { UserMeViewSqlModel } from '../models/queryRepositorySql/user.me.view.sql.model';
-import { UserConfirmationCodeViewSqlModel } from '../models/queryRepositorySql/user.confirmation.code.view.sql.model';
-import { UserWithConfirmationSqlModel } from '../models/queryRepositorySql/user.with.confirmation.sql.model';
+import { UserViewSqlModel } from '../../models/user.view.sql.model';
+import { UserWithPasswordViewSqlModel } from '../../models/user.with.password.view.sql.model';
+import { UserMeViewSqlModel } from '../../models/user.me.view.sql.model';
+import { UserConfirmationCodeViewSqlModel } from '../../models/user.confirmation.code.view.sql.model';
+import { UserWithConfirmationSqlModel } from '../../models/user.with.confirmation.sql.model';
 import { UserQueryParamType } from '../../models/user.query.param.type';
-import { UserViewForSaModel } from '../models/queryRepositorySql/users.view.for.sa.model';
-import { UserBannedSqlModel } from '../models/queryRepositorySql/user.banned.sql.model';
+import { UserViewForSaModel } from '../../models/users.view.for.sa.model';
+import { UserBannedSqlModel } from '../../models/user.banned.sql.model';
 
 @Injectable()
 export class UserQueryRepositorySql {
-  constructor(@InjectDataSource() private dataSource: DataSource) {}
+  constructor(@InjectDataSource() private dataSource: DataSource) { }
 
   async findAllUsers(): Promise<UserViewSqlModel[]> {
     const users = await this.dataSource.query(`
@@ -50,15 +50,13 @@ export class UserQueryRepositorySql {
 	        LEFT JOIN "UsersBannedSa" ub
 	        ON u."Id" = ub."UserId"
 	        WHERE (u."Login" ILIKE $1 OR u."Email" ILIKE $2)
-            ${
-              banStatus === 'banned'
-                ? 'AND ub."IsBanned" = true'
-                : banStatus === 'notBanned'
-                ? 'AND ub."IsBanned" is null'
-                : ''
-            }
-	        ORDER BY  u."${sortBy}" ${
-        sortBy !== 'CreatedAt' ? 'COLLATE "C"' : ''
+            ${banStatus === 'banned'
+        ? 'AND ub."IsBanned" = true'
+        : banStatus === 'notBanned'
+          ? 'AND ub."IsBanned" is null'
+          : ''
+      }
+	        ORDER BY  u."${sortBy}" ${sortBy !== 'CreatedAt' ? 'COLLATE "C"' : ''
       } ${sortDirection} 
 	        OFFSET $3 LIMIT $4
         `,
@@ -72,13 +70,12 @@ export class UserQueryRepositorySql {
             LEFT JOIN "UsersBannedSa" ub
             ON u."Id" = ub."UserId"
             WHERE (u."Login" ILIKE $1 OR u."Email" ILIKE $2)
-            ${
-              banStatus === 'banned'
-                ? 'AND ub."IsBanned" = true'
-                : banStatus === 'notBanned'
-                ? 'AND ub."IsBanned" is null'
-                : ''
-            }
+            ${banStatus === 'banned'
+        ? 'AND ub."IsBanned" = true'
+        : banStatus === 'notBanned'
+          ? 'AND ub."IsBanned" is null'
+          : ''
+      }
         `,
       [`%${searchLoginTerm}%`, `%${searchEmailTerm}%`],
     );

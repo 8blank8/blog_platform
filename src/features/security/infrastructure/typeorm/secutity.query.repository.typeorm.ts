@@ -3,13 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { Devices } from '../../domain/typeorm/devices.entity';
-import { DeviceViewSqlModel } from '../models/queryRepositorySql/device.view.sql.model';
+import { DeviceViewSqlModel } from '../../models/device.view.sql.model';
 
 @Injectable()
 export class SecurityQueryRepositoryTypeorm {
   constructor(
     @InjectRepository(Devices) private securityRepository: Repository<Devices>,
-  ) {}
+  ) { }
 
   async findDeviceById(deviceId: string): Promise<Devices | null> {
     const queryBuilder = this.securityRepository.createQueryBuilder('d');

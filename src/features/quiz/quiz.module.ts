@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CqrsModule } from '@nestjs/cqrs';
 
-import { QuizController } from './api/sa/quiz.sa.controller';
-import { QuizPublicController } from './api/public/quiz.public.controller';
+import { QuizController } from './api/quiz.sa.controller';
+import { QuizPublicController } from './api/quiz.public.controller';
 import { AddAnswerUseCase } from './application/useCases/add.answer.use.case';
 import { ConnectionGameUseCase } from './application/useCases/connection.game.use.case';
 import { UpdatePublishedQuestUseCase } from './application/useCases/update.published.quest.use.case';
@@ -45,4 +45,4 @@ import { UserModule } from '../user/user.module';
   ],
   exports: [],
 })
-export class QuizModule {}
+export class QuizModule { }

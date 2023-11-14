@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
-import { PostCreateSqlModel } from './models/post.create.sql.model';
-import { PostUpdateSqlModel } from './models/post.update.sql.model';
+import { PostCreateSqlModel } from '../../models/post.create.sql.model';
+import { PostUpdateSqlModel } from '../../models/post.update.sql.model';
 
 @Injectable()
 export class PostRepositorySql {
-  constructor(@InjectDataSource() private dataSource: DataSource) {}
+  constructor(@InjectDataSource() private dataSource: DataSource) { }
 
   async createPost(inputData: PostCreateSqlModel) {
     const { title, shortDescription, content, blogId } = inputData;

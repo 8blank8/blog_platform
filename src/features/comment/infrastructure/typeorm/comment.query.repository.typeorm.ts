@@ -6,7 +6,7 @@ import { CommentPagniation } from '@app/utils/pagination/comment/comment.paginat
 
 import { PostComments } from '../../domain/typeorm/comment.entitty';
 import { CommentQueryParam } from '../../models/comment.query.param.type';
-import { CommentViewSqlModel } from '../sql/models/comment.view.sql.model';
+import { CommentViewSqlModel } from '../../models/comment.view.sql.model';
 import { PostCommentLike } from '../../domain/typeorm/comment.like.entity';
 
 @Injectable()
@@ -16,7 +16,7 @@ export class CommentQueryRepositoryTypeorm {
     private commentRepository: Repository<PostComments>,
     @InjectRepository(PostCommentLike)
     private commentLikeRepository: Repository<PostCommentLike>,
-  ) {}
+  ) { }
 
   async findCommentsViewByPostId(
     queryParam: CommentQueryParam,

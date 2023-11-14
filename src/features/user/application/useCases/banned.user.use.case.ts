@@ -3,10 +3,10 @@ import { CommandHandler } from '@nestjs/cqrs';
 import { UserBanModel } from '../../models/user.ban.model';
 import { UserQueryRepositorySql } from '../../infrastructure/sql/user.query.repository.sql';
 import { UserRepositorySql } from '../../infrastructure/sql/user.repository.sql';
-import { UpdateBannedUserForSqlModel } from '../../infrastructure/models/repositorySql/update.banned.user.for.sql.model';
+import { UpdateBannedUserForSqlModel } from '../../models/update.banned.user.for.sql.model';
 
 export class BannedUserCommand {
-  constructor(public inputData: UserBanModel, public userId: string) {}
+  constructor(public inputData: UserBanModel, public userId: string) { }
 }
 
 @CommandHandler(BannedUserCommand)
@@ -14,7 +14,7 @@ export class BannedUserUseCase {
   constructor(
     private userQueryRepositorySql: UserQueryRepositorySql,
     private userRepositorySql: UserRepositorySql,
-  ) {}
+  ) { }
 
   async execute(command: BannedUserCommand): Promise<boolean> {
     const { isBanned, banReason } = command.inputData;

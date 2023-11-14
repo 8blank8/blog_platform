@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
-import { CreateDeviceForSqlModel } from '../models/create.device.for.sql.model';
+import { CreateDeviceForSqlModel } from '../../models/create.device.for.sql.model';
 
 @Injectable()
 export class SecurityRepositorySql {
-  constructor(@InjectDataSource() private dataSource: DataSource) {}
+  constructor(@InjectDataSource() private dataSource: DataSource) { }
 
   async createDevice(device: CreateDeviceForSqlModel) {
     const { userId, title, lastActiveDate, ip } = device;

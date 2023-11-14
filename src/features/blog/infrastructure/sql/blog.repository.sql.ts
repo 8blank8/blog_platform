@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
-import { BlogCreateSqlModel } from './models/blog.create.sql.model';
-import { BlogUpdateSqlModel } from './models/blog.update.sql.model';
-import { BannedBlogCreateSqlModel } from './models/banned.blog.create.sql.model';
+import { BlogCreateSqlModel } from '../../models/blog.create.sql.model';
+import { BlogUpdateSqlModel } from '../../models/blog.update.sql.model';
+import { BannedBlogCreateSqlModel } from '../../models/banned.blog.create.sql.model';
 
 @Injectable()
 export class BlogRepositorySql {
-  constructor(@InjectDataSource() private dataSource: DataSource) {}
+  constructor(@InjectDataSource() private dataSource: DataSource) { }
 
   async createBlog(blog: BlogCreateSqlModel) {
     const { name, description, websiteUrl } = blog;

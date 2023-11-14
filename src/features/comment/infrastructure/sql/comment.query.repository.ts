@@ -3,14 +3,14 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { QUERY_PARAM_SQL } from '@app/utils/enum/query.param.enum.sql';
 
-import { CommentViewSqlModel } from './models/comment.view.sql.model';
+import { CommentViewSqlModel } from '../../models/comment.view.sql.model';
 import { CommentQueryParam } from '../../models/comment.query.param.type';
-import { CommentLikeViewSqlModel } from './models/comment.like.view.sql.model';
-import { CommentFullSqlModel } from './models/comment.full.sql.model';
+import { CommentLikeViewSqlModel } from '../../models/comment.like.view.sql.model';
+import { CommentFullSqlModel } from '../../models/comment.full.sql.model';
 
 @Injectable()
 export class CommentQueryRepositorySql {
-  constructor(@InjectDataSource() private dataSource: DataSource) {}
+  constructor(@InjectDataSource() private dataSource: DataSource) { }
 
   async findCommentFullById(commentId: string): Promise<CommentFullSqlModel> {
     const comment = await this.dataSource.query(
@@ -42,15 +42,14 @@ export class CommentQueryRepositorySql {
 		        	SELECT COUNT(*) as "DislikesCount" FROM "PostCommentLike"
 		        	WHERE "LikeStatus" = 'Dislike' AND "CommentId" = pc."Id"
 		        )
-                ${
-                  userId
-                    ? `,(
+                ${userId
+        ? `,(
                             SELECT "LikeStatus" as "MyStatus"
                             FROM "PostCommentLike"
                             WHERE "UserId" = '${userId}' AND "CommentId" = pc."Id"
                         )`
-                    : ''
-                }
+        : ''
+      }
 	        FROM public."PostComments" as pc
 	        LEFT JOIN "Users" as u ON pc."UserId" = u."Id"
             WHERE pc."Id" = $1;
@@ -92,20 +91,18 @@ export class CommentQueryRepositorySql {
                     SELECT COUNT(*) as "DislikesCount" FROM "PostCommentLike"
                     WHERE "LikeStatus" = 'Dislike' AND "CommentId" = pc."Id"
                 )
-                ${
-                  userId
-                    ? `,(
+                ${userId
+        ? `,(
                         SELECT "LikeStatus" as "MyStatus"
                         FROM "PostCommentLike"
                         WHERE "UserId" = '${userId}' AND "CommentId" = pc."Id"
                     )`
-                    : ''
-                }
+        : ''
+      }
             FROM public."PostComments" as pc
             LEFT JOIN "Users" as u ON pc."UserId" = u."Id"
             WHERE pc."PostId" = $3
-            ORDER BY pc."${sortBy}" ${
-        sortBy === 'CreatedAt' ? '' : 'COLLATE "C"'
+            ORDER BY pc."${sortBy}" ${sortBy === 'CreatedAt' ? '' : 'COLLATE "C"'
       } ${sortDirection} 
             OFFSET $1 LIMIT $2;
         `,

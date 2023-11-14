@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { BlogQueryParamModel } from '@app/features/sa/infrastructure/models/blog.query.param';
+import { BlogQueryParamModel } from '@app/features/sa/models/blog.query.param';
 import { BlogPagination } from '@app/utils/pagination/blog/blog.pagination';
 
 import { Blogs } from '../../domain/typeorm/blog.entity';
@@ -10,7 +10,7 @@ import { Blogs } from '../../domain/typeorm/blog.entity';
 export class BlogQueryRepositoryTypeorm {
   constructor(
     @InjectRepository(Blogs) private blogRepository: Repository<Blogs>,
-  ) {}
+  ) { }
 
   async findBlogViewById(blogId: string): Promise<Blogs | null> {
     return this.blogRepository

@@ -15,8 +15,8 @@ import { STATUS_CODE } from '@app/utils/enum/status.code';
 
 import { BindUserForBlogCommand } from '../application/useCases/bind.user.for.blog.use.case';
 import { SaQueryRepository } from '../infrastructure/sa.query.repository';
-import { BlogQueryParamModel } from '../infrastructure/models/blog.query.param';
-import { BlogBanInputDataModel } from './models/blog.ban.input.data.model';
+import { BlogQueryParamModel } from '../models/blog.query.param';
+import { BlogBanInputDataModel } from '../models/blog.ban.input.data.model';
 import { BlogBanCommand } from '../application/useCases/blog.ban.use.case';
 
 @Controller('sa')
@@ -24,7 +24,7 @@ export class SaBlogController {
   constructor(
     private commandBus: CommandBus,
     private saQueryRepository: SaQueryRepository,
-  ) {}
+  ) { }
 
   @UseGuards(BasicAuthGuard)
   @Put('blogs/blogId/bind-with-user/userId')

@@ -15,21 +15,21 @@ import { Response } from 'express';
 import { BasicAuthGuard } from '@app/features/auth/guards/basic.guard';
 import { STATUS_CODE } from '@app/utils/enum/status.code';
 
-import { CreateQuestionModel } from '../../models/create.question.model';
-import { CreateQuestionCommand } from '../../application/useCases/create.question.use.case';
-import { QuizQueryRepositoryTypeorm } from '../../infrastructure/typeorm/quiz.query.repository.typeorm';
-import { DeleteQuestionCommand } from '../../application/useCases/delete.question.use.case';
-import { UpdateQuestionCommand } from '../../application/useCases/update.question.use.case';
-import { UpdatePublishedQuestModel } from '../../models/update.published.quest.model';
-import { UpdatePublishedQuestCommand } from '../../application/useCases/update.published.quest.use.case';
-import { QuestionQueryParam } from '../../models/question.query.param';
+import { CreateQuestionModel } from '../models/create.question.model';
+import { CreateQuestionCommand } from '../application/useCases/create.question.use.case';
+import { QuizQueryRepositoryTypeorm } from '../infrastructure/typeorm/quiz.query.repository.typeorm';
+import { DeleteQuestionCommand } from '../application/useCases/delete.question.use.case';
+import { UpdateQuestionCommand } from '../application/useCases/update.question.use.case';
+import { UpdatePublishedQuestModel } from '../models/update.published.quest.model';
+import { UpdatePublishedQuestCommand } from '../application/useCases/update.published.quest.use.case';
+import { QuestionQueryParam } from '../models/question.query.param';
 
 @Controller('sa/quiz/questions')
 export class QuizController {
   constructor(
     private commandBus: CommandBus,
     private quizQueryRepository: QuizQueryRepositoryTypeorm,
-  ) {}
+  ) { }
 
   @UseGuards(BasicAuthGuard)
   @Post()

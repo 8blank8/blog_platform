@@ -6,14 +6,14 @@ import { BanUserForBlogModel } from '../../models/ban.user.for.blog.model';
 import { BlogQueryRepositorySql } from '../../infrastructure/sql/blog.query.repository.sql';
 import { UserBanBlogQueryRepositorySql } from '../../infrastructure/sql/user.ban.blog.query.repository.sql';
 import { UserBanBlogRepositorySql } from '../../infrastructure/sql/user.ban.blog.repository.sql';
-import { BannedUserForBlogCreateSqlModel } from '../../infrastructure/sql/models/banned.user.for.blog.create.sql.model';
+import { BannedUserForBlogCreateSqlModel } from '../../models/banned.user.for.blog.create.sql.model';
 
 export class BanUserForBlogCommand {
   constructor(
     public inputData: BanUserForBlogModel,
     public bannedUserId: string,
     public blogUserId: string,
-  ) {}
+  ) { }
 }
 
 @CommandHandler(BanUserForBlogCommand)
@@ -23,7 +23,7 @@ export class BanUserForBlogUseCase {
     private blogQueryRepositorySql: BlogQueryRepositorySql,
     private userBanBlogQueryRepositorySql: UserBanBlogQueryRepositorySql,
     private userBanBlogRepositorySql: UserBanBlogRepositorySql,
-  ) {}
+  ) { }
 
   async execute(command: BanUserForBlogCommand): Promise<boolean> {
     const { inputData, bannedUserId, blogUserId } = command;

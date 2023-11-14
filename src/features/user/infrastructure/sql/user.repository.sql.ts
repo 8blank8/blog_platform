@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
-import { CreateUserForSaSqlModel } from '../models/repositorySql/create.user.for..sa.sql.model';
-import { UpdateBannedUserForSqlModel } from '../models/repositorySql/update.banned.user.for.sql.model';
-import { CreateUserForRegistrationSqlModel } from '../models/repositorySql/create.user.for.registration.sql.model';
+import { CreateUserForSaSqlModel } from '../../models/create.user.for..sa.sql.model';
+import { UpdateBannedUserForSqlModel } from '../../models/update.banned.user.for.sql.model';
+import { CreateUserForRegistrationSqlModel } from '../../models/create.user.for.registration.sql.model';
 
 @Injectable()
 export class UserRepositorySql {
-  constructor(@InjectDataSource() private dataSource: DataSource) {}
+  constructor(@InjectDataSource() private dataSource: DataSource) { }
 
   async createUserForAdmin(user: CreateUserForSaSqlModel): Promise<boolean> {
     await this.dataSource.query(

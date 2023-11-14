@@ -1,13 +1,13 @@
 import { CommandHandler } from '@nestjs/cqrs';
 import { v4 as uuidv4 } from 'uuid';
-import { EmailType } from '@app/features/auth/api/models/email.type';
+import { EmailType } from '@app/features/auth/models/email.type';
 import { EmailManager } from '@app/utils/managers/email.manager';
 
 import { UserRepositoryTypeorm } from '../../infrastructure/typeorm/user.repository.typeorm';
 import { UserQueryRepositoryTypeorm } from '../../infrastructure/typeorm/user.query.repository.typeorm';
 
 export class ResendingConfirmationCodeCommand {
-  constructor(public email: EmailType) {}
+  constructor(public email: EmailType) { }
 }
 
 @CommandHandler(ResendingConfirmationCodeCommand)
@@ -16,7 +16,7 @@ export class ResendingConfirmationCodeUseCase {
     private userRepository: UserRepositoryTypeorm,
     private userQueryRepository: UserQueryRepositoryTypeorm,
     private emailManager: EmailManager,
-  ) {}
+  ) { }
 
   async execute(command: ResendingConfirmationCodeCommand): Promise<boolean> {
     const { email } = command;

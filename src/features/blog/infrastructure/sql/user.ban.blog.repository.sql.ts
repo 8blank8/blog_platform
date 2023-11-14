@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
-import { BannedUserForBlogCreateSqlModel } from './models/banned.user.for.blog.create.sql.model';
-import { BannedUserForBlogUpdateSqlModel } from './models/banned.user.for.blog.update.sql.model';
+import { BannedUserForBlogCreateSqlModel } from '../../models/banned.user.for.blog.create.sql.model';
+import { BannedUserForBlogUpdateSqlModel } from '../../models/banned.user.for.blog.update.sql.model';
 
 @Injectable()
 export class UserBanBlogRepositorySql {
-  constructor(@InjectDataSource() private dataSource: DataSource) {}
+  constructor(@InjectDataSource() private dataSource: DataSource) { }
 
   async createBanUserForBlogger(inputData: BannedUserForBlogCreateSqlModel) {
     const { userId, blogId, isBanned, banReason } = inputData;

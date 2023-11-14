@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
-import { AuthRefershTokenViewSqlModel } from '../models/auth.refresh.token.view.sql.model';
+import { AuthRefershTokenViewSqlModel } from '../../models/auth.refresh.token.view.sql.model';
 
 @Injectable()
 export class AuthRepositorySql {
-  constructor(@InjectDataSource() private dataSource: DataSource) {}
+  constructor(@InjectDataSource() private dataSource: DataSource) { }
 
   async postRefreshTokenInBlackList(refreshToken: string) {
     await this.dataSource.query(

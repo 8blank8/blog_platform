@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
-import { BannedUserForBlogSqlModel } from './models/banned.user.for.blog.sql.model';
+import { BannedUserForBlogSqlModel } from '../../models/banned.user.for.blog.sql.model';
 
 @Injectable()
 export class UserBanBlogQueryRepositorySql {
-  constructor(@InjectDataSource() private dataSource: DataSource) {}
+  constructor(@InjectDataSource() private dataSource: DataSource) { }
 
   async findBannedUser(
     userId: string,

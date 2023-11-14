@@ -20,7 +20,7 @@ import { PostQueryParamType } from '@app/features/post/models/post.query.param.t
 import { CommentQueryRepository } from '@app/features/comment/infrastructure/mongo/comment.query.repository';
 import { CommentQueryParam } from '@app/features/comment/models/comment.query.param.type';
 import { BasicAuthGuard } from '@app/features/auth/guards/basic.guard';
-import { BlogQueryParamModel } from '@app/features/sa/infrastructure/models/blog.query.param';
+import { BlogQueryParamModel } from '@app/features/sa/models/blog.query.param';
 import { PostQueryRepositoryTypeorm } from '@app/features/post/infrastructure/typeorm/post.query.repository.typeorm';
 
 import { BlogCreateType } from '../models/blog.create.type';
@@ -41,7 +41,7 @@ export class BloggerController {
     private postQueryRepository: PostQueryRepositoryTypeorm,
     private blogQueryRepository: BlogQueryRepositoryTypeorm,
     private commentQueryRepository: CommentQueryRepository,
-  ) {}
+  ) { }
 
   @UseGuards(BasicAuthGuard)
   @Post()

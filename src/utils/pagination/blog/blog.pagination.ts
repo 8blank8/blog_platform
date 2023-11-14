@@ -1,4 +1,4 @@
-import { BlogQueryParamModel } from '../../../features/sa/infrastructure/models/blog.query.param';
+import { BlogQueryParamModel } from '../../../features/sa/models/blog.query.param';
 import { DefaultPagination } from '../default.pagination';
 import { QUERY_PARAM_SQL } from '../../../utils/enum/query.param.enum.sql';
 

@@ -11,7 +11,7 @@ import { Response } from 'express';
 import { PostQueryParamType } from '@app/features/post/models/post.query.param.type';
 import { JwtOrNotGuard } from '@app/features/auth/guards/jwt.or.not.guard';
 import { STATUS_CODE } from '@app/utils/enum/status.code';
-import { BlogQueryParamModel } from '@app/features/sa/infrastructure/models/blog.query.param';
+import { BlogQueryParamModel } from '@app/features/sa/models/blog.query.param';
 import { PostQueryRepositoryTypeorm } from '@app/features/post/infrastructure/typeorm/post.query.repository.typeorm';
 
 import { BlogQueryRepositoryTypeorm } from '../infrastructure/typeorm/blog.query.repository.typeorm';
@@ -21,7 +21,7 @@ export class BlogController {
   constructor(
     private blogQueryRepository: BlogQueryRepositoryTypeorm,
     private readonly postQueryRepository: PostQueryRepositoryTypeorm,
-  ) {}
+  ) { }
 
   @Get()
   async getBlogs(@Query() queryParam: BlogQueryParamModel) {

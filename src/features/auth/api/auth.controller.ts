@@ -23,7 +23,7 @@ import { LoginUserCommand } from '../application/useCases/login.user.use.case';
 import { CreateRefreshTokenCommand } from '../application/useCases/create.refresh.token.use.case';
 import { AddRefreshTokenInBlackListCommand } from '../application/useCases/add.refresh.token.in.black.list.use.case';
 import { JwtRefreshTokenGuard } from '../guards/jwt.refresh.token.guard';
-import { EmailType } from './models/email.type';
+import { EmailType } from '../models/email.type';
 import { JwtAuthGuard } from '../guards/jwt.guard';
 import { LocalAuthGuard } from '../guards/local.guard';
 
@@ -32,7 +32,7 @@ export class AuthController {
   constructor(
     private userQueryRepository: UserQueryRepositoryTypeorm,
     private commandBus: CommandBus,
-  ) {}
+  ) { }
 
   @UseGuards(ThrottlerGuard, LocalAuthGuard)
   @Post('/login')

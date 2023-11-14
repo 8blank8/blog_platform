@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { PostPagniation } from '@app/utils/pagination/post/post.pagination';
 
 import { Posts } from '../../domain/typeorm/post.entity';
-import { PostViewSqlModel } from '../sql/models/post.view.sql.model';
+import { PostViewSqlModel } from '../../models/post.view.sql.model';
 import { PostQueryParamType } from '../../models/post.query.param.type';
 import { PostLikes } from '../../domain/typeorm/post.like.entity';
 
@@ -14,7 +14,7 @@ export class PostQueryRepositoryTypeorm {
     @InjectRepository(Posts) private postRepository: Repository<Posts>,
     @InjectRepository(PostLikes)
     private postLikesRepository: Repository<PostLikes>,
-  ) {}
+  ) { }
 
   async findFullPostById(postId: string): Promise<Posts | null> {
     return this.postRepository
@@ -126,8 +126,7 @@ export class PostQueryRepositoryTypeorm {
       .leftJoin('p.blog', 'b')
       .where('b.id = :blogId', { blogId })
       .orderBy(
-        `${sortBy === 'blogName' ? `b."name"` : `p."${sortBy}"`} ${
-          sortBy === 'createdAt' ? '' : 'COLLATE "C"'
+        `${sortBy === 'blogName' ? `b."name"` : `p."${sortBy}"`} ${sortBy === 'createdAt' ? '' : 'COLLATE "C"'
         }`,
         sortDirection,
       )
@@ -195,8 +194,7 @@ export class PostQueryRepositoryTypeorm {
       )
       .leftJoin('p.blog', 'b')
       .orderBy(
-        `${sortBy === 'blogName' ? `b."name"` : `p."${sortBy}"`} ${
-          sortBy === 'createdAt' ? '' : 'COLLATE "C"'
+        `${sortBy === 'blogName' ? `b."name"` : `p."${sortBy}"`} ${sortBy === 'createdAt' ? '' : 'COLLATE "C"'
         }`,
         sortDirection,
       )
