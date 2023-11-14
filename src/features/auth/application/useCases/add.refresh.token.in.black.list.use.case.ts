@@ -1,8 +1,8 @@
 import { CommandHandler } from '@nestjs/cqrs';
+import { SecurityRepositoryTypeorm } from '@app/features/security/infrastructure/typeorm/security.repository.typeorm';
 
 import { BlackListRefreshToken } from '../../domain/typeorm/auth.entity';
 import { AuthRepositoryTypeorm } from '../../infrastructure/typeorm/auth.repository.typeorm';
-import { SecurityRepositoryTypeorm } from '../../../../features/security/infrastructure/typeorm/security.repository.typeorm';
 
 export class AddRefreshTokenInBlackListCommand {
   constructor(public refreshToken: string, public deviceId?: string) {}

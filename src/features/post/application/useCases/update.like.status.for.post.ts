@@ -1,8 +1,8 @@
 import { CommandHandler } from '@nestjs/cqrs';
+import { UserQueryRepositoryTypeorm } from '@app/features/user/infrastructure/typeorm/user.query.repository.typeorm';
 
 import { PostLikeStatusType } from '../../models/post.like.status.type';
 import { PostQueryRepositoryTypeorm } from '../../infrastructure/typeorm/post.query.repository.typeorm';
-import { UserQueryRepositoryTypeorm } from '../../../../features/user/infrastructure/typeorm/user.query.repository.typeorm';
 import { PostRepositoryTypeorm } from '../../infrastructure/typeorm/post.repository.typeorm';
 import { PostLikes } from '../../domain/typeorm/post.like.entity';
 

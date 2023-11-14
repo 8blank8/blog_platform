@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
+import { QUERY_PARAM } from '@app/utils/enum/query.param.enum';
 
 import {
   UserBanBlog,
   UserBanBlogDocument,
 } from '../../domain/mongoose/user.ban.blog.schema';
 import { UsersBanQueryParamModel } from '../../models/users.ban.query.param.model';
-import { QUERY_PARAM } from '../../../../utils/enum/query.param.enum';
 
 @Injectable()
 export class UserBanBlogQueryRepository {

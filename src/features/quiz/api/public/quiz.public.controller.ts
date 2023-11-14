@@ -14,9 +14,9 @@ import {
 } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { Response } from 'express';
+import { JwtAuthGuard } from '@app/features/auth/guards/jwt.guard';
+import { STATUS_CODE } from '@app/utils/enum/status.code';
 
-import { JwtAuthGuard } from '../../../../features/auth/guards/jwt.guard';
-import { STATUS_CODE } from '../../../../utils/enum/status.code';
 import { QuizQueryRepositoryTypeorm } from '../../infrastructure/typeorm/quiz.query.repository.typeorm';
 import { AnswerCreateModel } from '../../models/create.answer.model';
 import { ConnectionGameCommand } from '../../application/useCases/connection.game.use.case';

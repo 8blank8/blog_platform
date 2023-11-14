@@ -1,8 +1,8 @@
 import { CommandHandler } from '@nestjs/cqrs';
+import { UserQueryRepositoryTypeorm } from '@app/features/user/infrastructure/typeorm/user.query.repository.typeorm';
 
 import { SecurityRepositoryTypeorm } from '../../infrastructure/typeorm/security.repository.typeorm';
 import { Devices } from '../../domain/typeorm/devices.entity';
-import { UserQueryRepositoryTypeorm } from '../../../../features/user/infrastructure/typeorm/user.query.repository.typeorm';
 
 export class CreateDeviceCommand {
   constructor(public userId: string, public ip: string, public title: string) {}

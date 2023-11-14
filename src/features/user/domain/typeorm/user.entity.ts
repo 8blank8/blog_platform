@@ -5,8 +5,8 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { PostLikes } from '@app/features/post/domain/typeorm/post.like.entity';
 
-import { PostLikes } from '../../../../features/post/domain/typeorm/post.like.entity';
 import { UsersPassword } from './user.password.entity';
 import { UsersConfirmationEmail } from './user.confirmation.email.entity';
 

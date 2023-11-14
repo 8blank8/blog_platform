@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
+import { QUERY_PARAM_SQL } from '@app/utils/enum/query.param.enum.sql';
 
 import { PostViewSqlModel } from './models/post.view.sql.model';
 import { PostFullSqlModel } from './models/post.full.sql.model';
 import { PostQueryParamType } from '../../models/post.query.param.type';
-import { QUERY_PARAM_SQL } from '../../../../utils/enum/query.param.enum.sql';
 import { PostLikeStatusViewSqlModel } from './models/post.like.status.view.sql.model';
 
 @Injectable()

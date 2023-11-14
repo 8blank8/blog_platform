@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { BlogQueryParamModel } from '@app/features/sa/infrastructure/models/blog.query.param';
+import { BlogPagination } from '@app/utils/pagination/blog/blog.pagination';
 
 import { Blogs } from '../../domain/typeorm/blog.entity';
-import { BlogQueryParamModel } from '../../../../features/sa/infrastructure/models/blog.query.param';
-import { BlogPagination } from '../../../../utils/pagination/blog/blog.pagination';
 
 @Injectable()
 export class BlogQueryRepositoryTypeorm {

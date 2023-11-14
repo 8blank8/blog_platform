@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { PostPagniation } from '@app/utils/pagination/post/post.pagination';
 
 import { Posts } from '../../domain/typeorm/post.entity';
 import { PostViewSqlModel } from '../sql/models/post.view.sql.model';
-import { PostPagniation } from '../../../../utils/pagination/post/post.pagination';
 import { PostQueryParamType } from '../../models/post.query.param.type';
 import { PostLikes } from '../../domain/typeorm/post.like.entity';
 

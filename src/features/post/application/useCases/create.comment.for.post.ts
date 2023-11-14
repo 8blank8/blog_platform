@@ -1,10 +1,10 @@
 import { CommandHandler } from '@nestjs/cqrs';
+import { CommentCreateType } from '@app/features/comment/models/comment.create.type';
+import { UserQueryRepositoryTypeorm } from '@app/features/user/infrastructure/typeorm/user.query.repository.typeorm';
+import { PostComments } from '@app/features/comment/domain/typeorm/comment.entitty';
+import { CommentRepositoryTypeorm } from '@app/features/comment/infrastructure/typeorm/comment.repository.typeorm';
 
-import { CommentCreateType } from '../../../../features/comment/models/comment.create.type';
 import { PostQueryRepositoryTypeorm } from '../../infrastructure/typeorm/post.query.repository.typeorm';
-import { UserQueryRepositoryTypeorm } from '../../../../features/user/infrastructure/typeorm/user.query.repository.typeorm';
-import { PostComments } from '../../../../features/comment/domain/typeorm/comment.entitty';
-import { CommentRepositoryTypeorm } from '../../../../features/comment/infrastructure/typeorm/comment.repository.typeorm';
 
 export class CreateCommentForPostCommand {
   constructor(

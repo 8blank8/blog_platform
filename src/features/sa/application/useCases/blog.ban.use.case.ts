@@ -1,9 +1,9 @@
 import { CommandHandler } from '@nestjs/cqrs';
+import { BlogQueryRepositorySql } from '@app/features/blog/infrastructure/sql/blog.query.repository.sql';
+import { BannedBlogCreateSqlModel } from '@app/features/blog/infrastructure/sql/models/banned.blog.create.sql.model';
+import { BlogRepositorySql } from '@app/features/blog/infrastructure/sql/blog.repository.sql';
 
 import { BlogBanInputDataModel } from '../../api/models/blog.ban.input.data.model';
-import { BlogQueryRepositorySql } from '../../../../features/blog/infrastructure/sql/blog.query.repository.sql';
-import { BannedBlogCreateSqlModel } from '../../../../features/blog/infrastructure/sql/models/banned.blog.create.sql.model';
-import { BlogRepositorySql } from '../../../../features/blog/infrastructure/sql/blog.repository.sql';
 
 export class BlogBanCommand {
   constructor(public blogId: string, public inputData: BlogBanInputDataModel) {}

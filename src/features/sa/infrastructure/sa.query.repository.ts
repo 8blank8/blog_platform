@@ -1,11 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import {
+  Blog,
+  BlogDocument,
+} from '@app/features/blog/domain/mongoose/blog.schema';
+import {
+  User,
+  UserDocument,
+} from '@app/features/user/domain/mongoose/user.schema';
+import { QUERY_PARAM } from '@app/utils/enum/query.param.enum';
 
-import { Blog, BlogDocument } from '../../blog/domain/mongoose/blog.schema';
 import { BlogViewModel } from './models/blog.view.model';
-import { User, UserDocument } from '../../user/domain/mongoose/user.schema';
-import { QUERY_PARAM } from '../../../utils/enum/query.param.enum';
 import { BlogQueryParamModel } from './models/blog.query.param';
 
 @Injectable()

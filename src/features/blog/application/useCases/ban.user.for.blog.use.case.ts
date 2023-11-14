@@ -1,8 +1,8 @@
 import { CommandHandler } from '@nestjs/cqrs';
 import { ForbiddenException } from '@nestjs/common';
+import { UserQueryRepositorySql } from '@app/features/user/infrastructure/sql/user.query.repository.sql';
 
 import { BanUserForBlogModel } from '../../models/ban.user.for.blog.model';
-import { UserQueryRepositorySql } from '../../../user/infrastructure/sql/user.query.repository.sql';
 import { BlogQueryRepositorySql } from '../../infrastructure/sql/blog.query.repository.sql';
 import { UserBanBlogQueryRepositorySql } from '../../infrastructure/sql/user.ban.blog.query.repository.sql';
 import { UserBanBlogRepositorySql } from '../../infrastructure/sql/user.ban.blog.repository.sql';

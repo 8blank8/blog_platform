@@ -1,9 +1,9 @@
 import { CommandHandler } from '@nestjs/cqrs';
 import { v4 as uuidv4 } from 'uuid';
 import bcrypt from 'bcrypt';
+import { EmailManager } from '@app/utils/managers/email.manager';
 
 import { UserCreateType } from '../../models/user.create.type';
-import { EmailManager } from '../../../../utils/managers/email.manager';
 import { UserRepositoryTypeorm } from '../../infrastructure/typeorm/user.repository.typeorm';
 import { Users } from '../../domain/typeorm/user.entity';
 import { UsersPassword } from '../../domain/typeorm/user.password.entity';

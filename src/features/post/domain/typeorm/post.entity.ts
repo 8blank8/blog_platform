@@ -5,10 +5,10 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Blogs } from '@app/features/blog/domain/typeorm/blog.entity';
+import { PostComments } from '@app/features/comment/domain/typeorm/comment.entitty';
 
-import { Blogs } from '../../../../features/blog/domain/typeorm/blog.entity';
 import { PostLikes } from './post.like.entity';
-import { PostComments } from '../../../../features/comment/domain/typeorm/comment.entitty';
 
 @Entity()
 export class Posts {

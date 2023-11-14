@@ -1,8 +1,8 @@
 import { CommandHandler } from '@nestjs/cqrs';
+import { PostRepositoryTypeorm } from '@app/features/post/infrastructure/typeorm/post.repository.typeorm';
+import { PostQueryRepositoryTypeorm } from '@app/features/post/infrastructure/typeorm/post.query.repository.typeorm';
 
 import { BlogQueryRepositoryTypeorm } from '../../infrastructure/typeorm/blog.query.repository.typeorm';
-import { PostRepositoryTypeorm } from '../../../../features/post/infrastructure/typeorm/post.repository.typeorm';
-import { PostQueryRepositoryTypeorm } from '../../../../features/post/infrastructure/typeorm/post.query.repository.typeorm';
 
 export class DeletePostByBlogIdCommand {
   constructor(public postId: string, public blogId: string) {}

@@ -1,20 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { QuestPagniation } from '@app/utils/pagination/quest/quest.pagination';
+import { GamePagniation } from '@app/utils/pagination/game/game.pagination';
+import { TopUsersPagniation } from '@app/utils/pagination/game/top.user.pagination';
 
 import { QuizQestion } from '../../domain/typeorm/question.entity';
 import { QuestionQueryParam } from '../../models/question.query.param';
-import { QuestPagniation } from '../../../../utils/pagination/quest/quest.pagination';
 import { Game } from '../../domain/typeorm/quiz.game';
 import { Answer } from '../../domain/typeorm/answer.entity';
 import { QuizScore } from '../../domain/typeorm/quiz.score.entity';
 import { QuizPlayer } from '../../domain/typeorm/quiz.player.entity';
 import { PlayerStatisticViewModel } from '../../models/player.statistic.view.model';
 import { QuizGameQueryParamModel } from '../../models/quiz.game.query.param.model';
-import { GamePagniation } from '../../../../utils/pagination/game/game.pagination';
 import { TopUsersQueryParamModel } from '../../models/top.users.query.param.model';
 import { TopUsersViewModel } from '../../models/top.users.view.model';
-import { TopUsersPagniation } from '../../../../utils/pagination/game/top.user.pagination';
 
 @Injectable()
 export class QuizQueryRepositoryTypeorm {

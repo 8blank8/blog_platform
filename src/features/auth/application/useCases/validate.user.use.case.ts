@@ -1,7 +1,6 @@
 import { CommandHandler } from '@nestjs/cqrs';
 import bcrypt from 'bcrypt';
-
-import { UserQueryRepositoryTypeorm } from '../../../../features/user/infrastructure/typeorm/user.query.repository.typeorm';
+import { UserQueryRepositoryTypeorm } from '@app/features/user/infrastructure/typeorm/user.query.repository.typeorm';
 
 export class ValidateUserCommand {
   constructor(public loginOrEmail: string, public password: string) {}

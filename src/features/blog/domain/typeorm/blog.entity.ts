@@ -1,6 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-
-import { Posts } from '../../../../features/post/domain/typeorm/post.entity';
+import { Posts } from '@app/features/post/domain/typeorm/post.entity';
 
 @Entity()
 export class Blogs {

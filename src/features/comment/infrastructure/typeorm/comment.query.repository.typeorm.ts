@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { objectKeysMapTypeorm } from '@app/utils/mapper/object.keys.map.typeorm';
+import { CommentPagniation } from '@app/utils/pagination/comment/comment.pagination';
 
 import { PostComments } from '../../domain/typeorm/comment.entitty';
 import { CommentQueryParam } from '../../models/comment.query.param.type';
 import { CommentViewSqlModel } from '../sql/models/comment.view.sql.model';
 import { PostCommentLike } from '../../domain/typeorm/comment.like.entity';
-import { objectKeysMapTypeorm } from '../../../../utils/mapper/object.keys.map.typeorm';
-import { CommentPagniation } from '../../../../utils/pagination/comment/comment.pagination';
 
 @Injectable()
 export class CommentQueryRepositoryTypeorm {

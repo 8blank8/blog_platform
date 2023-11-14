@@ -10,22 +10,22 @@ import {
 import { Response } from 'express';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { CommandBus } from '@nestjs/cqrs';
+import { UserCreateType } from '@app/features/user/models/user.create.type';
+import { ConfirmationCodeType } from '@app/utils/custom-validation/confirmation.code.type';
+import { STATUS_CODE } from '@app/utils/enum/status.code';
+import { CreateDeviceCommand } from '@app/features/security/application/useCases/create.device.use.case';
+import { RegistrationUserCommand } from '@app/features/user/application/useCases/registration.user.use.case';
+import { EmailConfirmationCommand } from '@app/features/user/application/useCases/email.confirmation.use.case';
+import { ResendingConfirmationCodeCommand } from '@app/features/user/application/useCases/resending.confirmation.code.use.case';
+import { UserQueryRepositoryTypeorm } from '@app/features/user/infrastructure/typeorm/user.query.repository.typeorm';
 
-import { LocalAuthGuard } from '../guards/local.guard';
-import { JwtAuthGuard } from '../guards/jwt.guard';
-import { UserCreateType } from '../../user/models/user.create.type';
-import { ConfirmationCodeType } from '../../../utils/custom-validation/confirmation.code.type';
-import { EmailType } from './models/email.type';
-import { JwtRefreshTokenGuard } from '../guards/jwt.refresh.token.guard';
-import { STATUS_CODE } from '../../../utils/enum/status.code';
-import { CreateDeviceCommand } from '../../security/application/useCases/create.device.use.case';
-import { RegistrationUserCommand } from '../../user/application/useCases/registration.user.use.case';
-import { EmailConfirmationCommand } from '../../user/application/useCases/email.confirmation.use.case';
-import { ResendingConfirmationCodeCommand } from '../../user/application/useCases/resending.confirmation.code.use.case';
 import { LoginUserCommand } from '../application/useCases/login.user.use.case';
 import { CreateRefreshTokenCommand } from '../application/useCases/create.refresh.token.use.case';
 import { AddRefreshTokenInBlackListCommand } from '../application/useCases/add.refresh.token.in.black.list.use.case';
-import { UserQueryRepositoryTypeorm } from '../../../features/user/infrastructure/typeorm/user.query.repository.typeorm';
+import { JwtRefreshTokenGuard } from '../guards/jwt.refresh.token.guard';
+import { EmailType } from './models/email.type';
+import { JwtAuthGuard } from '../guards/jwt.guard';
+import { LocalAuthGuard } from '../guards/local.guard';
 
 @Controller('/auth')
 export class AuthController {
