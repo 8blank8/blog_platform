@@ -1,4 +1,5 @@
 import { ConfigModule } from '@nestjs/config';
+// eslint-disable-next-line no-unused-vars
 const configModule = ConfigModule.forRoot({});
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -85,4 +86,4 @@ const saUseCase = [BindUserForBlogUseCase, BannedUserUseCase, BlogBanUseCase];
   controllers: [...controllers],
   providers: [...validation, ...adapters, ...saUseCase, ...services],
 })
-export class AppModule { }
+export class AppModule {}
