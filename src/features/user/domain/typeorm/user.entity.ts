@@ -1,4 +1,3 @@
-import { PostLikes } from '../../../../features/post/domain/typeorm/post.like.entity';
 import {
   Column,
   Entity,
@@ -6,9 +5,10 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+
+import { PostLikes } from '../../../../features/post/domain/typeorm/post.like.entity';
 import { UsersPassword } from './user.password.entity';
 import { UsersConfirmationEmail } from './user.confirmation.email.entity';
-import { QuizPlayer } from '../../../quiz/domain/typeorm/quiz.player.entity';
 
 @Entity()
 export class Users {

@@ -1,4 +1,5 @@
 import { CommandHandler } from '@nestjs/cqrs';
+
 import { UpdatePublishedQuestModel } from '../../models/update.published.quest.model';
 import { QuizQueryRepositoryTypeorm } from '../../infrastructure/typeorm/quiz.query.repository.typeorm';
 import { QuizRepositoryTypeorm } from '../../infrastructure/typeorm/quiz.repository.typeorm';

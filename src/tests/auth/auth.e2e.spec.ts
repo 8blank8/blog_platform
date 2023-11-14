@@ -1,14 +1,13 @@
 import request from 'supertest';
 import { INestApplication } from '@nestjs/common';
+
 import { dropDataBase, startTestConfig } from '../utils/start.test.config';
 import { createUserDto } from '../utils/create.user.dto';
-import { async } from 'rxjs';
 import { AUTH } from '../enums/base.auth.enum';
-import { cookieParser } from '../utils/cookie.parser';
 
 describe('auth', () => {
   let app: INestApplication;
-  const basicAuth = 'Basic YWRtaW46cXdlcnR5';
+  // const basicAuth = 'Basic YWRtaW46cXdlcnR5';
 
   beforeAll(async () => {
     app = await startTestConfig();

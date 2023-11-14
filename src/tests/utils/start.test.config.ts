@@ -7,6 +7,7 @@ import {
 import { DataSource } from 'typeorm';
 import cookieParser from 'cookie-parser';
 import { useContainer } from 'class-validator';
+
 import { AppModule } from '../../app.module';
 import { HttpExceptionFilter } from '../../exception.filter';
 import { EmailManager } from '../../utils/managers/email.manager';
@@ -47,8 +48,6 @@ export const startTestConfig = async () => {
   );
   app.useGlobalFilters(new HttpExceptionFilter());
   await app.init();
-
-  // await dropDataBase(app)
 
   return app;
 };

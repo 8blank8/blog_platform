@@ -6,6 +6,7 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
+
 import { UserQueryRepositoryTypeorm } from '../../features/user/infrastructure/typeorm/user.query.repository.typeorm';
 
 @ValidatorConstraint({ name: 'UserIsConfirmed', async: true })

@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsString, Length, Validate } from 'class-validator';
+
 import { CheckBlogId } from '../../../utils/custom-validation/check.blogId';
 import { IsNotBlank } from '../../../utils/custom-validation/is.not.blank';
 

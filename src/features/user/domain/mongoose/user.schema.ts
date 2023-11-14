@@ -4,9 +4,6 @@ import { v4 as uuidv4 } from 'uuid';
 import bcrypt from 'bcrypt';
 
 @Schema()
-class BanInfo {}
-
-@Schema()
 export class User {
   @Prop({
     required: true,

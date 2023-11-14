@@ -1,4 +1,5 @@
 import { IsString, Length, IsNotEmpty, Validate } from 'class-validator';
+
 import { IsNotBlank } from '../../../utils/custom-validation/is.not.blank';
 
 export class PostCreateByIdType {

@@ -1,4 +1,7 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { CqrsModule } from '@nestjs/cqrs';
+
 import { QuizController } from './api/sa/quiz.sa.controller';
 import { QuizPublicController } from './api/public/quiz.public.controller';
 import { AddAnswerUseCase } from './application/useCases/add.answer.use.case';
@@ -7,7 +10,6 @@ import { UpdatePublishedQuestUseCase } from './application/useCases/update.publi
 import { UpdateQuestionUseCase } from './application/useCases/update.question.use.case';
 import { DeleteQuestionUseCase } from './application/useCases/delete.question.use.case';
 import { CreateQuestionUseCase } from './application/useCases/create.question.use.case';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { QuizPlayer } from './domain/typeorm/quiz.player.entity';
 import { QuizScore } from './domain/typeorm/quiz.score.entity';
 import { Answer } from './domain/typeorm/answer.entity';
@@ -16,7 +18,6 @@ import { QuizQestion } from './domain/typeorm/question.entity';
 import { QuizRepositoryTypeorm } from './infrastructure/typeorm/quiz.repository.typeorm';
 import { QuizQueryRepositoryTypeorm } from './infrastructure/typeorm/quiz.query.repository.typeorm';
 import { UserModule } from '../user/user.module';
-import { CqrsModule } from '@nestjs/cqrs';
 
 @Module({
   imports: [

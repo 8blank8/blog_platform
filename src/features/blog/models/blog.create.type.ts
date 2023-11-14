@@ -1,11 +1,5 @@
 import { Transform } from 'class-transformer';
-import {
-  Length,
-  IsString,
-  IsNotEmpty,
-  Matches,
-  NotContains,
-} from 'class-validator';
+import { Length, IsString, IsNotEmpty, Matches } from 'class-validator';
 
 export class BlogCreateType {
   @IsNotEmpty()

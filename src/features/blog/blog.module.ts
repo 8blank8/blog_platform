@@ -1,4 +1,8 @@
 import { Module, forwardRef } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { CqrsModule } from '@nestjs/cqrs';
+
 import { BlogController } from './api/blog.controller';
 import { BloggerUserController } from './api/blogger.user.controller';
 import { BlogService } from './application/blog.service';
@@ -8,13 +12,11 @@ import { CreateBlogUseCase } from './application/useCases/create.blog.use.case';
 import { UpdateBlogUseCase } from './application/useCases/update.blog.use.case';
 import { DeleteBlogUseCase } from './application/useCases/delete.blog.use.case';
 import { BanUserForBlogUseCase } from './application/useCases/ban.user.for.blog.use.case';
-import { MongooseModule } from '@nestjs/mongoose';
 import {
   UserBanBlog,
   UserBanBlogSchema,
 } from './domain/mongoose/user.ban.blog.schema';
 import { Blog, BlogSchema } from './domain/mongoose/blog.schema';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { Blogs } from './domain/typeorm/blog.entity';
 import { BlogQueryRepository } from './infrastructure/mongo/blog.query.repository';
 import { BlogRepository } from './infrastructure/mongo/blog.repository';
@@ -27,11 +29,7 @@ import { UserBanBlogRepositorySql } from './infrastructure/sql/user.ban.blog.rep
 import { BlogRepositoryTypeorm } from './infrastructure/typeorm/blog.repository.typeorm';
 import { BlogQueryRepositoryTypeorm } from './infrastructure/typeorm/blog.query.repository.typeorm';
 import { PostModule } from '../post/post.module';
-import { PostQueryRepositoryTypeorm } from '../post/infrastructure/typeorm/post.query.repository.typeorm';
-import { PostRepositoryTypeorm } from '../post/infrastructure/typeorm/post.repository.typeorm';
 import { UserModule } from '../user/user.module';
-import { PostRepository } from '../post/infrastructure/mongo/post.repository';
-import { CqrsModule } from '@nestjs/cqrs';
 
 @Module({
   imports: [

@@ -1,10 +1,7 @@
 import { CommandHandler } from '@nestjs/cqrs';
-import { CommentCreateType } from '../../models/comment.create.type';
 import { ForbiddenException } from '@nestjs/common';
-import { CommentQueryRepository } from '../../infrastructure/mongo/comment.query.repository';
-import { CommentRepository } from '../../infrastructure/mongo/comment.repository';
-import { CommentQueryRepositorySql } from '../../infrastructure/sql/comment.query.repository';
-import { CommentRepositorySql } from '../../infrastructure/sql/comment.repository.sql';
+
+import { CommentCreateType } from '../../models/comment.create.type';
 import { CommentQueryRepositoryTypeorm } from '../../infrastructure/typeorm/comment.query.repository.typeorm';
 import { CommentRepositoryTypeorm } from '../../infrastructure/typeorm/comment.repository.typeorm';
 

@@ -1,9 +1,9 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
+import request from 'supertest';
+
 import { startTestConfig } from '../utils/start.test.config';
 import { createUserDto } from '../utils/create.user.dto';
-import request from 'supertest';
 import { AUTH } from '../enums/base.auth.enum';
-import { async } from 'rxjs';
 
 describe('quiz', () => {
   let app: INestApplication;
@@ -20,22 +20,13 @@ describe('quiz', () => {
     });
   });
 
-  // describe('add question', () => {
-
-  // })
-
   describe('connection game', () => {
     const user1 = createUserDto(1);
     const user2 = createUserDto(2);
     const user3 = createUserDto(3);
 
-    let createdUser1;
-    let createdUser2;
-    let createdUser3;
-
     let accessTokenUser1: string;
     let accessTokenUser2: string;
-    let accessTokenUser3: string;
 
     const questions = [
       { body: '11111111111', correctAnswers: ['1'] },
@@ -44,10 +35,6 @@ describe('quiz', () => {
       { body: '44444444444', correctAnswers: ['1'] },
       { body: '55555555555', correctAnswers: ['1'] },
     ];
-
-    let createdGameActive;
-
-    let answer1User1;
 
     it('add five question', async () => {
       for (let i = 0; i < questions.length; i++) {
@@ -86,10 +73,7 @@ describe('quiz', () => {
         .post(`/sa/users`)
         .set('Authorization', AUTH.BASIC)
         .send(user1)
-        .expect(201)
-        .then(({ body }) => {
-          createdUser1 = body;
-        });
+        .expect(201);
     });
 
     it('create user2', async () => {
@@ -97,10 +81,7 @@ describe('quiz', () => {
         .post(`/sa/users`)
         .set('Authorization', AUTH.BASIC)
         .send(user2)
-        .expect(201)
-        .then(({ body }) => {
-          createdUser2 = body;
-        });
+        .expect(201);
     });
 
     it('create user3', async () => {
@@ -108,10 +89,7 @@ describe('quiz', () => {
         .post(`/sa/users`)
         .set('Authorization', AUTH.BASIC)
         .send(user3)
-        .expect(201)
-        .then(({ body }) => {
-          createdUser3 = body;
-        });
+        .expect(201);
     });
 
     it('login user1', async () => {
@@ -148,8 +126,6 @@ describe('quiz', () => {
         .send({ loginOrEmail: user3.login, password: user3.password })
         .expect(200)
         .then(({ body }) => {
-          accessTokenUser3 = body.accessToken;
-
           expect(body).toEqual({
             accessToken: expect.any(String),
           });
@@ -162,7 +138,7 @@ describe('quiz', () => {
         .set('Authorization', `Bearer ${accessTokenUser1}`)
         .expect(200);
 
-      const responseConnectionUser2 = await request(app.getHttpServer())
+      await request(app.getHttpServer())
         .post(`/pair-game-quiz/pairs/connection`)
         .set('Authorization', `Bearer ${accessTokenUser2}`)
         .expect(200);
@@ -203,7 +179,7 @@ describe('quiz', () => {
     });
 
     it('find top users', async () => {
-      const res = await request(app.getHttpServer())
+      await request(app.getHttpServer())
         .get('/pair-game-quiz/users/top')
         .query('sort=avgScores desc');
     });

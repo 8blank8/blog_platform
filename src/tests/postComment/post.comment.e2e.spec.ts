@@ -1,11 +1,12 @@
 import { INestApplication } from '@nestjs/common';
-import { dropDataBase, startTestConfig } from '../utils/start.test.config';
 import request from 'supertest';
+import { v4 as uuidv4 } from 'uuid';
+
+import { dropDataBase, startTestConfig } from '../utils/start.test.config';
 import { createUserDto } from '../utils/create.user.dto';
 import { AUTH } from '../enums/base.auth.enum';
 import { createBlogDto } from '../utils/create.blog.dto';
 import { createPostDto } from '../utils/create.post.dto';
-import { v4 as uuidv4 } from 'uuid';
 
 describe('post comment', () => {
   let app: INestApplication;

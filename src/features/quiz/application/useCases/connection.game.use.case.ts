@@ -1,7 +1,8 @@
 import { CommandHandler } from '@nestjs/cqrs';
+import { ForbiddenException } from '@nestjs/common';
+
 import { UserQueryRepositoryTypeorm } from '../../../user/infrastructure/typeorm/user.query.repository.typeorm';
 import { QuizQueryRepositoryTypeorm } from '../../infrastructure/typeorm/quiz.query.repository.typeorm';
-import { ForbiddenException } from '@nestjs/common';
 import { Game } from '../../domain/typeorm/quiz.game';
 import { QuizRepositoryTypeorm } from '../../infrastructure/typeorm/quiz.repository.typeorm';
 import { QuizScore } from '../../domain/typeorm/quiz.score.entity';

@@ -1,5 +1,6 @@
-import { DefaultPagination } from '../default.pagination';
 import { QuizGameQueryParamModel } from '@app/features/quiz/models/quiz.game.query.param.model';
+
+import { DefaultPagination } from '../default.pagination';
 
 export class GamePagniation extends DefaultPagination {
   constructor(private queryParam: QuizGameQueryParamModel) {

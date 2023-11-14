@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { Users } from '../../domain/typeorm/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+
+import { Users } from '../../domain/typeorm/user.entity';
 import { UsersConfirmationEmail } from '../../domain/typeorm/user.confirmation.email.entity';
 import { UsersPassword } from '../../domain/typeorm/user.password.entity';
 

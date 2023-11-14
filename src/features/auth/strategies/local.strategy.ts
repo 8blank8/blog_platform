@@ -2,6 +2,7 @@ import { Strategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
+
 import { ValidateUserCommand } from '../application/useCases/validate.user.use.case';
 
 @Injectable()

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { UserViewType } from '../../models/user.view.type';
+
 import { UserViewSqlModel } from '../models/queryRepositorySql/user.view.sql.model';
 import { UserWithPasswordViewSqlModel } from '../models/queryRepositorySql/user.with.password.view.sql.model';
 import { UserMeViewSqlModel } from '../models/queryRepositorySql/user.me.view.sql.model';
@@ -218,19 +218,14 @@ export class UserQueryRepositorySql {
   }
 
   _mapUserForSa(user): UserViewForSaModel {
-    const banDate =
-      user.BanDate === null ? null : new Date(user.BanDate).toISOString();
+    // const banDate =
+    //   user.BanDate === null ? null : new Date(user.BanDate).toISOString();
 
     return {
       id: user.Id,
       login: user.Login,
       email: user.Email,
       createdAt: user.CreatedAt,
-      // banInfo: {
-      //     isBanned: user.IsBanned ?? false,
-      //     banDate: banDate,
-      //     banReason: user.BanReason,
-      // }
     };
   }
 

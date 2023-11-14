@@ -1,7 +1,12 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { MongooseModule } from '@nestjs/mongoose';
+import { EmailManager } from '@app/utils/managers/email.manager';
+import { EmailAdapter } from '@app/utils/adapters/email.adapter';
+import { CqrsModule } from '@nestjs/cqrs';
+
 import { UserRepositoryTypeorm } from './infrastructure/typeorm/user.repository.typeorm';
 import { UserQueryRepositoryTypeorm } from './infrastructure/typeorm/user.query.repository.typeorm';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { Users } from './domain/typeorm/user.entity';
 import { UsersConfirmationEmail } from './domain/typeorm/user.confirmation.email.entity';
 import { UsersPassword } from './domain/typeorm/user.password.entity';
@@ -12,15 +17,11 @@ import { ResendingConfirmationCodeUseCase } from './application/useCases/resendi
 import { EmailConfirmationUseCase } from './application/useCases/email.confirmation.use.case';
 import { RegistrationUserUseCase } from './application/useCases/registration.user.use.case';
 import { CreateUserUseCase } from './application/useCases/create.user.use.case';
-import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './domain/mongoose/user.schema';
 import { UserRepository } from './infrastructure/mongo/user.repository';
 import { UserQueryRepository } from './infrastructure/mongo/user.query.repository';
 import { UserRepositorySql } from './infrastructure/sql/user.repository.sql';
 import { UserQueryRepositorySql } from './infrastructure/sql/user.query.repository.sql';
-import { EmailManager } from '@app/utils/managers/email.manager';
-import { EmailAdapter } from '@app/utils/adapters/email.adapter';
-import { CqrsModule } from '@nestjs/cqrs';
 
 @Module({
   imports: [

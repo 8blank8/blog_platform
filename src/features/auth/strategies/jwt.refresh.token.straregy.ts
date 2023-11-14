@@ -2,6 +2,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
+
 import { setting_env } from '../../../setting.env';
 import { AuthRepositoryTypeorm } from '../infrastructure/typeorm/auth.repository.typeorm';
 

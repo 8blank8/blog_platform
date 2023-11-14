@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Devices } from '../../domain/typeorm/devices.entity';
 import { Repository } from 'typeorm';
+
+import { Devices } from '../../domain/typeorm/devices.entity';
 import { DeviceViewSqlModel } from '../models/queryRepositorySql/device.view.sql.model';
 
 @Injectable()

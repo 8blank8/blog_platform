@@ -1,4 +1,5 @@
 import { CommandHandler } from '@nestjs/cqrs';
+
 import { UserRepositoryTypeorm } from '../../infrastructure/typeorm/user.repository.typeorm';
 import { UserQueryRepositoryTypeorm } from '../../infrastructure/typeorm/user.query.repository.typeorm';
 

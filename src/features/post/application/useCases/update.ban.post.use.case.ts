@@ -1,4 +1,5 @@
 import { CommandHandler } from '@nestjs/cqrs';
+
 import { PostRepository } from '../../infrastructure/mongo/post.repository';
 
 export class UpdateBanPostCommand {

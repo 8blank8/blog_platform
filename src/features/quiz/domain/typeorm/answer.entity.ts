@@ -1,13 +1,6 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+
 import { QuizQestion } from './question.entity';
-import { Users } from '../../../../features/user/domain/typeorm/user.entity';
-import { Game } from './quiz.game';
 import { QuizPlayer } from './quiz.player.entity';
 
 @Entity()

@@ -5,6 +5,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+
 import { QuizQestion } from './question.entity';
 import { Answer } from './answer.entity';
 import { QuizScore } from './quiz.score.entity';

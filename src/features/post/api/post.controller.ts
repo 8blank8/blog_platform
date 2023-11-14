@@ -12,6 +12,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { CommandBus } from '@nestjs/cqrs';
+
 import { PostQueryParamType } from '../models/post.query.param.type';
 import { PostUpdateType } from '../models/post.update.type';
 import { CommentCreateType } from '../../comment/models/comment.create.type';
@@ -21,14 +23,10 @@ import { PostLikeStatusType } from '../models/post.like.status.type';
 import { JwtOrNotGuard } from '../../auth/guards/jwt.or.not.guard';
 import { BasicAuthGuard } from '../../auth/guards/basic.guard';
 import { STATUS_CODE } from '../../../utils/enum/status.code';
-import { CommandBus } from '@nestjs/cqrs';
 import { UpdatePostCommand } from '../application/useCases/update.post.use.case';
 import { DeletePostCommand } from '../application/useCases/delete.post.use.case';
 import { CreateCommentForPostCommand } from '../application/useCases/create.comment.for.post';
 import { UpdateLikeStatusForPostCommand } from '../application/useCases/update.like.status.for.post';
-import { BlogQueryRepository } from '../../../features/blog/infrastructure/mongo/blog.query.repository';
-import { PostQueryRepositorySql } from '../infrastructure/sql/post.query.repository.sql';
-import { CommentQueryRepositorySql } from '../../../features/comment/infrastructure/sql/comment.query.repository';
 import { PostQueryRepositoryTypeorm } from '../infrastructure/typeorm/post.query.repository.typeorm';
 import { CommentQueryRepositoryTypeorm } from '../../../features/comment/infrastructure/typeorm/comment.query.repository.typeorm';
 

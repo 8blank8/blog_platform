@@ -1,6 +1,7 @@
 import { INestApplication } from '@nestjs/common';
-import { dropDataBase, startTestConfig } from '../utils/start.test.config';
 import request from 'supertest';
+
+import { startTestConfig } from '../utils/start.test.config';
 import { AUTH } from '../enums/base.auth.enum';
 import { createBlogDto } from '../utils/create.blog.dto';
 import { createPostDto } from '../utils/create.post.dto';

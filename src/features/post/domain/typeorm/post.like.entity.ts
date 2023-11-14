@@ -1,5 +1,6 @@
-import { Users } from '../../../../features/user/domain/typeorm/user.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+
+import { Users } from '../../../../features/user/domain/typeorm/user.entity';
 import { Posts } from './post.entity';
 
 @Entity()

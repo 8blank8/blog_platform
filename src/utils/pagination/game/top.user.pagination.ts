@@ -1,5 +1,6 @@
-import { DefaultPagination } from '../default.pagination';
 import { TopUsersQueryParamModel } from '@app/features/quiz/models/top.users.query.param.model';
+
+import { DefaultPagination } from '../default.pagination';
 
 export class TopUsersPagniation extends DefaultPagination {
   constructor(private queryParam: TopUsersQueryParamModel) {

@@ -1,5 +1,6 @@
-import { Users } from '../../../user/domain/typeorm/user.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+
+import { Users } from '../../../user/domain/typeorm/user.entity';
 
 @Entity()
 export class QuizPlayer {

@@ -1,4 +1,5 @@
 import { CommandHandler } from '@nestjs/cqrs';
+
 import { UserBanModel } from '../../models/user.ban.model';
 import { UserQueryRepositorySql } from '../../infrastructure/sql/user.query.repository.sql';
 import { UserRepositorySql } from '../../infrastructure/sql/user.repository.sql';

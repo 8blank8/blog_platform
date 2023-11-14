@@ -11,10 +11,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { CommandBus } from '@nestjs/cqrs';
+
 import { UserCreateType } from '../models/user.create.type';
 import { UserQueryParamType } from '../models/user.query.param.type';
 import { BasicAuthGuard } from '../../auth/guards/basic.guard';
-import { CommandBus } from '@nestjs/cqrs';
 import { CreateUserCommand } from '../application/useCases/create.user.use.case';
 import { DeleteUserCommand } from '../application/useCases/delete.user.use.case';
 import { STATUS_CODE } from '../../../utils/enum/status.code';

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+
 import { Blog, BlogDocument } from '../../blog/domain/mongoose/blog.schema';
 import { BlogViewModel } from './models/blog.view.model';
 import { User, UserDocument } from '../../user/domain/mongoose/user.schema';
@@ -48,8 +49,9 @@ export class SaQueryRepository {
     };
   }
 
-  async _mapBlog(blog: BlogDocument): Promise<BlogViewModel> {
+  async _mapBlog(blog: BlogDocument): Promise<BlogViewModel | null> {
     const user = await this.userModel.findOne({ id: blog.userId });
+    if (!user) return null;
 
     return {
       id: blog.id,
@@ -59,8 +61,8 @@ export class SaQueryRepository {
       isMembership: blog.isMembership,
       createdAt: blog.createdAt,
       blogOwnerInfo: {
-        userId: user!.id,
-        userLogin: user!.login,
+        userId: user.id,
+        userLogin: user.login,
       },
       banInfo: {
         isBanned: blog.isBanned,

@@ -1,7 +1,8 @@
 import { CommandHandler } from '@nestjs/cqrs';
+import { ForbiddenException } from '@nestjs/common';
+
 import { AnswerCreateModel } from '../../models/create.answer.model';
 import { QuizQueryRepositoryTypeorm } from '../../infrastructure/typeorm/quiz.query.repository.typeorm';
-import { ForbiddenException } from '@nestjs/common';
 import { Answer } from '../../domain/typeorm/answer.entity';
 import { QuizRepositoryTypeorm } from '../../infrastructure/typeorm/quiz.repository.typeorm';
 
@@ -170,10 +171,6 @@ export class AddAnswerUseCase {
     );
     if (!firstPlayer || !secondPlayer) return false;
 
-    // firstPlayer.sumScore += game.score.find(item => item.user.id === firstPlayer.id)!.score
-    // secondPlayer.sumScore += game.score.find(item => item.user.id === secondPlayer.id)!.score
-
-    const playerId: string = firstPlayerId;
     const firstPlayerAnswer: any = [];
     const secondPlayerAnswer: any = [];
     let firstPlayerCorrectAnswer = [];

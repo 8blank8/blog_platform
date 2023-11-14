@@ -1,4 +1,5 @@
 import { PostQueryParamType } from '@app/features/post/models/post.query.param.type';
+
 import { DefaultPagination } from '../default.pagination';
 
 export class PostPagniation extends DefaultPagination {

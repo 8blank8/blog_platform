@@ -1,12 +1,9 @@
 import { Controller, Delete, Res } from '@nestjs/common';
 import { Response } from 'express';
-import { CommentRepository } from '../comment/infrastructure/mongo/comment.repository';
-import { STATUS_CODE } from '../../utils/enum/status.code';
-import { UserRepositorySql } from '../user/infrastructure/sql/user.repository.sql';
-import { BlogRepositorySql } from '../blog/infrastructure/sql/blog.repository.sql';
-import { PostRepositorySql } from '../post/infrastructure/sql/post.repository.sql';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
+
+import { STATUS_CODE } from '../../utils/enum/status.code';
 
 @Controller('/testing')
 export class TestingController {

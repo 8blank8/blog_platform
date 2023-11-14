@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { QuizQestion } from '../../domain/typeorm/question.entity';
 import { Repository } from 'typeorm';
+
+import { QuizQestion } from '../../domain/typeorm/question.entity';
 import { QuestionQueryParam } from '../../models/question.query.param';
 import { QuestPagniation } from '../../../../utils/pagination/quest/quest.pagination';
 import { Game } from '../../domain/typeorm/quiz.game';

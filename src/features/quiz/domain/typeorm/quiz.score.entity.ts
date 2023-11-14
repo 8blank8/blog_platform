@@ -1,4 +1,5 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+
 import { Game } from './quiz.game';
 import { QuizPlayer } from './quiz.player.entity';
 

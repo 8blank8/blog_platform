@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
+
 import { Comment, CommentDocument } from '../../domain/mongoose/comment.schema';
 import { CommentQueryParam } from '../../models/comment.query.param.type';
 import { QUERY_PARAM } from '../../../../utils/enum/query.param.enum';
@@ -145,6 +146,7 @@ export class CommentQueryRepository {
     const post = await this.postQueryRepository.findPostDocumentById(
       comment.postId,
     );
+    if (!post) return null;
 
     return {
       id: comment.id,
@@ -160,10 +162,10 @@ export class CommentQueryRepository {
         myStatus: myStatus,
       },
       postInfo: {
-        blogId: post!.blogId,
-        blogName: post!.blogName,
-        title: post!.title,
-        id: post!.id,
+        blogId: post.blogId,
+        blogName: post.blogName,
+        title: post.title,
+        id: post.id,
       },
     };
   }

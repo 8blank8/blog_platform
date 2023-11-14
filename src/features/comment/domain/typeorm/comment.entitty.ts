@@ -1,6 +1,3 @@
-import { Blogs } from '../../../../features/blog/domain/typeorm/blog.entity';
-import { Posts } from '../../../../features/post/domain/typeorm/post.entity';
-import { Users } from '../../../../features/user/domain/typeorm/user.entity';
 import {
   Column,
   Entity,
@@ -8,6 +5,10 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+
+import { Blogs } from '../../../../features/blog/domain/typeorm/blog.entity';
+import { Posts } from '../../../../features/post/domain/typeorm/post.entity';
+import { Users } from '../../../../features/user/domain/typeorm/user.entity';
 import { PostCommentLike } from './comment.like.entity';
 
 @Entity()

@@ -8,15 +8,16 @@ import {
   Body,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { ThrottlerGuard } from '@nestjs/throttler';
+import { CommandBus } from '@nestjs/cqrs';
+
 import { LocalAuthGuard } from '../guards/local.guard';
 import { JwtAuthGuard } from '../guards/jwt.guard';
 import { UserCreateType } from '../../user/models/user.create.type';
 import { ConfirmationCodeType } from '../../../utils/custom-validation/confirmation.code.type';
 import { EmailType } from './models/email.type';
 import { JwtRefreshTokenGuard } from '../guards/jwt.refresh.token.guard';
-import { ThrottlerGuard } from '@nestjs/throttler';
 import { STATUS_CODE } from '../../../utils/enum/status.code';
-import { CommandBus } from '@nestjs/cqrs';
 import { CreateDeviceCommand } from '../../security/application/useCases/create.device.use.case';
 import { RegistrationUserCommand } from '../../user/application/useCases/registration.user.use.case';
 import { EmailConfirmationCommand } from '../../user/application/useCases/email.confirmation.use.case';

@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Posts } from '../../domain/typeorm/post.entity';
 import { Repository } from 'typeorm';
+
+import { Posts } from '../../domain/typeorm/post.entity';
 import { PostLikes } from '../../domain/typeorm/post.like.entity';
 
 @Injectable()

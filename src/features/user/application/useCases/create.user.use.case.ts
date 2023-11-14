@@ -1,7 +1,8 @@
 import { CommandHandler } from '@nestjs/cqrs';
-import { UserCreateType } from '../../models/user.create.type';
 import { v4 as uuidv4 } from 'uuid';
 import bcrypt from 'bcrypt';
+
+import { UserCreateType } from '../../models/user.create.type';
 import { Users } from '../../domain/typeorm/user.entity';
 import { UsersPassword } from '../../domain/typeorm/user.password.entity';
 import { UsersConfirmationEmail } from '../../domain/typeorm/user.confirmation.email.entity';

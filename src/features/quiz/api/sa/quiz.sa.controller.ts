@@ -10,12 +10,13 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
+import { CommandBus } from '@nestjs/cqrs';
+import { Response } from 'express';
+
 import { BasicAuthGuard } from '../../../../features/auth/guards/basic.guard';
 import { CreateQuestionModel } from '../../models/create.question.model';
-import { CommandBus } from '@nestjs/cqrs';
 import { CreateQuestionCommand } from '../../application/useCases/create.question.use.case';
 import { QuizQueryRepositoryTypeorm } from '../../infrastructure/typeorm/quiz.query.repository.typeorm';
-import { Response } from 'express';
 import { STATUS_CODE } from '../../../../utils/enum/status.code';
 import { DeleteQuestionCommand } from '../../application/useCases/delete.question.use.case';
 import { UpdateQuestionCommand } from '../../application/useCases/update.question.use.case';

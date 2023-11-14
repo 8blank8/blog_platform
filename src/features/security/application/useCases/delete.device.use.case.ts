@@ -1,5 +1,6 @@
 import { CommandHandler } from '@nestjs/cqrs';
 import { ForbiddenException } from '@nestjs/common';
+
 import { SecurityRepositoryTypeorm } from '../../infrastructure/typeorm/security.repository.typeorm';
 import { SecurityQueryRepositoryTypeorm } from '../../infrastructure/typeorm/secutity.query.repository.typeorm';
 

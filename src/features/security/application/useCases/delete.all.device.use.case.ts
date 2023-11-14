@@ -1,4 +1,5 @@
 import { CommandHandler } from '@nestjs/cqrs';
+
 import { SecurityRepositoryTypeorm } from '../../infrastructure/typeorm/security.repository.typeorm';
 
 export class DeleteAllDevicesCommand {

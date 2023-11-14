@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { FilterQuery, Model } from 'mongoose';
+
 import {
   UserBanBlog,
   UserBanBlogDocument,
 } from '../../domain/mongoose/user.ban.blog.schema';
-import { FilterQuery, Model } from 'mongoose';
 import { UsersBanQueryParamModel } from '../../models/users.ban.query.param.model';
 import { QUERY_PARAM } from '../../../../utils/enum/query.param.enum';
 

@@ -1,4 +1,8 @@
 import { Module, forwardRef } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { CqrsModule } from '@nestjs/cqrs';
+
 import { PostControler } from './api/post.controller';
 import { PostService } from './application/post.service';
 import { CreatePostUseCase } from './application/useCases/create.post.use.case';
@@ -9,10 +13,8 @@ import { CreateCommentForPostUseCase } from './application/useCases/create.comme
 import { UpdateLikeStatusForPostUseCase } from './application/useCases/update.like.status.for.post';
 import { UpdateBanPostUseCase } from './application/useCases/update.ban.post.use.case';
 import { UpdateBanPostLikeStatusUseCase } from './application/useCases/update.ban.post.like.status.use.case';
-import { MongooseModule } from '@nestjs/mongoose';
 import { PostLike, PostLikeSchema } from './domain/mongoose/post.like.schema';
 import { PostSchema, Post } from './domain/mongoose/post.schema';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { Posts } from './domain/typeorm/post.entity';
 import { PostLikes } from './domain/typeorm/post.like.entity';
 import { PostQueryRepository } from './infrastructure/mongo/post.query.repository';
@@ -24,7 +26,6 @@ import { PostQueryRepositoryTypeorm } from './infrastructure/typeorm/post.query.
 import { BlogModule } from '../blog/blog.module';
 import { UserModule } from '../user/user.module';
 import { CommentModule } from '../comment/comment.module';
-import { CqrsModule } from '@nestjs/cqrs';
 
 @Module({
   imports: [

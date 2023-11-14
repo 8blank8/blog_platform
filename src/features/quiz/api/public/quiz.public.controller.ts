@@ -11,11 +11,11 @@ import {
   Req,
   Res,
   UseGuards,
-  assignMetadata,
 } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
-import { JwtAuthGuard } from '../../../../features/auth/guards/jwt.guard';
 import { Response } from 'express';
+
+import { JwtAuthGuard } from '../../../../features/auth/guards/jwt.guard';
 import { STATUS_CODE } from '../../../../utils/enum/status.code';
 import { QuizQueryRepositoryTypeorm } from '../../infrastructure/typeorm/quiz.query.repository.typeorm';
 import { AnswerCreateModel } from '../../models/create.answer.model';

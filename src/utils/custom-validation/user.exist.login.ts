@@ -3,18 +3,13 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-// import { UserQueryRepository } from '/features/user/infrastructure/user.query.repository";
-import { UserQueryRepositorySql } from '../../features/user/infrastructure/sql/user.query.repository.sql';
+
 import { UserQueryRepositoryTypeorm } from '../../features/user/infrastructure/typeorm/user.query.repository.typeorm';
 
 @ValidatorConstraint({ name: 'UserExistLogin', async: true })
 @Injectable()
 export class UserExistLogin implements ValidatorConstraintInterface {
-  constructor(
-    // private readonly userQueryRepository: UserQueryRepository
-    // private userQueryRepositorySql: UserQueryRepositorySql
-    private userQueryRepository: UserQueryRepositoryTypeorm,
-  ) {}
+  constructor(private userQueryRepository: UserQueryRepositoryTypeorm) {}
 
   async validate(login: string) {
     try {

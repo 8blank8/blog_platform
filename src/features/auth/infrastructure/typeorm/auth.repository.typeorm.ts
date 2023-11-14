@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BlackListRefreshToken } from '../../domain/typeorm/auth.entity';
 import { Repository } from 'typeorm';
+
+import { BlackListRefreshToken } from '../../domain/typeorm/auth.entity';
 
 @Injectable()
 export class AuthRepositoryTypeorm {
