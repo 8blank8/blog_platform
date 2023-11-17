@@ -4,7 +4,7 @@ import { PostFullSqlModel } from '@post/models/post.full.sql.model';
 import { PostLikeStatusViewSqlModel } from '@post/models/post.like.status.view.sql.model';
 import { PostQueryParamType } from '@post/models/post.query.param.type';
 import { PostViewSqlModel } from '@post/models/post.view.sql.model';
-import { QUERY_PARAM_SQL } from '@src/utils/enum/query.param.enum.sql';
+import { QUERY_PARAM_SQL } from '@utils/enum/query.param.enum.sql';
 import { DataSource } from 'typeorm';
 
 @Injectable()

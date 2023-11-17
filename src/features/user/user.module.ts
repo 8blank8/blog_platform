@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CqrsModule } from '@nestjs/cqrs';
-import { EmailManager } from '@src/utils/managers/email.manager';
-import { EmailAdapter } from '@src/utils/adapters/email.adapter';
+import { EmailManager } from '@utils/managers/email.manager';
+import { EmailAdapter } from '@utils/adapters/email.adapter';
 
 import { UserRepositoryTypeorm } from './infrastructure/typeorm/user.repository.typeorm';
 import { UserQueryRepositoryTypeorm } from './infrastructure/typeorm/user.query.repository.typeorm';

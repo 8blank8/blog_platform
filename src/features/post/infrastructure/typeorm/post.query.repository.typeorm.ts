@@ -4,7 +4,7 @@ import { Posts } from '@post/domain/typeorm/post.entity';
 import { PostLikes } from '@post/domain/typeorm/post.like.entity';
 import { PostQueryParamType } from '@post/models/post.query.param.type';
 import { PostViewSqlModel } from '@post/models/post.view.sql.model';
-import { PostPagniation } from '@src/utils/pagination/post/post.pagination';
+import { PostPagniation } from '@utils/pagination/post/post.pagination';
 import { Repository } from 'typeorm';
 
 @Injectable()

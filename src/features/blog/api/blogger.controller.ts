@@ -15,7 +15,7 @@ import { CommandBus } from '@nestjs/cqrs';
 import { Response } from 'express';
 import { JwtAuthGuard } from '@auth/guards/jwt.guard';
 import { CreatePostByBlogIdCommand } from '@post/usecases/create.post.by.blog.id.use.case';
-import { STATUS_CODE } from '@src/utils/enum/status.code';
+import { STATUS_CODE } from '@utils/enum/status.code';
 import { PostQueryParamType } from '@post/models/post.query.param.type';
 import { CommentQueryRepository } from '@comment/repository/mongo/comment.query.repository';
 import { CommentQueryParam } from '@comment/models/comment.query.param.type';

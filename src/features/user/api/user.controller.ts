@@ -18,7 +18,7 @@ import { UserCreateType } from '@user/models/user.create.type';
 import { CreateUserCommand } from '@user/usecases/create.user.use.case';
 import { UserQueryParamType } from '@user/models/user.query.param.type';
 import { DeleteUserCommand } from '@user/usecases/delete.user.use.case';
-import { STATUS_CODE } from '@src/utils/enum/status.code';
+import { STATUS_CODE } from '@utils/enum/status.code';
 import { UserBanModel } from '@user/models/user.ban.model';
 import { BannedUserCommand } from '@user/usecases/banned.user.use.case';
 

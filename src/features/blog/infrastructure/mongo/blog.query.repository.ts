@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { QUERY_PARAM } from '@src/utils/enum/query.param.enum';
+import { QUERY_PARAM } from '@utils/enum/query.param.enum';
 import { Blog, BlogDocument } from '@blog/domain/mongoose/blog.schema';
 import { BlogDBType } from '@blog/models/blog.db.type';
 import { BlogViewType } from '@blog/models/blog.view.type';

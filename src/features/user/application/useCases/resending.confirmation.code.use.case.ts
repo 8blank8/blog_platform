@@ -1,6 +1,6 @@
 import { EmailType } from '@auth/models/email.type';
 import { CommandHandler } from '@nestjs/cqrs';
-import { EmailManager } from '@src/utils/managers/email.manager';
+import { EmailManager } from '@utils/managers/email.manager';
 import { UserQueryRepositoryTypeorm } from '@user/repository/typeorm/user.query.repository.typeorm';
 import { UserRepositoryTypeorm } from '@user/repository/typeorm/user.repository.typeorm';
 import { v4 as uuidv4 } from 'uuid';

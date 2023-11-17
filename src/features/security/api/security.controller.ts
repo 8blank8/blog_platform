@@ -12,7 +12,7 @@ import { CommandBus } from '@nestjs/cqrs';
 import { SecurityQueryRepositoryTypeorm } from '@security/repository/typeorm/secutity.query.repository.typeorm';
 import { JwtRefreshTokenGuard } from '@auth/guards/jwt.refresh.token.guard';
 import { DeleteDeviceCommand } from '@security/usecases/delete.device.use.case';
-import { STATUS_CODE } from '@src/utils/enum/status.code';
+import { STATUS_CODE } from '@utils/enum/status.code';
 import { DeleteAllDevicesCommand } from '@security/usecases/delete.all.device.use.case';
 
 @Controller('/security')

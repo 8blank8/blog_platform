@@ -10,12 +10,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
-import { SaQueryRepository } from '@posast/repository/sa.query.repository';
+import { SaQueryRepository } from '@sa/repository/sa.query.repository';
 import { BlogBanInputDataModel } from '@sa/models/blog.ban.input.data.model';
 import { BlogQueryParamModel } from '@sa/models/blog.query.param';
 import { BindUserForBlogCommand } from '@sa/usecases/bind.user.for.blog.use.case';
 import { BlogBanCommand } from '@sa/usecases/blog.ban.use.case';
-import { STATUS_CODE } from '@src/utils/enum/status.code';
+import { STATUS_CODE } from '@utils/enum/status.code';
 import { Response } from 'express';
 
 @Controller('sa')

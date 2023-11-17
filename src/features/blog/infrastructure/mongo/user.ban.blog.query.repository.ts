@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
-import { QUERY_PARAM } from '@src/utils/enum/query.param.enum';
+import { QUERY_PARAM } from '@utils/enum/query.param.enum';
 import {
   UserBanBlog,
   UserBanBlogDocument,

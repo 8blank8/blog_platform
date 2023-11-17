@@ -1,6 +1,6 @@
 import { CommandHandler } from '@nestjs/cqrs';
 import { JwtService } from '@nestjs/jwt';
-import { setting_env } from '@src/setting.env';
+import { setting_env } from '@utils/enums/setting.env';
 import { SecurityQueryRepositoryTypeorm } from '@security/repository/typeorm/secutity.query.repository.typeorm';
 import { SecurityRepositoryTypeorm } from '@security/repository/typeorm/security.repository.typeorm';
 

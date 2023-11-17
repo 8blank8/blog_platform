@@ -7,7 +7,7 @@ import {
 import { Post, PostDocument } from '@post/domain/mongoose/post.schema';
 import { PostQueryParamType } from '@post/models/post.query.param.type';
 import { PostViewType } from '@post/models/post.view.type';
-import { QUERY_PARAM } from '@src/utils/enum/query.param.enum';
+import { QUERY_PARAM } from '@utils/enum/query.param.enum';
 import { Model } from 'mongoose';
 
 @Injectable()

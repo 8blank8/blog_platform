@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import bcrypt from 'bcrypt';
 import { UserCreateType } from '@user/models/user.create.type';
 import { UserRepositoryTypeorm } from '@user/repository/typeorm/user.repository.typeorm';
-import { EmailManager } from '@src/utils/managers/email.manager';
+import { EmailManager } from '@utils/managers/email.manager';
 import { Users } from '@user/domain/typeorm/user.entity';
 import { UsersPassword } from '@user/domain/typeorm/user.password.entity';
 import { UsersConfirmationEmail } from '@user/domain/typeorm/user.confirmation.email.entity';

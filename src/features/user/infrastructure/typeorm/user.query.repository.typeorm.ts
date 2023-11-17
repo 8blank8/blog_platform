@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserPagination } from '@src/utils/pagination/user/user.pagination';
+import { UserPagination } from '@utils/pagination/user/user.pagination';
 import { UsersConfirmationEmail } from '@user/domain/typeorm/user.confirmation.email.entity';
 import { Users } from '@user/domain/typeorm/user.entity';
 import { UserQueryParamType } from '@user/models/user.query.param.type';

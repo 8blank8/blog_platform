@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { QUERY_PARAM_SQL } from '@src/utils/enum/query.param.enum.sql';
+import { QUERY_PARAM_SQL } from '@utils/enum/query.param.enum.sql';
 import { UserBannedSqlModel } from '@user/models/user.banned.sql.model';
 import { UserConfirmationCodeViewSqlModel } from '@user/models/user.confirmation.code.view.sql.model';
 import { UserMeViewSqlModel } from '@user/models/user.me.view.sql.model';

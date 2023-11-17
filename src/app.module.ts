@@ -10,7 +10,7 @@ import { CqrsModule } from '@nestjs/cqrs/dist';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TestingModule } from '@nestjs/testing';
 
-import { setting_env } from './setting.env';
+import { setting_env } from './utils/enums/setting.env';
 import { AppController } from './app.controller';
 import { EmailAdapter } from './utils/adapters/email.adapter';
 import { EmailManager } from './utils/managers/email.manager';

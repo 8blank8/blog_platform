@@ -4,7 +4,7 @@ import { CommentQueryParam } from '@comment/models/comment.query.param.type';
 import { CommentViewSqlModel } from '@comment/models/comment.view.sql.model';
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { QUERY_PARAM_SQL } from '@src/utils/enum/query.param.enum.sql';
+import { QUERY_PARAM_SQL } from '@utils/enum/query.param.enum.sql';
 import { DataSource } from 'typeorm';
 
 @Injectable()

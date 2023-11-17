@@ -17,7 +17,7 @@ import { PostQueryRepositoryTypeorm } from '@post/repository/typeorm/post.query.
 import { CommentQueryRepositoryTypeorm } from '@comment/repository/typeorm/comment.query.repository.typeorm';
 import { JwtOrNotGuard } from '@auth/guards/jwt.or.not.guard';
 import { PostQueryParamType } from '@post/models/post.query.param.type';
-import { STATUS_CODE } from '@src/utils/enum/status.code';
+import { STATUS_CODE } from '@utils/enum/status.code';
 import { BasicAuthGuard } from '@auth/guards/basic.guard';
 import { PostUpdateType } from '@post/models/post.update.type';
 import { UpdatePostCommand } from '@post/usecases/update.post.use.case';

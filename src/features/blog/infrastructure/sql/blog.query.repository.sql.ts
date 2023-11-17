@@ -4,7 +4,7 @@ import { BlogViewSqlModel } from '@blog/models/blog.view.sql.model';
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { BlogQueryParamModel } from '@sa/models/blog.query.param';
-import { QUERY_PARAM_SQL } from '@src/utils/enum/query.param.enum.sql';
+import { QUERY_PARAM_SQL } from '@utils/enum/query.param.enum.sql';
 import { DataSource } from 'typeorm';
 
 @Injectable()

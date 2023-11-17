@@ -13,7 +13,7 @@ import { Response } from 'express';
 import { CommandBus } from '@nestjs/cqrs';
 import { JwtOrNotGuard } from '@auth/guards/jwt.or.not.guard';
 import { CommentQueryRepositoryTypeorm } from '@comment/repository/typeorm/comment.query.repository.typeorm';
-import { STATUS_CODE } from '@src/utils/enum/status.code';
+import { STATUS_CODE } from '@utils/enum/status.code';
 import { JwtAuthGuard } from '@auth/guards/jwt.guard';
 import { CommentCreateType } from '@comment/models/comment.create.type';
 import { UpdateCommetCommand } from '@comment/appication/useCases/update.comment.use.case';

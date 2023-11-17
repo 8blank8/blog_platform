@@ -4,8 +4,8 @@ import { CommentQueryParam } from '@comment/models/comment.query.param.type';
 import { CommentViewSqlModel } from '@comment/models/comment.view.sql.model';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { objectKeysMapTypeorm } from '@src/utils/mapper/object.keys.map.typeorm';
-import { CommentPagniation } from '@src/utils/pagination/comment/comment.pagination';
+import { objectKeysMapTypeorm } from '@utils/mapper/object.keys.map.typeorm';
+import { CommentPagniation } from '@utils/pagination/comment/comment.pagination';
 import { Repository } from 'typeorm';
 
 @Injectable()
