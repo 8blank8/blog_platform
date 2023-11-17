@@ -20,7 +20,7 @@ import { TopUsersQueryParamModel } from '@quiz/models/top.users.query.param.mode
 import { QuizQueryRepositoryTypeorm } from '@quiz/repository/typeorm/quiz.query.repository.typeorm';
 import { AddAnswerCommand } from '@quiz/usecases/add.answer.use.case';
 import { ConnectionGameCommand } from '@quiz/usecases/connection.game.use.case';
-import { STATUS_CODE } from '@src/utils/enum/status.code';
+import { STATUS_CODE } from '@utils/enum/status.code';
 import { Response } from 'express';
 
 @Controller('pair-game-quiz')

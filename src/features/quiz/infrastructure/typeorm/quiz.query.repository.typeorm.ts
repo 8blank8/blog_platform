@@ -10,9 +10,9 @@ import { QuestionQueryParam } from '@quiz/models/question.query.param';
 import { QuizGameQueryParamModel } from '@quiz/models/quiz.game.query.param.model';
 import { TopUsersQueryParamModel } from '@quiz/models/top.users.query.param.model';
 import { TopUsersViewModel } from '@quiz/models/top.users.view.model';
-import { GamePagniation } from '@src/utils/pagination/game/game.pagination';
-import { TopUsersPagniation } from '@src/utils/pagination/game/top.user.pagination';
-import { QuestPagniation } from '@src/utils/pagination/quest/quest.pagination';
+import { GamePagniation } from '@utils/pagination/game/game.pagination';
+import { TopUsersPagniation } from '@utils/pagination/game/top.user.pagination';
+import { QuestPagniation } from '@utils/pagination/quest/quest.pagination';
 import { Repository } from 'typeorm';
 
 @Injectable()

@@ -20,7 +20,7 @@ import { CreateQuestionCommand } from '@quiz/usecases/create.question.use.case';
 import { DeleteQuestionCommand } from '@quiz/usecases/delete.question.use.case';
 import { UpdatePublishedQuestCommand } from '@quiz/usecases/update.published.quest.use.case';
 import { UpdateQuestionCommand } from '@quiz/usecases/update.question.use.case';
-import { STATUS_CODE } from '@src/utils/enum/status.code';
+import { STATUS_CODE } from '@utils/enum/status.code';
 import { Response } from 'express';
 
 @Controller('sa/quiz/questions')
