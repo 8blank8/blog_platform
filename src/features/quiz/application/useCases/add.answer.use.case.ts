@@ -4,17 +4,22 @@ import { AnswerCreateModel } from '@quiz/models/create.answer.model';
 import { QuizQueryRepositoryTypeorm } from '@quiz/repository/typeorm/quiz.query.repository.typeorm';
 import { QuizRepositoryTypeorm } from '@quiz/repository/typeorm/quiz.repository.typeorm';
 import { Answer } from '@quiz/domain/typeorm/answer.entity';
+import { Game } from '@quiz/domain/typeorm/quiz.game';
+import { QuizPlayer } from '@quiz/domain/typeorm/quiz.player.entity';
 
 export class AddAnswerCommand {
-  constructor(public inputData: AnswerCreateModel, public userId: string) {}
+  constructor(public inputData: AnswerCreateModel, public userId: string) { }
 }
-
+// TODO: добавить в packege.json после завершения // "pre-commit": {
+//   "run": "lint",
+//   "silent": false
+// },
 @CommandHandler(AddAnswerCommand)
 export class AddAnswerUseCase {
   constructor(
     private quizQueryRepository: QuizQueryRepositoryTypeorm,
     private quizRepository: QuizRepositoryTypeorm,
-  ) {}
+  ) { }
 
   async execute(command: AddAnswerCommand): Promise<string | boolean> {
     const { inputData, userId } = command;
@@ -28,104 +33,22 @@ export class AddAnswerUseCase {
     if (!game) throw new ForbiddenException();
     if (!game.secondPlayer) throw new ForbiddenException();
 
-    const firstPlayerAnswersCount = !game.answer
-      ? 0
-      : game.answer.filter((answer) => answer.userId === player.id).length;
+    const firstPlayerAnswersCount = this.countPlayerAnswers(game, player);
     if (firstPlayerAnswersCount === 5) throw new ForbiddenException();
 
-    let secondPlayerId: string;
-    if (game.firstPlayer.id === player.id) {
-      secondPlayerId = game.secondPlayer.id;
-    } else {
-      secondPlayerId = game.firstPlayer.id;
-    }
+    const secondPlayerId = this.findSecondPlayerId(game, player);
 
-    if (firstPlayerAnswersCount === 4) {
-      game.answerTime = new Date();
-    }
-
-    console.log({ time: game.answerTime, date: new Date() });
-
-    if (game.answerTime < new Date()) {
-      let answerId = '';
-      for (let i = firstPlayerAnswersCount; i <= 4; i++) {
-        const createdAnswer = new Answer();
-        createdAnswer.gameId = game.id;
-        createdAnswer.user = player;
-        createdAnswer.userId = player.id;
-        createdAnswer.question = game.questions[firstPlayerAnswersCount];
-        createdAnswer.questionId = game.questions[firstPlayerAnswersCount].id;
-        createdAnswer.addedAt = new Date().toISOString();
-        createdAnswer.answerStatus = 'Incorrect';
-
-        let gameAnswers;
-        if (game.answer) {
-          gameAnswers = [...game.answer, createdAnswer];
-        } else {
-          gameAnswers = [createdAnswer];
-        }
-
-        game.answer = gameAnswers;
-
-        await this.quizRepository.saveGame(game);
-        await this.quizRepository.saveAnswer(createdAnswer);
-        answerId = createdAnswer.id;
-      }
-
-      const isFinished = await this.checkFinishGame(player.id);
-      if (isFinished) {
-        game.finishGameDate = new Date().toISOString();
-        game.status = 'Finished';
-        await this.quizRepository.saveGame(game);
-      }
-
-      return answerId;
-    }
-
-    const createdAnswer = new Answer();
-    createdAnswer.gameId = game.id;
-    createdAnswer.user = player;
-    createdAnswer.userId = player.id;
-    createdAnswer.question = game.questions[firstPlayerAnswersCount];
-    createdAnswer.questionId = game.questions[firstPlayerAnswersCount].id;
-    createdAnswer.addedAt = new Date().toISOString();
-
-    const answer = game.questions[firstPlayerAnswersCount].correctAnswers.find(
-      (item) => item === inputData.answer,
+    const answer = await this.addAnswer(
+      game,
+      player,
+      inputData.answer,
+      firstPlayerAnswersCount,
     );
-
-    if (answer) {
-      createdAnswer.answerStatus = 'Correct';
-    } else {
-      createdAnswer.answerStatus = 'Incorrect';
-    }
-
-    let gameAnswers;
-    if (game.answer) {
-      gameAnswers = [...game.answer, createdAnswer];
-    } else {
-      gameAnswers = [createdAnswer];
-    }
-
-    game.answer = gameAnswers;
-
+    await this.addScore(game, player, answer);
+    // TODO: возможно не надо сейчас сохранять игру
     await this.quizRepository.saveGame(game);
-    // log(createdAnswer, 'IN UC AFTER SAVE')
-    await this.quizRepository.saveAnswer(createdAnswer);
 
-    const score = await this.quizQueryRepository.findPlayerScoreByUserId(
-      game.id,
-      player.id,
-    );
-
-    if (score && answer) {
-      score.score = score.score + 1;
-      player.sumScore += 1;
-
-      await this.quizRepository.savePlayer(player);
-      await this.quizRepository.saveScore(score);
-    }
-
+    // TODO: рефактор функции сделать более оптимизированно и добавить проверку на 10 секунд до завершения
     const isFinished = await this.checkFinishGame(player.id);
     if (isFinished) {
       game.finishGameDate = new Date().toISOString();
@@ -133,18 +56,71 @@ export class AddAnswerUseCase {
       await this.quizRepository.saveGame(game);
     }
 
+    // TODO: рефактор сделать более оптимизированно
     await this.checkAddBonus(game.id, player.id, secondPlayerId);
-    // console.log(createdAnswer, 'IN UC FOR RETURN')
-    return createdAnswer.id;
+
+    return answer.id;
   }
 
-  // private checkExpirationGame(game: Game, player: QuizPlayer) {
-  //     const time = new Date()
+  private async addScore(game: Game, player: QuizPlayer, answer: Answer) {
+    const score = await this.quizQueryRepository.findPlayerScoreByUserId(
+      game.id,
+      player.id,
+    );
 
-  //     if(time > game.answerTime){
+    if (score && answer.answerStatus === 'Correct') {
+      score.score += 1;
+      player.sumScore += 1;
 
-  //     }
-  // }
+      await this.quizRepository.savePlayer(player);
+      await this.quizRepository.saveScore(score);
+    }
+  }
+
+  private countPlayerAnswers(game: Game, player: QuizPlayer): number {
+    return !game.answer
+      ? 0
+      : game.answer.filter((answer) => answer.userId === player.id).length;
+  }
+
+  private async addAnswer(
+    game: Game,
+    player: QuizPlayer,
+    answer: string,
+    answerCount: number,
+  ): Promise<Answer> {
+    const newAnswer = new Answer();
+    newAnswer.gameId = game.id;
+    newAnswer.user = player;
+    newAnswer.userId = player.id;
+    newAnswer.question = game.questions[answerCount];
+    newAnswer.questionId = game.questions[answerCount].id;
+    newAnswer.addedAt = new Date().toISOString();
+
+    const isCorrectAnswer = game.questions[answerCount].correctAnswers.find(
+      (correctAnswer) => correctAnswer === answer,
+    );
+
+    isCorrectAnswer
+      ? (newAnswer.answerStatus = 'Correct')
+      : (newAnswer.answerStatus = 'Incorrect');
+
+    if (game.answer) {
+      game.answer = [...game.answer, newAnswer];
+    } else {
+      game.answer = [newAnswer];
+    }
+
+    await this.quizRepository.saveAnswer(newAnswer);
+
+    return newAnswer;
+  }
+
+  private findSecondPlayerId(game: Game, player: QuizPlayer) {
+    return game.firstPlayer.id === player.id
+      ? game.secondPlayer.id
+      : game.firstPlayer.id;
+  }
 
   private async checkFinishGame(userId: string) {
     const game = await this.quizQueryRepository.findMyCurrentGameFullByUserId(
