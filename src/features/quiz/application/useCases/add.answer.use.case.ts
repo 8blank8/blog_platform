@@ -36,7 +36,6 @@ export class AddAnswerUseCase {
     const firstPlayerAnswersCount = this.countPlayerAnswers(game, player);
     if (firstPlayerAnswersCount === 5) throw new ForbiddenException();
 
-    const secondPlayerId = this.findSecondPlayerId(game, player);
 
     const answer = await this.addAnswer(
       game,
@@ -45,21 +44,70 @@ export class AddAnswerUseCase {
       firstPlayerAnswersCount,
     );
     await this.addScore(game, player, answer);
-    // TODO: возможно не надо сейчас сохранять игру
+
+    await this.checkFinishGame(game);
+
     await this.quizRepository.saveGame(game);
 
-    // TODO: рефактор функции сделать более оптимизированно и добавить проверку на 10 секунд до завершения
-    const isFinished = await this.checkFinishGame(player.id);
-    if (isFinished) {
-      game.finishGameDate = new Date().toISOString();
-      game.status = 'Finished';
-      await this.quizRepository.saveGame(game);
-    }
+    await this.checkExpiresGame(game.id, player.id)
 
-    // TODO: рефактор сделать более оптимизированно
-    await this.checkAddBonus(game.id, player.id, secondPlayerId);
 
     return answer.id;
+  }
+
+  private async addFiledAswers(game: Game, playerId: string) {
+
+
+    const answerCount = game.answer.filter(answer => answer.userId !== playerId)
+    const player = game.firstPlayer.id === playerId ? game.firstPlayer : game.secondPlayer
+
+    if (answerCount.length === 5) return false
+
+    for (let i = answerCount.length; i < 5; i++) {
+      await this.addAnswer(game, player, null, i)
+      console.log('add failed answer')
+    }
+  }
+
+  private async checkExpiresGame(gameId: string, playerId: string) {
+    const game = await this.quizQueryRepository.findFullGameByGameId(gameId)
+    if (!game || !game.answer) return false
+
+    const answers = game.answer.filter(answer => answer.userId === playerId)
+    console.log(answers, 'before start timeout')
+    if (answers.length === 5) {
+      setTimeout(async () => {
+        console.log('start timeout')
+        await this.addFiledAswers(game, playerId)
+        await this.checkFinishGame(game)
+        await this.quizRepository.saveGame(game)
+      }, 10000);
+    }
+  }
+
+  private async addStatistic(game: Game, playerId: string) {
+    console.log(`add statistic ${playerId}`)
+    const player = await this.quizQueryRepository.findPlayerByPlayerId(playerId)
+    if (!player) return false
+
+    const secondPlayerId = this.findSecondPlayerId(game, player);
+
+    const playerScore = await this.quizQueryRepository.findPlayerScoreByUserId(game.id, player.id)
+    const secondPlayerScore = await this.quizQueryRepository.findPlayerScoreByUserId(game.id, secondPlayerId)
+    if (!playerScore || !secondPlayerScore) return false
+
+    if (playerScore.score === secondPlayerScore.score) {
+      player.drawsCount += 1
+    } else if (playerScore.score > secondPlayerScore.score) {
+      player.winsCount += 1
+    } else {
+      player.lossesCount += 1
+    }
+
+    player.sumScore += playerScore.score
+    player.avgScores = Math.round((player.sumScore / player.gamesCount) * 100) / 100;
+
+    await this.quizRepository.savePlayer(player)
   }
 
   private async addScore(game: Game, player: QuizPlayer, answer: Answer) {
@@ -70,9 +118,6 @@ export class AddAnswerUseCase {
 
     if (score && answer.answerStatus === 'Correct') {
       score.score += 1;
-      player.sumScore += 1;
-
-      await this.quizRepository.savePlayer(player);
       await this.quizRepository.saveScore(score);
     }
   }
@@ -86,7 +131,7 @@ export class AddAnswerUseCase {
   private async addAnswer(
     game: Game,
     player: QuizPlayer,
-    answer: string,
+    answer: string | null,
     answerCount: number,
   ): Promise<Answer> {
     const newAnswer = new Answer();
@@ -122,128 +167,30 @@ export class AddAnswerUseCase {
       : game.firstPlayer.id;
   }
 
-  private async checkFinishGame(userId: string) {
-    const game = await this.quizQueryRepository.findMyCurrentGameFullByUserId(
-      userId,
-    );
-    if (!game) return false;
-    return game.answer.length === 10 ? true : false;
+  private async checkFinishGame(game: Game) {
+    const isFinished = game.answer.length === 10 ? true : false;
+    if (isFinished) {
+      console.log('check finish game')
+      game.finishGameDate = new Date().toISOString();
+      game.status = 'Finished';
+
+      await this.addBonus(game);
+
+      await this.addStatistic(game, game.secondPlayer.id)
+      await this.addStatistic(game, game.firstPlayer.id)
+    }
   }
 
-  private async checkAddBonus(
-    gameId: string,
-    firstPlayerId: string,
-    secondPlayerId: string,
-  ) {
-    const game = await this.quizQueryRepository.findFullGameByGameId(gameId);
-    if (!game || game.status !== 'Finished') return false;
+  private async addBonus(game: Game) {
+    console.log('add bonus')
+    // TODO: исправить начисления бонусных очков
+    const answer = game.answer.find(answer => answer.answerStatus === 'Correct')
+    if (!answer) return false
 
-    const firstPlayer = await this.quizQueryRepository.findPlayerByPlayerId(
-      firstPlayerId,
-    );
-    const secondPlayer = await this.quizQueryRepository.findPlayerByPlayerId(
-      secondPlayerId,
-    );
-    if (!firstPlayer || !secondPlayer) return false;
-
-    const firstPlayerAnswer: any = [];
-    const secondPlayerAnswer: any = [];
-    let firstPlayerCorrectAnswer = [];
-    let secondPlayerCorrectAnser = [];
-
-    game.answer.forEach((item) => {
-      if (item.userId === game.firstPlayer.id) {
-        firstPlayerAnswer.push(item);
-      } else {
-        secondPlayerAnswer.push(item);
-      }
-    });
-
-    firstPlayerAnswer.sort((a, b) => a.addedAt < b.addedAt);
-    secondPlayerAnswer.sort((a, b) => a.addedAt < b.addedAt);
-
-    firstPlayerCorrectAnswer = firstPlayerAnswer.filter(
-      (item) => item.answerStatus === 'Correct',
-    );
-    secondPlayerCorrectAnser = secondPlayerAnswer.filter(
-      (item) => item.answerStatus === 'Correct',
-    );
-
-    if (
-      firstPlayerCorrectAnswer.length === 0 &&
-      secondPlayerCorrectAnser.length === 0
-    )
-      return false;
-
-    if (
-      firstPlayerAnswer[0].addedAt > secondPlayerAnswer[0].addedAt &&
-      firstPlayerCorrectAnswer.length !== 0
-    ) {
-      const score = await this.quizQueryRepository.findPlayerScoreByUserId(
-        game.id,
-        firstPlayerId,
-      );
-      if (!score) return false;
-
-      score.score = score.score + 1;
-      firstPlayer.sumScore += 1;
-
-      await this.quizRepository.saveScore(score);
+    const score = await this.quizQueryRepository.findPlayerScoreByUserId(game.id, answer.userId)
+    if (score) {
+      score.score += 1
+      await this.quizRepository.saveScore(score)
     }
-    if (
-      secondPlayerAnswer[0].addedAt > firstPlayerAnswer[0].addedAt &&
-      secondPlayerCorrectAnser.length !== 0
-    ) {
-      const score = await this.quizQueryRepository.findPlayerScoreByUserId(
-        game.id,
-        secondPlayerId,
-      );
-      if (!score) return false;
-
-      score.score = score.score + 1;
-      secondPlayer.sumScore += 1;
-
-      await this.quizRepository.saveScore(score);
-    }
-
-    const game1 = await this.quizQueryRepository.findFullGameByGameId(game.id);
-    if (!game1) return false;
-
-    let firstPlayerScore;
-    let secondPlayerScore;
-
-    game1.score.forEach((item) => {
-      if (item.userId === firstPlayer.id) {
-        firstPlayerScore = item;
-      } else {
-        secondPlayerScore = item;
-      }
-    });
-
-    if (firstPlayerScore.score === secondPlayerScore.score) {
-      firstPlayer.drawsCount += 1;
-      secondPlayer.drawsCount += 1;
-
-      await this.quizRepository.savePlayer(firstPlayer);
-      await this.quizRepository.savePlayer(secondPlayer);
-      console.log({ draw: 'its draw' });
-      return true;
-    }
-
-    if (firstPlayerScore.score > secondPlayerScore.score) {
-      firstPlayer.winsCount += 1;
-      secondPlayer.lossesCount += 1;
-    } else {
-      secondPlayer.winsCount += 1;
-      firstPlayer.lossesCount += 1;
-    }
-
-    firstPlayer.avgScores =
-      Math.round((firstPlayer.sumScore / firstPlayer.gamesCount) * 100) / 100;
-    secondPlayer.avgScores =
-      Math.round((secondPlayer.sumScore / secondPlayer.gamesCount) * 100) / 100;
-
-    await this.quizRepository.savePlayer(firstPlayer);
-    await this.quizRepository.savePlayer(secondPlayer);
   }
 }
