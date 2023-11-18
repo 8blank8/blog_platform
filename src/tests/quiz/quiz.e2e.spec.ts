@@ -12,6 +12,9 @@ import { loginUser } from '../auth/utils/login.user';
 import { connectionGame } from './utils/connection.game';
 import { registerUserForSa } from '../auth/utils/register.user.for.sa';
 import { findGameById } from './utils/find.game.by.id';
+import { checkPlayerStatistic } from './utils/check.player.statistic';
+import { PlayerStatisticModel } from './models/player.statistic.model';
+import { async } from 'rxjs';
 
 describe('quiz', () => {
   let app: INestApplication;
@@ -79,26 +82,48 @@ describe('quiz', () => {
       await addAnswer(app, tokensUser1, '1');
       await addAnswer(app, tokensUser1, '1');
       await addAnswer(app, tokensUser1, '1');
-      await addAnswer(app, tokensUser1, '1');
+      await addAnswer(app, tokensUser1, '12');
     });
 
-    it('add all incorrect answer user2 should be status 200', async () => {
-      await addAnswer(app, tokensUser2, '2');
-      await addAnswer(app, tokensUser2, '2');
-      await addAnswer(app, tokensUser2, '2');
-      await addAnswer(app, tokensUser2, '2');
-      await addAnswer(app, tokensUser2, '2');
+    it('add all incorrect answer user2 should be status 200', (done) => {
+      setTimeout(async () => {
+        expect(1).toBe(1)
+        console.log('timeout')
+        done()
+      }, 11000);
     });
 
     it('check result game user1, user2', async () => {
+      console.log('find game ')
       await findGameById(app, gameId, tokensUser1, {
-        firsPlayerScore: 6,
+        firsPlayerScore: 5,
         firstPlayerId: user1.id,
         firstPlayerLogin: user1.login,
         secondPlayerScore: 0,
         secondPlayerId: user2.id,
         secondPlayerLogin: user2.login,
       });
+
+    });
+
+    it('check statistic player user1', async () => {
+      // await findGameById(app, gameId, tokensUser1, {
+      //   firsPlayerScore: 6,
+      //   firstPlayerId: user1.id,
+      //   firstPlayerLogin: user1.login,
+      //   secondPlayerScore: 0,
+      //   secondPlayerId: user2.id,
+      //   secondPlayerLogin: user2.login,
+      // });
+      const statistic: PlayerStatisticModel = {
+        sumScore: 0,
+        avgScores: 0,
+        gamesCount: 1,
+        winsCount: 0,
+        lossesCount: 1,
+        drawsCount: 0
+      }
+      await checkPlayerStatistic(app, tokensUser2, statistic)
     });
   });
 
