@@ -32,8 +32,9 @@ import { PostModule } from './features/post/post.module';
 import { QuizModule } from './features/quiz/quiz.module';
 import { SecurityModule } from './features/security/security.module';
 import { AppService } from './app.service';
+import { TestingController } from '@testing/testing.controller';
 
-const controllers = [AppController];
+const controllers = [AppController, TestingController];
 
 const services = [AppService];
 
@@ -80,10 +81,10 @@ const saUseCase = [BindUserForBlogUseCase, BannedUserUseCase, BlogBanUseCase];
     PostModule,
     QuizModule,
     SecurityModule,
-    TestingModule,
+    // TestingModule,
     // SaModule
   ],
   controllers: [...controllers],
   providers: [...validation, ...adapters, ...saUseCase, ...services],
 })
-export class AppModule {}
+export class AppModule { }
