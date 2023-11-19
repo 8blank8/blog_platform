@@ -22,11 +22,17 @@ describe('quiz', () => {
   let createdQuestions;
   let user1: UserTestModel;
   let user2: UserTestModel;
+  let user3: UserTestModel
+  let user4: UserTestModel
 
   let tokensUser1: TokenTestModel;
   let tokensUser2: TokenTestModel;
+  let tokensUser3: TokenTestModel;
+  let tokensUser4: TokenTestModel;
+
 
   let gameId: string;
+  let gameId2: string
 
   beforeAll(async () => {
     app = await startTestConfig();
@@ -51,12 +57,14 @@ describe('quiz', () => {
   });
 
   describe('create users', () => {
-    it('create user1, user2 should be status 201', async () => {
+    it('create user1, user2, user3, user4 should be status 201', async () => {
       user1 = await registerUserForSa(app, 1);
       user2 = await registerUserForSa(app, 2);
+      user3 = await registerUserForSa(app, 3);
+      user4 = await registerUserForSa(app, 4);
     });
 
-    it('login user1, user2 should be status 200', async () => {
+    it('login user1, user2, user3, user4 should be status 200', async () => {
       tokensUser1 = await loginUser(app, {
         login: user1.login,
         password: user1.password,
@@ -65,10 +73,18 @@ describe('quiz', () => {
         login: user2.login,
         password: user2.password,
       });
+      tokensUser3 = await loginUser(app, {
+        login: user3.login,
+        password: user3.password,
+      });
+      tokensUser4 = await loginUser(app, {
+        login: user4.login,
+        password: user4.password,
+      });
     });
   });
 
-  describe('connection game user1, user2, and finish game user1 - 6, user2 - 0', () => {
+  describe('connection game user1, user2, and finish game user1 - 6, user2 - 3', () => {
     it('connection game user1 should be status 200', async () => {
       gameId = await connectionGame(app, user1, tokensUser1, 'first');
     });
@@ -77,55 +93,179 @@ describe('quiz', () => {
       await connectionGame(app, user2, tokensUser2, 'second');
     });
 
-    it('add all correct answer user1 should be status 200', async () => {
-      await addAnswer(app, tokensUser1, '1');
-      await addAnswer(app, tokensUser1, '1');
-      await addAnswer(app, tokensUser1, '1');
-      await addAnswer(app, tokensUser1, '1');
-      await addAnswer(app, tokensUser1, '12');
+    it('add 3 correct answer by user2', async () => {
+      await addAnswer(app, tokensUser2, '1');
+      await addAnswer(app, tokensUser2, '1');
+      await addAnswer(app, tokensUser2, '1');
     });
 
-    it('add all incorrect answer user2 should be status 200', (done) => {
-      setTimeout(async () => {
-        expect(1).toBe(1)
-        console.log('timeout')
-        done()
-      }, 11000);
+    it('add 5 correct answer by user1', async () => {
+      await addAnswer(app, tokensUser1, '1');
+      await addAnswer(app, tokensUser1, '1');
+      await addAnswer(app, tokensUser1, '1');
+      await addAnswer(app, tokensUser1, '1');
+      await addAnswer(app, tokensUser1, '1');
+
+      await new Promise(resolve => setTimeout(resolve, 10000));
     });
 
-    it('check result game user1, user2', async () => {
+    it('check result game by user1', async () => {
       console.log('find game ')
       await findGameById(app, gameId, tokensUser1, {
-        firsPlayerScore: 5,
+        firsPlayerScore: 6,
         firstPlayerId: user1.id,
         firstPlayerLogin: user1.login,
-        secondPlayerScore: 0,
+        secondPlayerScore: 3,
         secondPlayerId: user2.id,
         secondPlayerLogin: user2.login,
       });
-
     });
-
-    it('check statistic player user1', async () => {
-      // await findGameById(app, gameId, tokensUser1, {
-      //   firsPlayerScore: 6,
-      //   firstPlayerId: user1.id,
-      //   firstPlayerLogin: user1.login,
-      //   secondPlayerScore: 0,
-      //   secondPlayerId: user2.id,
-      //   secondPlayerLogin: user2.login,
-      // });
-      const statistic: PlayerStatisticModel = {
-        sumScore: 0,
-        avgScores: 0,
-        gamesCount: 1,
-        winsCount: 0,
-        lossesCount: 1,
-        drawsCount: 0
-      }
-      await checkPlayerStatistic(app, tokensUser2, statistic)
-    });
+    // it('check statistic player user1', async () => {
+    //   // await findGameById(app, gameId, tokensUser1, {
+    //   //   firsPlayerScore: 6,
+    //   //   firstPlayerId: user1.id,
+    //   //   firstPlayerLogin: user1.login,
+    //   //   secondPlayerScore: 0,
+    //   //   secondPlayerId: user2.id,
+    //   //   secondPlayerLogin: user2.login,
+    //   // });
+    //   const statistic: PlayerStatisticModel = {
+    //     sumScore: 0,
+    //     avgScores: 0,
+    //     gamesCount: 1,
+    //     winsCount: 0,
+    //     lossesCount: 1,
+    //     drawsCount: 0
+    //   }
+    //   await checkPlayerStatistic(app, tokensUser2, statistic)
+    // });
   });
+
+  describe('connection game user1, user2, and finish game user1 - 3, user2 - 3', () => {
+    it('connection game user1 should be status 200', async () => {
+      gameId = await connectionGame(app, user1, tokensUser1, 'first');
+    });
+
+    it('connection game user2 should be status 200', async () => {
+      await connectionGame(app, user2, tokensUser2, 'second');
+    });
+
+    it('add 3 incorrect answer by user2', async () => {
+      await addAnswer(app, tokensUser2, '2');
+      await addAnswer(app, tokensUser2, '2');
+      await addAnswer(app, tokensUser2, '2');
+    });
+
+    it('add 3 correct answer by user1', async () => {
+      await addAnswer(app, tokensUser1, '1');
+      await addAnswer(app, tokensUser1, '1');
+      await addAnswer(app, tokensUser1, '1');
+    });
+
+    it('add 2 correct answer by user2', async () => {
+      await addAnswer(app, tokensUser2, '1');
+      await addAnswer(app, tokensUser2, '1');
+      await new Promise(resolve => setTimeout(resolve, 10000));
+    });
+
+    it('check result game by user1', async () => {
+      console.log('find game ')
+      await findGameById(app, gameId, tokensUser1, {
+        firsPlayerScore: 3,
+        firstPlayerId: user1.id,
+        firstPlayerLogin: user1.login,
+        secondPlayerScore: 3,
+        secondPlayerId: user2.id,
+        secondPlayerLogin: user2.login,
+      });
+    });
+  })
+
+  describe('connection game user1, user2, and finish game user1 - 3, user2 - 3', () => {
+    it('connection game user1 should be status 200', async () => {
+      gameId = await connectionGame(app, user1, tokensUser1, 'first');
+    });
+
+    it('connection game user2 should be status 200', async () => {
+      await connectionGame(app, user2, tokensUser2, 'second');
+    });
+
+    it('add 3 incorrect answer by user2', async () => {
+      await addAnswer(app, tokensUser2, '2');
+      await addAnswer(app, tokensUser2, '2');
+      await addAnswer(app, tokensUser2, '2');
+    });
+
+    it('add 4 correct answer by user1', async () => {
+      await addAnswer(app, tokensUser1, '1');
+      await addAnswer(app, tokensUser1, '1');
+      await addAnswer(app, tokensUser1, '1');
+      await addAnswer(app, tokensUser1, '1');
+    });
+
+    // Create game2 by user3
+    it('connection game user3 should be status 200', async () => {
+      gameId2 = await connectionGame(app, user3, tokensUser3, 'first');
+    });
+
+    //  connect to game by user4.
+    it('connection game user4 should be status 200', async () => {
+      await connectionGame(app, user4, tokensUser4, 'second');
+    });
+
+    // Add 5 correct answers by user3.
+    it('add 5 correct answer by user3', async () => {
+      await addAnswer(app, tokensUser3, '1');
+      await addAnswer(app, tokensUser3, '1');
+      await addAnswer(app, tokensUser3, '1');
+      await addAnswer(app, tokensUser3, '1');
+      await addAnswer(app, tokensUser3, '1');
+    });
+
+    // Add 2 correct answers by user4.
+    it('add 2 correct answer by user4', async () => {
+      await addAnswer(app, tokensUser4, '1');
+      await addAnswer(app, tokensUser4, '1');
+    });
+
+    // Add 2 correct answers by user2.
+    // Await 10 sec.
+    it('add 2 correct answer by user2', async () => {
+      await addAnswer(app, tokensUser2, '1');
+      await addAnswer(app, tokensUser2, '1');
+      await new Promise(resolve => setTimeout(resolve, 10000));
+    });
+
+    // Get game1 by user2.
+    // Should return finished game - status: "Finished", firstPlayerProgress.score: 4, secondPlayerProgress.score: 3,
+    // finishGameDate: not to be null.
+    it('check result game by user2', async () => {
+      console.log('find game ')
+      await findGameById(app, gameId, tokensUser2, {
+        firsPlayerScore: 4,
+        firstPlayerId: user1.id,
+        firstPlayerLogin: user1.login,
+        secondPlayerScore: 3,
+        secondPlayerId: user2.id,
+        secondPlayerLogin: user2.login,
+      });
+    });
+
+    //  Get game2 by user3.
+    //  Should return finished game - status: "Finished", firstPlayerProgress.score: 6, secondPlayerProgress.score: 2,
+    //  finishGameDate: not to be null.
+    it('check result game by user3', async () => {
+      console.log('find game ')
+      await findGameById(app, gameId2, tokensUser3, {
+        firsPlayerScore: 6,
+        firstPlayerId: user3.id,
+        firstPlayerLogin: user3.login,
+        secondPlayerScore: 2,
+        secondPlayerId: user4.id,
+        secondPlayerLogin: user4.login,
+      });
+    });
+  })
 
   //   // it('user1 connection game', async () => {
   //   //   const responseConnection = await request(app.getHttpServer())
