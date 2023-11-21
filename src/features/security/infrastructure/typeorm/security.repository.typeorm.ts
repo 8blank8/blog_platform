@@ -7,7 +7,7 @@ import { Repository } from 'typeorm';
 export class SecurityRepositoryTypeorm {
   constructor(
     @InjectRepository(Devices) private securityRepository: Repository<Devices>,
-  ) {}
+  ) { }
 
   async saveDevice(device: Devices) {
     return this.securityRepository.save(device);
@@ -24,5 +24,12 @@ export class SecurityRepositoryTypeorm {
       .where('userId = :userId', { userId })
       .andWhere('id != :deviceId', { deviceId })
       .execute();
+  }
+
+  async deleteAllDevicesForSa(userId: string) {
+    return this.securityRepository.createQueryBuilder('d')
+      .delete()
+      .where('userId = :userId', { userId })
+      .execute()
   }
 }
