@@ -5,6 +5,7 @@ import { UsersConfirmationEmail } from '@user/domain/typeorm/user.confirmation.e
 import { Users } from '@user/domain/typeorm/user.entity';
 import { UserQueryParamType } from '@user/models/user.query.param.type';
 import { Repository } from 'typeorm';
+import { UserBanned } from '@user/domain/typeorm/user.banned.entity';
 
 @Injectable()
 export class UserQueryRepositoryTypeorm {
@@ -12,7 +13,8 @@ export class UserQueryRepositoryTypeorm {
     @InjectRepository(Users) private userQueryRepository: Repository<Users>,
     @InjectRepository(UsersConfirmationEmail)
     private userConfirmationEmailRepository: Repository<UsersConfirmationEmail>,
-  ) {}
+    @InjectRepository(UserBanned) private userBannedRepository: Repository<UserBanned>
+  ) { }
 
   async findUserByLoginOrEmail(loginOrEmail: string): Promise<Users | null> {
     const user = await this.userQueryRepository
@@ -20,6 +22,7 @@ export class UserQueryRepositoryTypeorm {
       .where('u.email ilike :email', { email: loginOrEmail })
       .orWhere('u.login ilike :login', { login: loginOrEmail })
       .leftJoinAndSelect('u.password', 'p')
+      .leftJoinAndSelect('u.banInfo', 'ban')
       .getOne();
 
     return user;
@@ -29,9 +32,21 @@ export class UserQueryRepositoryTypeorm {
     const user = await this.userQueryRepository
       .createQueryBuilder('u')
       .where('u.id = :userId', { userId: userId })
+      .leftJoinAndSelect('u.banInfo', 'ban')
       .getOne();
 
     return user;
+  }
+
+  async findUserWitchBanInfo(userId: string) {
+    const user = await this.userQueryRepository
+      .createQueryBuilder('u')
+      .where('u.id = :userId', { userId: userId })
+      .leftJoinAndSelect('u.banInfo', 'ban')
+      .getOne();
+
+    if (!user) return null
+    return this._mapUserWitchBanInfo(user);
   }
 
   async findUserByEmailWithConfirmationEmail(
@@ -78,6 +93,7 @@ export class UserQueryRepositoryTypeorm {
       pageSize,
       pageNumber,
       sortDirection,
+      banStatus
     } = pagination;
 
     const queryBuilderUser = this.userQueryRepository.createQueryBuilder('u');
@@ -85,15 +101,19 @@ export class UserQueryRepositoryTypeorm {
       this.userQueryRepository.createQueryBuilder('u');
 
     const totalCount = await queryBuilderTotalCount
-      .where('u.login ILIKE :searchLoginTerm', { searchLoginTerm })
-      .orWhere('u.email ILIKE :searchEmailTerm', { searchEmailTerm })
+      .where(
+        `(u.login ILIKE :searchLoginTerm OR u.email ILIKE :searchEmailTerm) AND (ban.isBanned = ${banStatus.banStatus1} OR ban.isBanned = ${banStatus.banStatus2})`,
+        { searchLoginTerm, searchEmailTerm },
+      )
+      .leftJoinAndSelect('u.banInfo', 'ban')
       .getCount();
 
     const users = await queryBuilderUser
       .where(
-        'u.login ILIKE :searchLoginTerm OR u.email ILIKE :searchEmailTerm',
+        `(u.login ILIKE :searchLoginTerm OR u.email ILIKE :searchEmailTerm) AND (ban.isBanned = ${banStatus.banStatus1} OR ban.isBanned = ${banStatus.banStatus2})`,
         { searchLoginTerm, searchEmailTerm },
       )
+      .leftJoinAndSelect('u.banInfo', 'ban')
       .orderBy(
         `"${sortBy}" ${sortBy === 'createdAt' ? '' : 'COLLATE "C"'}`,
         `${sortDirection}`,
@@ -107,8 +127,30 @@ export class UserQueryRepositoryTypeorm {
       page: +pageNumber,
       pageSize: +pageSize,
       totalCount: +totalCount,
-      items: users,
+      items: users.map(user => this._mapUserWitchBanInfo(user)),
     };
+  }
+
+  async findBanInfoByUserId(userId: string): Promise<UserBanned | null> {
+    const banInfo = await this.userBannedRepository.createQueryBuilder('u')
+      .where('u."userId" = :userId', { userId })
+      .getOne()
+
+    return banInfo
+  }
+
+  private _mapUserWitchBanInfo(user: Users) {
+    return {
+      id: user.id,
+      login: user.login,
+      email: user.email,
+      createdAt: user.createdAt,
+      banInfo: {
+        isBanned: user.banInfo.isBanned,
+        banDate: user.banInfo.banDate,
+        banReason: user.banInfo.banReason
+      }
+    }
   }
 
   private _mapUserViewByMe(user: Users) {
