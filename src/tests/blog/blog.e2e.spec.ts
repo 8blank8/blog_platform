@@ -1,306 +1,201 @@
-import request from 'supertest';
-import { INestApplication } from '@nestjs/common';
-import { v4 as uuidv4 } from 'uuid';
-import { BlogCreateSqlModel } from 'src/features/blog/infrastructure/sql/models/blog.create.sql.model';
-import { BlogViewSqlModel } from 'src/features/blog/infrastructure/sql/models/blog.view.sql.model';
+import { HttpStatus, INestApplication } from "@nestjs/common"
+import { dropDataBase, startTestConfig } from "../utils/start.test.config"
+import { Auth } from "../auth/auth"
+import { Blog } from "./blog"
+import request from 'supertest'
 
-import { dropDataBase, startTestConfig } from '../utils/start.test.config';
-import { createBlogDto } from '../utils/create.blog.dto';
-import { AUTH } from '../enums/base.auth.enum';
 
-describe('blog', () => {
-  let app: INestApplication;
+describe('blogger api', () => {
+  let app: INestApplication
+  const user1 = new Auth()
+  const blog1 = new Blog()
+  const blog2 = new Blog()
 
   beforeAll(async () => {
-    app = await startTestConfig();
-  });
+    app = await startTestConfig()
+  })
 
-  // beforeEach(async () => {
-  //     await dropDataBase(app)
-  // })
+  describe('delete all data', () => {
+    it('delete all data', async () => {
+      await dropDataBase(app)
+    })
+  })
 
-  describe('post blog', () => {
-    const blog1 = createBlogDto(1);
+  describe('create blogger', () => {
+    it('create user1 should be status 201', async () => {
+      await user1.registrationUser(app, 1)
+    })
 
-    it('created blog unauthorized 401', async () => {
-      await request(app.getHttpServer())
-        .post('/sa/blogs')
-        .send(blog1)
-        .expect(401);
-    });
+    it('login user1 should be status 200', async () => {
+      await user1.loginUser(app)
+    })
+  })
 
-    it('created blog invalid name 400', async () => {
-      await request(app.getHttpServer())
-        .post('/sa/blogs')
-        .set('Authorization', AUTH.BASIC)
-        .send({ ...blog1, name: '' })
-        .expect(400);
-    });
+  describe('create blog', () => {
+    it('create blog should be status 201', async () => {
+      await blog1.createBlog_201(
+        app,
+        {
+          name: "blog1",
+          description: "this is a good description",
+          websiteUrl: "https://website.com"
+        },
+        user1.accessToken
+      )
+    })
+  })
 
-    it('created blog invalid websiteUrl 400', async () => {
-      await request(app.getHttpServer())
-        .post('/sa/blogs')
-        .set('Authorization', AUTH.BASIC)
-        .send({ ...blog1, websiteUrl: '' })
-        .expect(400);
-    });
+  describe('update blog', () => {
+    it('update blog should be status 204', async () => {
+      await blog1.updateBlog_204(
+        app,
+        {
+          name: "blog2",
+          description: "this is a good",
+          websiteUrl: "https://website1.com"
+        },
+        user1.accessToken
+      )
+    })
+  })
 
-    it('created blog invalid description 400', async () => {
-      await request(app.getHttpServer())
-        .post('/sa/blogs')
-        .set('Authorization', AUTH.BASIC)
-        .send({ ...blog1, description: '' })
-        .expect(400);
-    });
+  describe('get blogs', () => {
+    it('get blog should be status 200', async () => {
+      const res = await request(app.getHttpServer())
+        .get(`/blogger/blogs`)
+        .set('Authorization', `Bearer ${user1.accessToken}`)
 
-    it('created blog 201', async () => {
-      await request(app.getHttpServer())
-        .post('/sa/blogs')
-        .set('Authorization', AUTH.BASIC)
-        .send(blog1)
-        .expect(201)
-        .then(({ body }) => {
-          expect(body).toEqual({
-            id: expect.any(String),
-            name: blog1.name,
-            description: blog1.description,
-            websiteUrl: blog1.websiteUrl,
-            createdAt: expect.any(String),
-            isMembership: expect.any(Boolean),
-          });
-        });
-    });
-  });
+      expect(res.status).toBe(HttpStatus.OK)
 
-  describe('get blog by id', () => {
-    const blog1 = createBlogDto(1);
-    let createdBlog1;
+      const data = res.body
 
-    it('created blog 201', async () => {
-      await request(app.getHttpServer())
-        .post('/sa/blogs')
-        .set('Authorization', AUTH.BASIC)
-        .send(blog1)
-        .expect(201)
-        .then(({ body }) => {
-          createdBlog1 = body;
+      expect(data.totalCount).toBe(1)
+      expect(data.page).toBe(1)
+      expect(data.pageSize).toBe(10)
+      expect(data.pagesCount).toBe(1)
 
-          expect(body).toEqual({
-            id: expect.any(String),
-            name: blog1.name,
-            description: blog1.description,
-            websiteUrl: blog1.websiteUrl,
-            createdAt: expect.any(String),
-            isMembership: expect.any(Boolean),
-          });
-        });
-    });
-
-    it('get blog by id 200', async () => {
-      await request(app.getHttpServer())
-        .get(`/blogs/${createdBlog1.id}`)
-        .expect(200)
-        .then(({ body }) => {
-          expect(body).toEqual({
-            id: createdBlog1.id,
-            name: createdBlog1.name,
-            description: createdBlog1.description,
-            websiteUrl: createdBlog1.websiteUrl,
-            createdAt: createdBlog1.createdAt,
-            isMembership: createdBlog1.isMembership,
-          });
-        });
-    });
-
-    it('get blog by id 404', async () => {
-      await request(app.getHttpServer()).get(`/blogs/${uuidv4()}`).expect(404);
-    });
-  });
-
-  describe('put blog', () => {
-    const blog1: BlogCreateSqlModel = createBlogDto(1);
-    let createdBlog1: BlogViewSqlModel;
-
-    const updateBlogDto = {
-      name: 'updateName1',
-      description: 'updateDescription1',
-      websiteUrl: 'https://update-some-site1.ru',
-    };
-
-    it('created blog 201', async () => {
-      await request(app.getHttpServer())
-        .post('/sa/blogs')
-        .set('Authorization', AUTH.BASIC)
-        .send(blog1)
-        .expect(201)
-        .then(({ body }) => {
-          createdBlog1 = body;
-
-          expect(body).toEqual({
-            id: expect.any(String),
-            name: blog1.name,
-            description: blog1.description,
-            websiteUrl: blog1.websiteUrl,
-            createdAt: expect.any(String),
-            isMembership: expect.any(Boolean),
-          });
-        });
-    });
-
-    it('put blog 204', async () => {
-      await request(app.getHttpServer())
-        .put(`/sa/blogs/${createdBlog1.id}`)
-        .set('Authorization', AUTH.BASIC)
-        .send(updateBlogDto)
-        .expect(204);
-    });
-
-    it('put blog unauthorized 401', async () => {
-      await request(app.getHttpServer())
-        .put(`/sa/blogs/${createdBlog1.id}`)
-        .send(updateBlogDto)
-        .expect(401);
-    });
-
-    it('put blog invalid name 400', async () => {
-      await request(app.getHttpServer())
-        .put(`/sa/blogs/${createdBlog1.id}`)
-        .set('Authorization', AUTH.BASIC)
-        .send({ ...updateBlogDto, name: '' })
-        .expect(400);
-    });
-
-    it('put blog invalid description 400', async () => {
-      await request(app.getHttpServer())
-        .put(`/sa/blogs/${createdBlog1.id}`)
-        .set('Authorization', AUTH.BASIC)
-        .send({ ...updateBlogDto, description: '' })
-        .expect(400);
-    });
-
-    it('put blog invalid websiteUrl 400', async () => {
-      await request(app.getHttpServer())
-        .put(`/sa/blogs/${createdBlog1.id}`)
-        .set('Authorization', AUTH.BASIC)
-        .send({ ...updateBlogDto, websiteUrl: '' })
-        .expect(400);
-    });
-  });
+      expect(data.items.length).toBe(1)
+      expect(data.items).toContainEqual({
+        id: expect.any(String),
+        name: expect.any(String),
+        description: expect.any(String),
+        websiteUrl: expect.any(String),
+        createdAt: expect.any(String),
+        isMembership: expect.any(Boolean)
+      })
+    })
+  })
 
   describe('delete blog', () => {
-    const blog1: BlogCreateSqlModel = createBlogDto(1);
-    let createdBlog1: BlogViewSqlModel;
+    it('delete blog should be status 204', async () => {
+      await blog1.deleteBlog_204(app, user1.accessToken)
+    })
+  })
 
-    it('created blog 201', async () => {
-      await request(app.getHttpServer())
-        .post('/sa/blogs')
-        .set('Authorization', AUTH.BASIC)
-        .send(blog1)
-        .expect(201)
-        .then(({ body }) => {
-          createdBlog1 = body;
+  describe('get blog after delete', () => {
+    it('get blog should be status 200', async () => {
+      const res = await request(app.getHttpServer())
+        .get(`/blogger/blogs`)
+        .set('Authorization', `Bearer ${user1.accessToken}`)
 
-          expect(body).toEqual({
-            id: expect.any(String),
-            name: blog1.name,
-            description: blog1.description,
-            websiteUrl: blog1.websiteUrl,
-            createdAt: expect.any(String),
-            isMembership: expect.any(Boolean),
-          });
-        });
-    });
+      expect(res.status).toBe(HttpStatus.OK)
 
-    it('delete blog unauthorized 401', async () => {
-      await request(app.getHttpServer())
-        .delete(`/sa/blogs/${createdBlog1.id}`)
-        .expect(401);
-    });
+      const data = res.body
 
-    it('delete blog not found 404', async () => {
-      await request(app.getHttpServer())
-        .delete(`/sa/blogs/${uuidv4()}`)
-        .set('Authorization', AUTH.BASIC)
-        .expect(404);
-    });
+      expect(data.totalCount).toBe(0)
+      expect(data.page).toBe(1)
+      expect(data.pageSize).toBe(10)
+      expect(data.pagesCount).toBe(0)
 
-    it('delete blog no content 204', async () => {
-      await request(app.getHttpServer())
-        .delete(`/sa/blogs/${createdBlog1.id}`)
-        .set('Authorization', AUTH.BASIC)
-        .expect(204);
+      expect(data.items.length).toBe(0)
+      expect(data.items).toEqual([])
+    })
+  })
 
-      await request(app.getHttpServer())
-        .get(`/blogs/${createdBlog1.id}`)
-        .expect(404);
-    });
-  });
+  describe('create blog and post by blogId', () => {
 
-  describe('get blogs with query params', () => {
-    const createdBlogs: any[] = [];
+    it('create blog should be status 201', async () => {
+      await blog2.createBlog_201(
+        app,
+        {
+          name: "blog2",
+          description: "is description blog2",
+          websiteUrl: "https://website2.ru"
+        },
+        user1.accessToken
+      )
+    })
 
-    it('delete all data', async () => {
-      await dropDataBase(app);
-    });
+    it('create post by id blog should be status 201', async () => {
+      await blog2.createPostByBlogId_201(
+        app,
+        {
+          title: "post_user1",
+          shortDescription: "short_description is good",
+          content: "this content is good content"
+        },
+        user1.accessToken
+      )
+    })
+  })
 
-    it('created 4 blogs', async () => {
-      for (let i = 1; i < 5; i++) {
-        const blogDto = createBlogDto(i);
+  describe('get posts by blog id', () => {
+    it('get posts by blog id should be status 200', async () => {
+      const res = await request(app.getHttpServer())
+        .get(`/blogger/blogs/${blog2.id}/posts`)
+        .set('Authorization', `Bearer ${user1.accessToken}`)
 
-        await request(app.getHttpServer())
-          .post('/sa/blogs')
-          .set('Authorization', AUTH.BASIC)
-          .send(blogDto)
-          .expect(201)
-          .then(({ body }) => {
-            createdBlogs.push(body);
-          });
-      }
-    });
+      expect(res.status).toBe(HttpStatus.OK)
 
-    it('get blogs query param sortDirection=desc', async () => {
-      await request(app.getHttpServer())
-        .get('/blogs')
-        .query({ sortDirection: 'desc' })
-        .expect(200)
-        .then(({ body }) => {
-          const createdBlogsSortDirectionDesc = createdBlogs.reverse();
-          expect(body).toEqual(createdBlogsSortDirectionDesc);
-        });
-    });
+      const data = res.body
+      expect(data.totalCount).toBe(1)
+      expect(data.pagesCount).toBe(1)
+      expect(data.page).toBe(1)
+      expect(data.pageSize).toBe(10)
 
-    it('get blogs query param sortDirection=asc', async () => {
-      await request(app.getHttpServer())
-        .get('/blogs')
-        .query({ sortDirection: 'asc' })
-        .expect(200)
-        .then(({ body }) => {
-          expect(body).toEqual(createdBlogs.reverse());
-        });
-    });
+      expect(data.items[0]).toEqual(blog2.posts[0])
+    })
+  })
 
-    it('get blogs query param sortDirection=asc, searchNameTerm=1', async () => {
-      await request(app.getHttpServer())
-        .get('/blogs')
-        .query({ sortDirection: 'asc', searchNameTerm: 1 })
-        .expect(200)
-        .then(({ body }) => {
-          expect(body).toEqual([createdBlogs[0]]);
-        });
-    });
+  describe('update post by blog id', () => {
+    it('update post by blog id should be status 204', async () => {
+      await blog2.updatePostByBlogId_204(
+        app,
+        blog2.posts[0].id,
+        {
+          title: "title_post12",
+          shortDescription: "is short desc",
+          content: "this is content"
+        },
+        user1.accessToken
+      )
+    })
+  })
 
-    it('get blogs query param sortDirection=asc, pageNumber=2, pageSize=1', async () => {
-      await request(app.getHttpServer())
-        .get('/blogs')
-        .query({ sortDirection: 'asc', pageNumber: 2, pageSize: 1 })
-        .expect(200)
-        .then(({ body }) => {
-          expect(body).toEqual([createdBlogs[1]]);
-        });
-    });
-  });
+  describe('delete post by blog id', () => {
+    it('delete post by blog id should be status 204', async () => {
+      await blog2.deletePostByBlogId_204(app, blog2.posts[0].id, user1.accessToken)
+    })
+
+    it('get posts by blog id should be status 200', async () => {
+      const res = await request(app.getHttpServer())
+        .get(`/blogger/blogs/${blog2.id}/posts`)
+        .set('Authorization', `Bearer ${user1.accessToken}`)
+
+      expect(res.status).toBe(HttpStatus.OK)
+
+      const data = res.body
+      expect(data.totalCount).toBe(0)
+      expect(data.pagesCount).toBe(0)
+      expect(data.page).toBe(1)
+      expect(data.pageSize).toBe(10)
+
+      expect(data.items).toEqual([])
+    })
+  })
+  // TODO: сделать delete метод для поста по blogId
 
   afterAll(async () => {
-    await app.close();
-  });
-});
+    await app.close()
+  })
+})
