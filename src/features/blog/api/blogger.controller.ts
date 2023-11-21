@@ -10,6 +10,7 @@ import {
   Request,
   Put,
   Delete,
+  Req,
 } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { Response } from 'express';
@@ -32,35 +33,43 @@ import { UpdatePostByBlogIdCommand } from '@blog/usecases/update.post.by.blog.id
 import { DeleteBlogCommand } from '@blog/usecases/delete.blog.use.case';
 import { DeletePostByBlogIdCommand } from '@blog/usecases/delete.post.by.blog.id.use.case';
 import { BlogQueryRepositoryTypeorm } from '@blog/repository/typeorm/blog.query.repository.typeorm';
-
-@Controller('sa/blogs')
+// TODO: исправить путь, посмотреть в документации
+@Controller('blogger/blogs')
 export class BloggerController {
   constructor(
     private commandBus: CommandBus,
     private postQueryRepository: PostQueryRepositoryTypeorm,
     private blogQueryRepository: BlogQueryRepositoryTypeorm,
     private commentQueryRepository: CommentQueryRepository,
-  ) {}
-
-  @UseGuards(BasicAuthGuard)
+  ) { }
+  // TODO: исправить все гарды на jwtrefreshguard
+  @UseGuards(JwtAuthGuard)
   @Post()
-  async createBlog(@Body() blog: BlogCreateType) {
+  async createBlog(
+    @Body() blog: BlogCreateType,
+    @Req() req
+  ) {
+    const userId = req.user
+
     const blogId: string = await this.commandBus.execute(
-      new CreateBlogCommand(blog),
+      new CreateBlogCommand(blog, userId),
     );
 
     return this.blogQueryRepository.findBlogViewById(blogId);
   }
 
-  @UseGuards(BasicAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Post('/:id/posts')
   async createPostByBlogId(
     @Param('id') id: string,
     @Body() inputData: PostCreateByIdType,
     @Res() res: Response,
+    @Req() req
   ) {
+    const userId = req.user
+
     const postId = await this.commandBus.execute(
-      new CreatePostByBlogIdCommand(inputData, id),
+      new CreatePostByBlogIdCommand(inputData, id, userId),
     );
     if (!postId) return res.sendStatus(STATUS_CODE.NOT_FOUND);
 
@@ -68,13 +77,18 @@ export class BloggerController {
     return res.status(STATUS_CODE.CREATED).send(post);
   }
 
-  @UseGuards(BasicAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get()
-  async getBlogs(@Query() queryParam: BlogQueryParamModel) {
-    return this.blogQueryRepository.findAllBlogsView(queryParam);
+  async getBlogs(
+    @Query() queryParam: BlogQueryParamModel,
+    @Req() req
+  ) {
+    const userId = req.user
+
+    return this.blogQueryRepository.findAllBlogsUserView(queryParam, userId);
   }
 
-  @UseGuards(BasicAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('/:id/posts')
   async getPostByBlogId(
     @Param('id') id: string,
@@ -96,33 +110,38 @@ export class BloggerController {
     return res.status(STATUS_CODE.OK).send(posts);
   }
 
-  @UseGuards(BasicAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Put('/:id')
   async updateBlog(
     @Param('id') id: string,
     @Body() updateData: BlogUpdateType,
     @Res() res: Response,
+    @Req() req
   ) {
+    const userId = req.user
+
     const isUpdate = await this.commandBus.execute(
-      new UpdateBlogCommand(updateData, id),
+      new UpdateBlogCommand(updateData, id, userId),
     );
     if (!isUpdate) return res.sendStatus(STATUS_CODE.NOT_FOUND);
 
     return res.sendStatus(STATUS_CODE.NO_CONTENT);
   }
 
-  @UseGuards(BasicAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Put('/:blogId/posts/:postId')
   async updatePostById(
     @Param() param,
     @Body() inputData: PostUpdateByIdModel,
     @Res() res: Response,
+    @Req() req
   ) {
     const blogId = param.blogId;
     const postId = param.postId;
+    const userId = req.user
 
     const isUpdate = await this.commandBus.execute(
-      new UpdatePostByBlogIdCommand(postId, blogId, inputData),
+      new UpdatePostByBlogIdCommand(postId, blogId, inputData, userId),
     );
 
     if (!isUpdate) return res.sendStatus(STATUS_CODE.NOT_FOUND);
@@ -130,23 +149,34 @@ export class BloggerController {
     return res.sendStatus(STATUS_CODE.NO_CONTENT);
   }
 
-  @UseGuards(BasicAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Delete('/:id')
-  async deleteBlog(@Param('id') id: string, @Res() res: Response) {
-    const isDelete = await this.commandBus.execute(new DeleteBlogCommand(id));
+  async deleteBlog(
+    @Param('id') id: string,
+    @Res() res: Response,
+    @Req() req
+  ) {
+    const userId = req.user
+
+    const isDelete = await this.commandBus.execute(new DeleteBlogCommand(id, userId));
     if (!isDelete) return res.sendStatus(STATUS_CODE.NOT_FOUND);
 
     return res.sendStatus(STATUS_CODE.NO_CONTENT);
   }
 
-  @UseGuards(BasicAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Delete(':blogId/posts/:postId')
-  async deletePostByBlogId(@Param() param, @Res() res: Response) {
+  async deletePostByBlogId(
+    @Param() param,
+    @Res() res: Response,
+    @Req() req
+  ) {
     const postId = param.postId;
     const blogId = param.blogId;
+    const userId = req.user
 
     const isDelete = await this.commandBus.execute(
-      new DeletePostByBlogIdCommand(postId, blogId),
+      new DeletePostByBlogIdCommand(postId, blogId, userId),
     );
 
     if (!isDelete) return res.sendStatus(STATUS_CODE.NOT_FOUND);
