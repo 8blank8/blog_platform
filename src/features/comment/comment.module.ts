@@ -58,6 +58,10 @@ import { BlogModule } from '../blog/blog.module';
     CommentQueryRepositoryTypeorm,
     CommentRepositoryTypeorm,
   ],
-  exports: [CommentQueryRepositoryTypeorm, CommentRepositoryTypeorm],
+  exports: [
+    CommentQueryRepositoryTypeorm,
+    CommentRepositoryTypeorm,
+    CommentQueryRepository,
+  ],
 })
-export class CommentModule {}
+export class CommentModule { }
