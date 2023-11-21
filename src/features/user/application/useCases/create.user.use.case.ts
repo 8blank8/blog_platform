@@ -6,14 +6,15 @@ import { UserRepositoryTypeorm } from '@user/repository/typeorm/user.repository.
 import { Users } from '@user/domain/typeorm/user.entity';
 import { UsersPassword } from '@user/domain/typeorm/user.password.entity';
 import { UsersConfirmationEmail } from '@user/domain/typeorm/user.confirmation.email.entity';
+import { UserBanned } from '@user/domain/typeorm/user.banned.entity';
 
 export class CreateUserCommand {
-  constructor(public user: UserCreateType) {}
+  constructor(public user: UserCreateType) { }
 }
 
 @CommandHandler(CreateUserCommand)
 export class CreateUserUseCase {
-  constructor(private userRepository: UserRepositoryTypeorm) {}
+  constructor(private userRepository: UserRepositoryTypeorm) { }
 
   async execute(command: CreateUserCommand): Promise<string> {
     const { user } = command;
@@ -35,9 +36,13 @@ export class CreateUserUseCase {
     confirmationUser.isConfirmed = true;
     confirmationUser.user = createdUser;
 
+    const userBanned = new UserBanned()
+    userBanned.user = createdUser
+
     await this.userRepository.saveUser(createdUser);
     await this.userRepository.saveUserPassword(passwordUser);
     await this.userRepository.saveUserConfirmation(confirmationUser);
+    await this.userRepository.saveUserBanned(userBanned)
 
     return createdUser.id;
   }
