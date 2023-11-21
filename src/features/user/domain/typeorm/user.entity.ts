@@ -9,6 +9,7 @@ import { PostLikes } from '@post/domain/typeorm/post.like.entity';
 
 import { UsersPassword } from './user.password.entity';
 import { UsersConfirmationEmail } from './user.confirmation.email.entity';
+import { UserBanned } from './user.banned.entity';
 
 @Entity()
 export class Users {
@@ -41,4 +42,9 @@ export class Users {
     onDelete: 'CASCADE',
   })
   confirmationInfo: UsersConfirmationEmail;
+
+  @OneToOne(() => UserBanned, userBanned => userBanned.user, {
+    onDelete: 'CASCADE',
+  })
+  banInfo: UserBanned
 }
