@@ -13,7 +13,7 @@ export class PostQueryRepositoryTypeorm {
     @InjectRepository(Posts) private postRepository: Repository<Posts>,
     @InjectRepository(PostLikes)
     private postLikesRepository: Repository<PostLikes>,
-  ) {}
+  ) { }
 
   async findFullPostById(postId: string): Promise<Posts | null> {
     return this.postRepository
@@ -43,13 +43,17 @@ export class PostQueryRepositoryTypeorm {
         return subquery
           .select('COUNT(*) as "likesCount"')
           .from(PostLikes, 'pl')
-          .where(`pl.likeStatus = 'Like' AND pl."postId" = p.id`);
+          .leftJoin('pl.user', 'user')
+          .leftJoin('user.banInfo', 'ban')
+          .where(`pl.likeStatus = 'Like' AND pl."postId" = p.id AND ban.isBanned = false`);
       })
       .addSelect((subquery) => {
         return subquery
           .select('COUNT(*) as "dislikesCount"')
           .from(PostLikes, 'pl')
-          .where(`pl.likeStatus = 'Dislike' AND pl."postId" = p.id`);
+          .leftJoin('pl.user', 'user')
+          .leftJoin('user.banInfo', 'ban')
+          .where(`pl.likeStatus = 'Dislike' AND pl."postId" = p.id AND ban.isBanned = false`);
       })
       .addSelect(
         `(SELECT ARRAY(
@@ -60,14 +64,19 @@ export class PostQueryRepositoryTypeorm {
                         SELECT u."login" FROM "users" as u 
                         WHERE u."id" = pl."userId"
                 )) FROM "post_likes" as pl 
-                WHERE p."id" = pl."postId" AND pl."likeStatus" = 'Like' 
+                LEFT JOIN "users" as u ON pl."userId" = u."id"
+                LEFT JOIN "user_banned" as ban ON u."id" = ban."userId"
+                WHERE p."id" = pl."postId" AND pl."likeStatus" = 'Like' AND ban."isBanned" = false
                 ORDER BY pl."addedAt" 
                 DESC LIMIT 3
             ))`,
         'newestLikes',
       )
       .leftJoin('p.blog', 'b')
-      .where('p.id = :postId', { postId })
+      .leftJoin('p.user', 'user')
+      .leftJoin('user.banInfo', 'ban')
+      .where('ban.isBanned = false')
+      .andWhere('p.id = :postId', { postId })
       .getRawOne();
 
     if (!post) return null;
@@ -125,8 +134,7 @@ export class PostQueryRepositoryTypeorm {
       .leftJoin('p.blog', 'b')
       .where('b.id = :blogId', { blogId })
       .orderBy(
-        `${sortBy === 'blogName' ? `b."name"` : `p."${sortBy}"`} ${
-          sortBy === 'createdAt' ? '' : 'COLLATE "C"'
+        `${sortBy === 'blogName' ? `b."name"` : `p."${sortBy}"`} ${sortBy === 'createdAt' ? '' : 'COLLATE "C"'
         }`,
         sortDirection,
       )
@@ -169,13 +177,17 @@ export class PostQueryRepositoryTypeorm {
         return subquery
           .select('COUNT(*) as "likesCount"')
           .from(PostLikes, 'pl')
-          .where(`pl.likeStatus = 'Like' AND pl."postId" = p.id`);
+          .leftJoin('pl.user', 'user')
+          .leftJoin('user.banInfo', 'ban')
+          .where(`pl.likeStatus = 'Like' AND pl."postId" = p.id AND ban.isBanned = false`);
       })
       .addSelect((subquery) => {
         return subquery
           .select('COUNT(*) as "dislikesCount"')
           .from(PostLikes, 'pl')
-          .where(`pl.likeStatus = 'Dislike' AND pl."postId" = p.id`);
+          .leftJoin('pl.user', 'user')
+          .leftJoin('user.banInfo', 'ban')
+          .where(`pl.likeStatus = 'Dislike' AND pl."postId" = p.id AND ban.isBanned = false`);
       })
       .addSelect(
         `(SELECT ARRAY(
@@ -186,7 +198,9 @@ export class PostQueryRepositoryTypeorm {
                             SELECT u."login" FROM "users" as u 
                             WHERE u."id" = pl."userId"
                     )) FROM "post_likes" as pl 
-                    WHERE p."id" = pl."postId" AND pl."likeStatus" = 'Like' 
+                    LEFT JOIN "users" as u ON pl."userId" = u."id"
+                    LEFT JOIN "user_banned" as ban ON u."id" = ban."userId"
+                    WHERE p."id" = pl."postId" AND pl."likeStatus" = 'Like' AND ban."isBanned" = false
                     ORDER BY pl."addedAt" 
                     DESC LIMIT 3
                 ))`,
@@ -194,17 +208,22 @@ export class PostQueryRepositoryTypeorm {
       )
       .leftJoin('p.blog', 'b')
       .orderBy(
-        `${sortBy === 'blogName' ? `b."name"` : `p."${sortBy}"`} ${
-          sortBy === 'createdAt' ? '' : 'COLLATE "C"'
+        `${sortBy === 'blogName' ? `b."name"` : `p."${sortBy}"`} ${sortBy === 'createdAt' ? '' : 'COLLATE "C"'
         }`,
         sortDirection,
       )
+      .leftJoin('p.user', 'user')
+      .leftJoin('user.banInfo', 'ban')
+      .where('ban.isBanned = false')
       .offset(offset)
       .limit(pageSize)
       .getRawMany();
 
     const totalCount = await this.postRepository
       .createQueryBuilder('p')
+      .leftJoin('p.user', 'user')
+      .leftJoin('user.banInfo', 'ban')
+      .where('ban.isBanned != true')
       .getCount();
 
     return {
