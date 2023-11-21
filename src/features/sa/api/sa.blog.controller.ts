@@ -17,16 +17,17 @@ import { BindUserForBlogCommand } from '@sa/usecases/bind.user.for.blog.use.case
 import { BlogBanCommand } from '@sa/usecases/blog.ban.use.case';
 import { STATUS_CODE } from '@utils/enum/status.code';
 import { Response } from 'express';
+import { SaQueryRepositoryTypeorm } from '@sa/repository/sa.query.repository.typeorm';
 
 @Controller('sa')
 export class SaBlogController {
   constructor(
     private commandBus: CommandBus,
-    private saQueryRepository: SaQueryRepository,
-  ) {}
+    private saQueryRepository: SaQueryRepositoryTypeorm
+  ) { }
 
   @UseGuards(BasicAuthGuard)
-  @Put('blogs/blogId/bind-with-user/userId')
+  @Put('blogs/:blogId/bind-with-user/:userId')
   async bindUserIdForBlog(@Param() param, @Res() res: Response) {
     const userId = param.userId;
     const blogId = param.blogId;
@@ -39,10 +40,11 @@ export class SaBlogController {
     return res.sendStatus(STATUS_CODE.NO_CONTENT);
   }
 
+  // TODO: переделать на typeorm repository
   @UseGuards(BasicAuthGuard)
   @Get('blogs')
   async getAllBlogs(@Query() queryParam: BlogQueryParamModel) {
-    return await this.saQueryRepository.findAllBlogs(queryParam);
+    return await this.saQueryRepository.findBlogsForSa(queryParam);
   }
 
   @UseGuards(BasicAuthGuard)
