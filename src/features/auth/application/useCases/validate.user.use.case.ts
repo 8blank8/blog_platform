@@ -3,12 +3,12 @@ import bcrypt from 'bcrypt';
 import { UserQueryRepositoryTypeorm } from '@user/repository/typeorm/user.query.repository.typeorm';
 
 export class ValidateUserCommand {
-  constructor(public loginOrEmail: string, public password: string) {}
+  constructor(public loginOrEmail: string, public password: string) { }
 }
 
 @CommandHandler(ValidateUserCommand)
 export class ValidateUserUseCase {
-  constructor(private userQueryRepository: UserQueryRepositoryTypeorm) {}
+  constructor(private userQueryRepository: UserQueryRepositoryTypeorm) { }
 
   async execute(command: ValidateUserCommand) {
     const { loginOrEmail, password } = command;
@@ -16,7 +16,7 @@ export class ValidateUserUseCase {
     const user = await this.userQueryRepository.findUserByLoginOrEmail(
       loginOrEmail,
     );
-    if (!user) return null;
+    if (!user || user.banInfo.isBanned) return null;
 
     const newPasswordHash: string = await bcrypt.hash(
       password,
