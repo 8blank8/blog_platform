@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from '@user/domain/typeorm/user.entity';
 import { UsersConfirmationEmail } from '@user/domain/typeorm/user.confirmation.email.entity';
 import { UsersPassword } from '@user/domain/typeorm/user.password.entity';
+import { UserBanned } from '@user/domain/typeorm/user.banned.entity';
 
 @Injectable()
 export class UserRepositoryTypeorm {
@@ -13,7 +14,8 @@ export class UserRepositoryTypeorm {
     private userConfirmationRepository: Repository<UsersConfirmationEmail>,
     @InjectRepository(UsersPassword)
     private userPasswordRepository: Repository<UsersPassword>,
-  ) {}
+    @InjectRepository(UserBanned) private userBannedRepository: Repository<UserBanned>
+  ) { }
 
   async saveUser(user: Users) {
     return this.userRepository.save(user);
@@ -25,6 +27,10 @@ export class UserRepositoryTypeorm {
 
   async saveUserPassword(userPassword: UsersPassword) {
     return this.userPasswordRepository.save(userPassword);
+  }
+
+  async saveUserBanned(banInfo: UserBanned) {
+    return this.userBannedRepository.save(banInfo)
   }
 
   async deleteUser(userId: string) {
