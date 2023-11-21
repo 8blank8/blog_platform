@@ -1,47 +1,40 @@
 import { CommandHandler } from '@nestjs/cqrs';
-import { UpdateBannedUserForSqlModel } from '@user/models/update.banned.user.for.sql.model';
+import { SecurityRepositoryTypeorm } from '@security/repository/typeorm/security.repository.typeorm';
+import { UserBanned } from '@user/domain/typeorm/user.banned.entity';
 import { UserBanModel } from '@user/models/user.ban.model';
-import { UserQueryRepositorySql } from '@user/repository/sql/user.query.repository.sql';
-import { UserRepositorySql } from '@user/repository/sql/user.repository.sql';
+import { UserQueryRepositoryTypeorm } from '@user/repository/typeorm/user.query.repository.typeorm';
+import { UserRepositoryTypeorm } from '@user/repository/typeorm/user.repository.typeorm';
 
 export class BannedUserCommand {
-  constructor(public inputData: UserBanModel, public userId: string) {}
+  constructor(public inputData: UserBanModel, public userId: string) { }
 }
 
 @CommandHandler(BannedUserCommand)
 export class BannedUserUseCase {
   constructor(
-    private userQueryRepositorySql: UserQueryRepositorySql,
-    private userRepositorySql: UserRepositorySql,
-  ) {}
+    private userQueryRepository: UserQueryRepositoryTypeorm,
+    private userRepository: UserRepositoryTypeorm,
+    private securityRepository: SecurityRepositoryTypeorm
+  ) { }
 
   async execute(command: BannedUserCommand): Promise<boolean> {
-    const { isBanned, banReason } = command.inputData;
+    let { isBanned, banReason } = command.inputData;
     const { userId } = command;
-
-    const user = await this.userQueryRepositorySql.findUser(userId);
+    console.log({ isBanned, banReason })
+    const user = await this.userQueryRepository.findUserByIdForSa(userId);
     if (!user) return false;
 
-    const banDto: UpdateBannedUserForSqlModel = {
-      userId: userId,
-      isBanned: isBanned,
-      banReason: banReason,
-    };
+    let banInfo = await this.userQueryRepository.findBanInfoByUserId(userId)
+    if (!banInfo) return false
 
-    const userIsBanned =
-      await this.userQueryRepositorySql.findBannedUserByIdForSa(userId);
+    banInfo.banReason = isBanned ? banReason : null
+    banInfo.isBanned = isBanned
+    banInfo.banDate = isBanned ? new Date().toISOString() : null
 
-    if (!userIsBanned) {
-      await this.userRepositorySql.createBanUserByIdForSa(banDto);
-      return true;
-    }
+    await this.userRepository.saveUserBanned(banInfo)
 
-    if (isBanned) {
-      await this.userRepositorySql.updateBanUserByIdForSa(banDto);
-      return true;
-    }
+    await this.securityRepository.deleteAllDevicesForSa(user.id)
 
-    await this.userRepositorySql.updateUnbanUserByIdForSa(userId);
-    return true;
+    return true
   }
 }
