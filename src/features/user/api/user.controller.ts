@@ -27,7 +27,7 @@ export class UserController {
   constructor(
     private commandBus: CommandBus,
     private userQueryRepository: UserQueryRepositoryTypeorm,
-  ) {}
+  ) { }
 
   @UseGuards(BasicAuthGuard)
   @Post()
@@ -35,7 +35,7 @@ export class UserController {
     const userId: string = await this.commandBus.execute(
       new CreateUserCommand(inputData),
     );
-    const user = await this.userQueryRepository.findUserByIdForSa(userId);
+    const user = await this.userQueryRepository.findUserWitchBanInfo(userId);
 
     return user;
   }
