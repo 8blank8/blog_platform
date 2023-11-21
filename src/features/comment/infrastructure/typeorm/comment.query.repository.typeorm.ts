@@ -15,7 +15,7 @@ export class CommentQueryRepositoryTypeorm {
     private commentRepository: Repository<PostComments>,
     @InjectRepository(PostCommentLike)
     private commentLikeRepository: Repository<PostCommentLike>,
-  ) {}
+  ) { }
 
   async findCommentsViewByPostId(
     queryParam: CommentQueryParam,
@@ -33,15 +33,17 @@ export class CommentQueryRepositoryTypeorm {
         return subquery
           .select('COUNT(*) as "likesCount"')
           .from(PostCommentLike, 'cl')
-          .where(`cl.likeStatus = 'Like'`)
-          .andWhere(`cl."commentId" = c.id`);
+          .leftJoin('cl.user', 'user')
+          .leftJoin('user.banInfo', 'ban')
+          .where(`cl.likeStatus = 'Like' AND cl."commentId" = c.id AND ban.isBanned = false`)
       })
       .addSelect((subquery) => {
         return subquery
           .select('COUNT(*) as "dislikesCount"')
           .from(PostCommentLike, 'cl')
-          .where(`cl.likeStatus = 'Dislike'`)
-          .andWhere(`cl."commentId" = c.id`);
+          .leftJoin('cl.user', 'user')
+          .leftJoin('user.banInfo', 'ban')
+          .where(`cl.likeStatus = 'Dislike' AND cl."commentId" = c.id AND ban.isBanned = false`)
       })
       .addSelect((subquery) => {
         return subquery
@@ -53,7 +55,9 @@ export class CommentQueryRepositoryTypeorm {
       .addSelect('u.login')
       .leftJoin('c.post', 'p')
       .leftJoin('c.user', 'u')
+      .leftJoin('u.banInfo', 'ban')
       .where('p.id = :postId', { postId })
+      .andWhere('ban.isBanned = false')
       .orderBy(
         `c."${sortBy}" ${sortBy === 'createdAt' ? '' : 'COLLATE "C"'}`,
         sortDirection,
@@ -86,15 +90,17 @@ export class CommentQueryRepositoryTypeorm {
         return subquery
           .select('COUNT(*) as "likesCount"')
           .from(PostCommentLike, 'cl')
-          .where(`cl.likeStatus = 'Like'`)
-          .andWhere(`cl."commentId" = c.id`);
+          .leftJoin('cl.user', 'user')
+          .leftJoin('user.banInfo', 'ban')
+          .where(`cl.likeStatus = 'Like' AND cl."commentId" = c.id AND ban.isBanned = false`)
       })
       .addSelect((subquery) => {
         return subquery
           .select('COUNT(*) as "dislikesCount"')
           .from(PostCommentLike, 'cl')
-          .where(`cl.likeStatus = 'Dislike'`)
-          .andWhere(`cl."commentId" = c.id`);
+          .leftJoin('cl.user', 'user')
+          .leftJoin('user.banInfo', 'ban')
+          .where(`cl.likeStatus = 'Dislike' AND cl."commentId" = c.id AND ban.isBanned = false`)
       })
       .addSelect((subquery) => {
         return subquery
@@ -105,7 +111,9 @@ export class CommentQueryRepositoryTypeorm {
       })
       .addSelect('u.login')
       .leftJoin('c.user', 'u')
+      .leftJoin('u.banInfo', 'ban')
       .where('c.id = :commentId', { commentId })
+      .andWhere('ban.isBanned = false')
       .getRawMany();
 
     if (!comment) return null;
