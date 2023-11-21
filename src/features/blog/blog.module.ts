@@ -12,7 +12,7 @@ import { DeletePostByBlogIdUseCase } from './application/useCases/delete.post.by
 import { UpdatePostByBlogIdUseCase } from './application/useCases/update.post.by.blog.id.use.case';
 import { CreateBlogUseCase } from './application/useCases/create.blog.use.case';
 import { UpdateBlogUseCase } from './application/useCases/update.blog.use.case';
-import { DeleteBlogUseCase } from './application/useCases/delete.blog.use.case';
+import { DeleteBlogUseCase } from '@blog/usecases/DeleteBlogUseCase';
 import { BanUserForBlogUseCase } from './application/useCases/ban.user.for.blog.use.case';
 import {
   UserBanBlog,
@@ -30,6 +30,8 @@ import { UserBanBlogQueryRepositorySql } from './infrastructure/sql/user.ban.blo
 import { UserBanBlogRepositorySql } from './infrastructure/sql/user.ban.blog.repository.sql';
 import { BlogRepositoryTypeorm } from './infrastructure/typeorm/blog.repository.typeorm';
 import { BlogQueryRepositoryTypeorm } from './infrastructure/typeorm/blog.query.repository.typeorm';
+import { BloggerController } from './api/blogger.controller';
+import { CommentModule } from '@comment/comment.module';
 
 @Module({
   imports: [
@@ -40,9 +42,10 @@ import { BlogQueryRepositoryTypeorm } from './infrastructure/typeorm/blog.query.
     ]),
     TypeOrmModule.forFeature([Blogs]),
     UserModule,
+    CommentModule,
     forwardRef(() => PostModule),
   ],
-  controllers: [BlogController, BloggerUserController],
+  controllers: [BlogController, BloggerUserController, BloggerController],
   providers: [
     BlogService,
     DeletePostByBlogIdUseCase,
@@ -74,4 +77,4 @@ import { BlogQueryRepositoryTypeorm } from './infrastructure/typeorm/blog.query.
     BlogQueryRepositorySql,
   ],
 })
-export class BlogModule {}
+export class BlogModule { }
