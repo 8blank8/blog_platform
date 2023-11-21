@@ -12,7 +12,7 @@ export class SaQueryRepository {
   constructor(
     @InjectModel(Blog.name) private blogModel: Model<BlogDocument>,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
-  ) {}
+  ) { }
 
   async findAllBlogs(queryParam: BlogQueryParamModel) {
     const {
@@ -63,10 +63,10 @@ export class SaQueryRepository {
         userId: user.id,
         userLogin: user.login,
       },
-      banInfo: {
-        isBanned: blog.isBanned,
-        banDate: blog.banDate,
-      },
+      // banInfo: {
+      //   isBanned: blog.isBanned,
+      //   banDate: blog.banDate,
+      // },
     };
   }
 }
