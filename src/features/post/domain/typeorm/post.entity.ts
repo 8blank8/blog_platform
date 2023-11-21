@@ -9,6 +9,7 @@ import {
 import { PostComments } from '@comment/domain/typeorm/comment.entitty';
 
 import { PostLikes } from './post.like.entity';
+import { Users } from '@user/domain/typeorm/user.entity';
 
 @Entity()
 export class Posts {
@@ -32,6 +33,9 @@ export class Posts {
     default: () => 'now()',
   })
   createdAt: string;
+
+  @ManyToOne(() => Users, user => user.id)
+  user: Users
 
   @ManyToOne(() => Blogs, (blog) => blog.id)
   blog: Blogs;
