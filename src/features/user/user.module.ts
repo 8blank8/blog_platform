@@ -22,12 +22,13 @@ import { UserRepository } from './infrastructure/mongo/user.repository';
 import { UserQueryRepository } from './infrastructure/mongo/user.query.repository';
 import { UserRepositorySql } from './infrastructure/sql/user.repository.sql';
 import { UserQueryRepositorySql } from './infrastructure/sql/user.query.repository.sql';
+import { UserBanned } from './domain/typeorm/user.banned.entity';
 
 @Module({
   imports: [
     CqrsModule,
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
-    TypeOrmModule.forFeature([Users, UsersConfirmationEmail, UsersPassword]),
+    TypeOrmModule.forFeature([Users, UsersConfirmationEmail, UsersPassword, UserBanned]),
   ],
   controllers: [UserController],
   providers: [
@@ -58,4 +59,4 @@ import { UserQueryRepositorySql } from './infrastructure/sql/user.query.reposito
     UserRepositorySql,
   ],
 })
-export class UserModule {}
+export class UserModule { }
