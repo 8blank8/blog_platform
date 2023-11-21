@@ -18,6 +18,20 @@ export class UserPagination extends DefaultPagination {
       searchEmailTerm = QUERY_PARAM_SQL.SEARCH_NAME_TERM,
     } = this.queryParam;
 
+    let banStatus: { banStatus1: boolean, banStatus2: boolean } = {
+      banStatus1: true,
+      banStatus2: false
+    }
+
+    if (this.queryParam.banStatus === 'banned') {
+      banStatus.banStatus1 = true
+      banStatus.banStatus2 = true
+    }
+    if (this.queryParam.banStatus === 'notBanned') {
+      banStatus.banStatus1 = false
+      banStatus.banStatus2 = false
+    }
+
     const defaultPagination = this.getDefaultPagination();
     const sortDirrection = this.getSortDirectionForSql();
 
@@ -26,6 +40,7 @@ export class UserPagination extends DefaultPagination {
       ...sortDirrection,
       searchLoginTerm: `%${searchLoginTerm}%`,
       searchEmailTerm: `%${searchEmailTerm}%`,
+      banStatus: banStatus
     };
   }
 }
