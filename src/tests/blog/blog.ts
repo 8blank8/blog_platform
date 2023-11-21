@@ -1,7 +1,10 @@
 import { BlogCreateType } from "@blog/models/blog.create.type";
 import { PostCreateByIdType } from "@blog/models/post.create.by.id.type";
 import { PostUpdateByIdModel } from "@blog/models/post.update.by.id";
+import { CommentCreateType } from "@comment/models/comment.create.type";
+import { CommentViewSqlModel } from "@comment/models/comment.view.sql.model";
 import { HttpStatus, INestApplication } from "@nestjs/common";
+import { PostLikeStatusType } from "@post/models/post.like.status.type";
 import { PostViewSqlModel } from "@post/models/post.view.sql.model";
 import request from 'supertest'
 
@@ -13,6 +16,7 @@ export class Blog {
     public createdAt: string
     public isMembership: boolean
     public posts: Array<PostViewSqlModel>
+    public comments: Array<CommentViewSqlModel>
 
     constructor() {
         this.id = ''
@@ -22,6 +26,7 @@ export class Blog {
         this.createdAt = ''
         this.isMembership = true
         this.posts = []
+        this.comments = []
     }
 
     async createBlog_201(app: INestApplication, inputData: BlogCreateType, accessToken: string) {
@@ -69,7 +74,7 @@ export class Blog {
         expect(res.status).toBe(HttpStatus.NO_CONTENT)
     }
 
-    async createPostByBlogId_201(app: INestApplication, inputData: PostCreateByIdType, accessToken: string) {
+    async createPostByBlogId_201(app: INestApplication, inputData: PostCreateByIdType, accessToken: string): Promise<string> {
         const res = await request(app.getHttpServer())
             .post(`/blogger/blogs/${this.id}/posts`)
             .set('Authorization', `Bearer ${accessToken}`)
@@ -93,7 +98,9 @@ export class Blog {
             }
         })
 
-        this.posts = [...this.posts, res.body]
+        this.posts.push(res.body)
+
+        return res.body.id
     }
 
     async updatePostByBlogId_204(app: INestApplication, postId: string, inputData: PostUpdateByIdModel, accessToken: string) {
@@ -121,4 +128,48 @@ export class Blog {
 
         this.posts = this.posts.filter(post => post!.id !== postId)
     }
+
+    async updateLikeStatusForPost_204(app: INestApplication, postId: string, inputData: PostLikeStatusType, accessToken: string) {
+        const res = await request(app.getHttpServer())
+            .put(`/posts/${postId}/like-status`)
+            .set('Authorization', `Bearer ${accessToken}`)
+            .send(inputData)
+
+        expect(res.status).toBe(HttpStatus.NO_CONTENT)
+    }
+
+    async createCommentForPost_201(app: INestApplication, inputData: CommentCreateType, postId: string, userInfo: UserInfo): Promise<string> {
+        const res = await request(app.getHttpServer())
+            .post(`/posts/${postId}/comments`)
+            .set('Authorization', `Bearer ${userInfo.accessToken}`)
+            .send(inputData)
+
+        expect(res.status).toBe(HttpStatus.CREATED)
+
+        expect(res.body).toEqual({
+            id: expect.any(String),
+            content: inputData.content,
+            commentatorInfo: {
+                userId: userInfo.id,
+                userLogin: userInfo.login,
+            },
+            createdAt: expect.any(String),
+            likesInfo: {
+                likesCount: 0,
+                dislikesCount: 0,
+                myStatus: "None"
+            }
+        })
+
+        this.comments = [...this.comments, res.body]
+
+        return res.body.id
+    }
+
+}
+
+class UserInfo {
+    accessToken: string
+    id: string
+    login: string
 }
