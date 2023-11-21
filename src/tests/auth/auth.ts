@@ -1,5 +1,4 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
-import { UserTestModel } from "./models/user.test.model";
 import request from 'supertest'
 import { AUTH } from "../enums/base.auth.enum";
 
@@ -20,7 +19,6 @@ export class Auth {
             email: `email${number}@yandex.ru`,
             password: `password${number}`,
         };
-        // let user: UserTestModel;
 
         const res = await request(app.getHttpServer())
             .post(`/sa/users`)
@@ -29,19 +27,14 @@ export class Auth {
 
         expect(res.status).toBe(HttpStatus.CREATED);
 
-        //   user = {
         this.id = res.body.id
         this.login = res.body.login
         this.email = res.body.email
         this.createdAt = res.body.createdAt
         this.password = userDto.password
-        //   };
-
-        //   return user;
     }
 
     async loginUser(app: INestApplication) {
-        // const { login, password } = loginData;
 
         const res = await request(app.getHttpServer())
             .post('/auth/login')
@@ -50,9 +43,15 @@ export class Auth {
         expect(res.status).toBe(HttpStatus.OK);
         expect(res.body).toEqual({ accessToken: expect.any(String) });
 
-        // return {
         this.accessToken = res.body.accessToken
         this.refreshToken = res.headers['set-cookie'][0]
-        // };
     };
+
+    async loginUserBanned_401(app: INestApplication) {
+        const res = await request(app.getHttpServer())
+            .post('/auth/login')
+            .send({ loginOrEmail: this.login, password: this.password });
+
+        expect(res.status).toBe(HttpStatus.UNAUTHORIZED);
+    }
 }
