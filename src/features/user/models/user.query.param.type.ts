@@ -5,5 +5,5 @@ export class UserQueryParamType {
   pageSize: string | undefined;
   searchLoginTerm: string | undefined;
   searchEmailTerm: string | undefined;
-  banStatus: string | undefined;
+  banStatus: 'all' | 'banned' | 'notBanned' | undefined;
 }
