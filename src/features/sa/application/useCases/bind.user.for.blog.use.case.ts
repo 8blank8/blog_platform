@@ -1,28 +1,29 @@
-import { BlogQueryRepositorySql } from '@blog/repository/sql/blog.query.repository.sql';
-import { BlogRepositorySql } from '@blog/repository/sql/blog.repository.sql';
+import { BlogQueryRepositoryTypeorm } from '@blog/repository/typeorm/blog.query.repository.typeorm';
+import { BlogRepositoryTypeorm } from '@blog/repository/typeorm/blog.repository.typeorm';
 import { CommandHandler } from '@nestjs/cqrs';
-import { UserQueryRepositorySql } from '@user/repository/sql/user.query.repository.sql';
+import { UserQueryRepositoryTypeorm } from '@user/repository/typeorm/user.query.repository.typeorm';
 
 export class BindUserForBlogCommand {
-  constructor(public userId: string, public blogId: string) {}
+  constructor(public userId: string, public blogId: string) { }
 }
 
 @CommandHandler(BindUserForBlogCommand)
 export class BindUserForBlogUseCase {
   constructor(
-    private blogQueryRepositorySql: BlogQueryRepositorySql,
-    private userQueryRepositorySql: UserQueryRepositorySql,
-    private blogRepositorySql: BlogRepositorySql,
-  ) {}
+    private blogQueryRepository: BlogQueryRepositoryTypeorm,
+    private userQueryRepository: UserQueryRepositoryTypeorm,
+    private blogRepository: BlogRepositoryTypeorm,
+  ) { }
 
   async execute(command: BindUserForBlogCommand): Promise<boolean> {
     const { userId, blogId } = command;
 
-    const user = await this.userQueryRepositorySql.findUserByIdForSa(userId);
-    const blog = await this.blogQueryRepositorySql.findBlogFullById(blogId);
-    if (!blog || !user) return false;
+    const user = await this.userQueryRepository.findUserByIdForSa(userId)
+    const blog = await this.blogQueryRepository.findFullBlogById(blogId)
+    if (!user || !blog) return false
 
-    await this.blogRepositorySql.bindBlogForUser(user.id, blog.id);
+    blog.user = user
+    await this.blogRepository.saveBlog(blog)
 
     return true;
   }
