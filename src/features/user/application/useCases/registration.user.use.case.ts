@@ -7,9 +7,10 @@ import { EmailManager } from '@utils/managers/email.manager';
 import { Users } from '@user/domain/typeorm/user.entity';
 import { UsersPassword } from '@user/domain/typeorm/user.password.entity';
 import { UsersConfirmationEmail } from '@user/domain/typeorm/user.confirmation.email.entity';
+import { UserBanned } from '@user/domain/typeorm/user.banned.entity';
 
 export class RegistrationUserCommand {
-  constructor(public user: UserCreateType) {}
+  constructor(public user: UserCreateType) { }
 }
 
 @CommandHandler(RegistrationUserCommand)
@@ -17,7 +18,7 @@ export class RegistrationUserUseCase {
   constructor(
     private userRepository: UserRepositoryTypeorm,
     private emailManager: EmailManager,
-  ) {}
+  ) { }
 
   async execute(command: RegistrationUserCommand): Promise<boolean> {
     const { user } = command;
@@ -41,9 +42,13 @@ export class RegistrationUserUseCase {
     createdConfirmationEmail.code = confirmationCode;
     createdConfirmationEmail.user = createdUser;
 
+    const userBanned = new UserBanned()
+    userBanned.user = createdUser
+
     await this.userRepository.saveUser(createdUser);
     await this.userRepository.saveUserConfirmation(createdConfirmationEmail);
     await this.userRepository.saveUserPassword(createdUserPassword);
+    await this.userRepository.saveUserBanned(userBanned)
 
     this.emailManager.sendEmailConfirmationMessage(
       user.email,
