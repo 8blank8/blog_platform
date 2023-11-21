@@ -1,5 +1,6 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Posts } from '@post/domain/typeorm/post.entity';
+import { Users } from '@user/domain/typeorm/user.entity';
 
 @Entity()
 export class Blogs {
@@ -26,4 +27,7 @@ export class Blogs {
 
   @OneToMany(() => Posts, (post) => post.blog)
   posts: Posts[];
+
+  @ManyToOne(() => Users, user => user.id)
+  user: Users
 }
