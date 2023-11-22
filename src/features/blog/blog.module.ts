@@ -32,6 +32,9 @@ import { BlogRepositoryTypeorm } from './infrastructure/typeorm/blog.repository.
 import { BlogQueryRepositoryTypeorm } from './infrastructure/typeorm/blog.query.repository.typeorm';
 import { BloggerController } from './api/blogger.controller';
 import { CommentModule } from '@comment/comment.module';
+import { UserBlogBanRepositoryTypeorm } from './infrastructure/typeorm/user.ban.blog.repository';
+import { BlogBanUser } from './domain/typeorm/blog.ban.user.entity';
+import { UserBlogBanQueryRepositoryTypeorm } from './infrastructure/typeorm/user.ban.blog.query.repository';
 
 @Module({
   imports: [
@@ -40,7 +43,7 @@ import { CommentModule } from '@comment/comment.module';
       { name: UserBanBlog.name, schema: UserBanBlogSchema },
       { name: Blog.name, schema: BlogSchema },
     ]),
-    TypeOrmModule.forFeature([Blogs]),
+    TypeOrmModule.forFeature([Blogs, BlogBanUser]),
     UserModule,
     CommentModule,
     forwardRef(() => PostModule),
@@ -67,6 +70,8 @@ import { CommentModule } from '@comment/comment.module';
 
     BlogRepositoryTypeorm,
     BlogQueryRepositoryTypeorm,
+    UserBlogBanRepositoryTypeorm,
+    UserBlogBanQueryRepositoryTypeorm
   ],
   exports: [
     BlogRepositoryTypeorm,
@@ -75,6 +80,7 @@ import { CommentModule } from '@comment/comment.module';
     BlogQueryRepository,
     BlogRepositorySql,
     BlogQueryRepositorySql,
+    UserBlogBanQueryRepositoryTypeorm
   ],
 })
 export class BlogModule { }
