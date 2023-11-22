@@ -13,7 +13,7 @@ export class UserBanBlogQueryRepository {
   constructor(
     @InjectModel(UserBanBlog.name)
     private userBanBlogModel: Model<UserBanBlogDocument>,
-  ) {}
+  ) { }
 
   async findBannedUsers(blogId: string, queryParam: UsersBanQueryParamModel) {
     const {
@@ -36,13 +36,13 @@ export class UserBanBlogQueryRepository {
     const bannedUsers = await this.userBanBlogModel
       .find(filter)
       .sort({ [sortBy]: sortDirection })
-      .skip((pageNumber - 1) * pageSize)
-      .limit(pageSize);
+      .skip((+pageNumber - 1) * +pageSize)
+      .limit(+pageSize);
 
     const totalCount = await this.userBanBlogModel.countDocuments(filter);
 
     return {
-      pagesCount: Math.ceil(totalCount / pageSize),
+      pagesCount: Math.ceil(totalCount / +pageSize),
       page: +pageNumber,
       pageSize: +pageSize,
       totalCount: totalCount,
