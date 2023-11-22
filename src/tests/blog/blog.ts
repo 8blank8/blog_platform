@@ -1,3 +1,4 @@
+import { BanUserForBlogModel } from "@blog/models/ban.user.for.blog.model";
 import { BlogCreateType } from "@blog/models/blog.create.type";
 import { PostCreateByIdType } from "@blog/models/post.create.by.id.type";
 import { PostUpdateByIdModel } from "@blog/models/post.update.by.id";
@@ -164,6 +165,24 @@ export class Blog {
         this.comments = [...this.comments, res.body]
 
         return res.body.id
+    }
+
+    async createCommentForPostUserIsBanned_403(app: INestApplication, inputData: CommentCreateType, postId: string, userInfo: UserInfo) {
+        const res = await request(app.getHttpServer())
+            .post(`/posts/${postId}/comments`)
+            .set('Authorization', `Bearer ${userInfo.accessToken}`)
+            .send(inputData)
+
+        expect(res.status).toBe(HttpStatus.FORBIDDEN)
+    }
+
+    async banUserForBlog(app: INestApplication, userId: string, inputData: BanUserForBlogModel, accessToken: string) {
+        const res = await request(app.getHttpServer())
+            .put(`/blogger/users/${userId}/ban`)
+            .set('Authorization', `Bearer ${accessToken}`)
+            .send(inputData)
+
+        expect(res.status).toBe(HttpStatus.NO_CONTENT)
     }
 
 }
