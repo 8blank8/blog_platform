@@ -1,6 +1,8 @@
+import { UserBlogBanQueryRepositoryTypeorm } from '@blog/repository/typeorm/user.ban.blog.query.repository';
 import { PostComments } from '@comment/domain/typeorm/comment.entitty';
 import { CommentCreateType } from '@comment/models/comment.create.type';
 import { CommentRepositoryTypeorm } from '@comment/repository/typeorm/comment.repository.typeorm';
+import { ForbiddenException } from '@nestjs/common';
 import { CommandHandler } from '@nestjs/cqrs';
 import { PostQueryRepositoryTypeorm } from '@post/repository/typeorm/post.query.repository.typeorm';
 import { UserQueryRepositoryTypeorm } from '@user/repository/typeorm/user.query.repository.typeorm';
@@ -10,7 +12,7 @@ export class CreateCommentForPostCommand {
     public id: string,
     public inputData: CommentCreateType,
     public userId: string,
-  ) {}
+  ) { }
 }
 
 @CommandHandler(CreateCommentForPostCommand)
@@ -19,7 +21,8 @@ export class CreateCommentForPostUseCase {
     private postQueryRepository: PostQueryRepositoryTypeorm,
     private userQueryRepository: UserQueryRepositoryTypeorm,
     private commentRepository: CommentRepositoryTypeorm,
-  ) {}
+    private userBanBlogQueryRepository: UserBlogBanQueryRepositoryTypeorm
+  ) { }
 
   async execute(
     command: CreateCommentForPostCommand,
@@ -31,6 +34,9 @@ export class CreateCommentForPostUseCase {
 
     const user = await this.userQueryRepository.findUserByIdForSa(userId);
     if (!user) return false;
+
+    const bannedUser = await this.userBanBlogQueryRepository.findBannedUserForBlog(user.id, post.blog.id)
+    if (bannedUser?.isBanned) throw new ForbiddenException()
 
     const comment = new PostComments();
     comment.content = inputData.content;
