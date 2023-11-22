@@ -11,6 +11,11 @@ describe('blogger api', () => {
   const blog1 = new Blog()
   const blog2 = new Blog()
 
+  const user2 = new Auth()
+  const user3 = new Auth()
+  const blog3 = new Blog()
+  let postIdUser3: string
+
   beforeAll(async () => {
     app = await startTestConfig()
   })
@@ -193,9 +198,120 @@ describe('blogger api', () => {
       expect(data.items).toEqual([])
     })
   })
-  // TODO: сделать delete метод для поста по blogId
 
-  afterAll(async () => {
-    await app.close()
+  describe('delete all data', () => {
+    it('delete all data', async () => {
+      await dropDataBase(app)
+    })
+  })
+
+  describe('check banned user for blog flow', () => {
+
+    // создать 2  пользователей и залогинить
+    it('create user2, user3 should be status 201', async () => {
+      await user2.registrationUser(app, 2)
+      await user3.registrationUser(app, 3)
+    })
+
+    it('login user2, user3 should be status 200', async () => {
+      await user2.loginUser(app)
+      await user3.loginUser(app)
+    })
+
+    // создать блог для пользователя 1
+    it('create blog for user3 should be status 201', async () => {
+      await blog3.createBlog_201(
+        app,
+        {
+          name: "blog_user3",
+          description: "is description for blog3",
+          websiteUrl: "https://website.com"
+        },
+        user3.accessToken
+      )
+    })
+
+    // создать пост для блога
+    it('create post for blog3 should be status 201', async () => {
+      postIdUser3 = await blog3.createPostByBlogId_201(
+        app,
+        {
+          title: "title_blog3",
+          shortDescription: "short description for post blog3",
+          content: "this content is good"
+        },
+        user3.accessToken
+      )
+    })
+
+    // оставить комментарий к блогу пользователя 1
+    it('create comment by user2 for post user3 should be status 201', async () => {
+      await blog3.createCommentForPost_201(
+        app,
+        {
+          content: "content by user2 for blog3"
+        },
+        postIdUser3,
+        {
+          accessToken: user2.accessToken,
+          id: user2.id,
+          login: user2.login
+        }
+      )
+    })
+
+    // забанить пользователя 2
+    it('ban user3 for blog3 should be status 204', async () => {
+      await blog3.banUserForBlog(
+        app,
+        user2.id,
+        {
+          isBanned: true,
+          banReason: "is user so bad assssssssssss",
+          blogId: blog3.id
+        },
+        user3.accessToken
+      )
+    })
+
+    // попробовать оставить комментарий к блогу пользователя 1
+    it('create comment by user2 for blog3, after banned should be status 400', async () => {
+      await blog3.createCommentForPostUserIsBanned_403(
+        app,
+        {
+          content: "content for post blog3"
+        },
+        postIdUser3,
+        {
+          accessToken: user2.accessToken,
+          id: user2.id,
+          login: user2.login
+        }
+      )
+    })
+
+    it('find banned users for blog3 should be status 200, items length 1', async () => {
+      const res = await request(app.getHttpServer())
+        .get(`/blogger/users/blog/${blog3.id}`)
+        .set('Authorization', `Bearer ${user3.accessToken}`)
+
+      expect(res.status).toBe(HttpStatus.OK)
+
+      expect(res.body.totalCount).toBe(1)
+      expect(res.body.items[0]).toEqual({
+        id: user2.id,
+        login: user2.login,
+        banInfo: {
+          isBanned: true,
+          banDate: expect.any(String),
+          banReason: expect.any(String)
+        }
+      })
+    })
+
+
+    afterAll(async () => {
+      await app.close()
+    })
   })
 })
