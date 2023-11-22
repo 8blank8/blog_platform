@@ -19,14 +19,16 @@ import { BanUserForBlogCommand } from '@blog/usecases/ban.user.for.blog.use.case
 import { UsersBanQueryParamModel } from '@blog/models/users.ban.query.param.model';
 import { UserBanBlogQueryRepository } from '@blog/repository/mongo/user.ban.blog.query.repository';
 import { BlogQueryRepository } from '@blog/repository/mongo/blog.query.repository';
+import { UserBlogBanQueryRepositoryTypeorm } from '@blog/repository/typeorm/user.ban.blog.query.repository';
+import { BlogQueryRepositoryTypeorm } from '@blog/repository/typeorm/blog.query.repository.typeorm';
 
 @Controller('blogger/users')
 export class BloggerUserController {
   constructor(
     private commandBus: CommandBus,
-    private userBanBlogQueryRepository: UserBanBlogQueryRepository,
-    private blogQueryRepository: BlogQueryRepository,
-  ) {}
+    private userBanBlogQueryRepository: UserBlogBanQueryRepositoryTypeorm,
+    private blogQueryRepository: BlogQueryRepositoryTypeorm,
+  ) { }
 
   @UseGuards(JwtAuthGuard)
   @Put('/:id/ban')
@@ -54,9 +56,11 @@ export class BloggerUserController {
     @Res() res: Response,
     @Request() req,
   ) {
-    const blog = await this.blogQueryRepository.findBlogDocumentById(blogId);
+
+    console.log({ queryParam })
+    const blog = await this.blogQueryRepository.findFullBlogById(blogId);
     if (!blog) return res.sendStatus(STATUS_CODE.NOT_FOUND);
-    if (blog.userId !== req.user) throw new ForbiddenException();
+    if (blog.user.id !== req.user) throw new ForbiddenException();
 
     const bannedUsers = await this.userBanBlogQueryRepository.findBannedUsers(
       blogId,
