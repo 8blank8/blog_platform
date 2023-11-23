@@ -40,7 +40,6 @@ export class SaBlogController {
     return res.sendStatus(STATUS_CODE.NO_CONTENT);
   }
 
-  // TODO: переделать на typeorm repository
   @UseGuards(BasicAuthGuard)
   @Get('blogs')
   async getAllBlogs(@Query() queryParam: BlogQueryParamModel) {
