@@ -35,6 +35,7 @@ import { CommentModule } from '@comment/comment.module';
 import { UserBlogBanRepositoryTypeorm } from './infrastructure/typeorm/user.ban.blog.repository';
 import { BlogBanUser } from './domain/typeorm/blog.ban.user.entity';
 import { UserBlogBanQueryRepositoryTypeorm } from './infrastructure/typeorm/user.ban.blog.query.repository';
+import { BlogBan } from './domain/typeorm/blog.ban.entity';
 
 @Module({
   imports: [
@@ -43,7 +44,7 @@ import { UserBlogBanQueryRepositoryTypeorm } from './infrastructure/typeorm/user
       { name: UserBanBlog.name, schema: UserBanBlogSchema },
       { name: Blog.name, schema: BlogSchema },
     ]),
-    TypeOrmModule.forFeature([Blogs, BlogBanUser]),
+    TypeOrmModule.forFeature([Blogs, BlogBanUser, BlogBan]),
     UserModule,
     CommentModule,
     forwardRef(() => PostModule),
