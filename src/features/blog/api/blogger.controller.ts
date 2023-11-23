@@ -33,6 +33,7 @@ import { UpdatePostByBlogIdCommand } from '@blog/usecases/update.post.by.blog.id
 import { DeleteBlogCommand } from '@blog/usecases/delete.blog.use.case';
 import { DeletePostByBlogIdCommand } from '@blog/usecases/delete.post.by.blog.id.use.case';
 import { BlogQueryRepositoryTypeorm } from '@blog/repository/typeorm/blog.query.repository.typeorm';
+import { CommentQueryRepositoryTypeorm } from '@comment/repository/typeorm/comment.query.repository.typeorm';
 // TODO: исправить путь, посмотреть в документации
 @Controller('blogger/blogs')
 export class BloggerController {
@@ -40,7 +41,7 @@ export class BloggerController {
     private commandBus: CommandBus,
     private postQueryRepository: PostQueryRepositoryTypeorm,
     private blogQueryRepository: BlogQueryRepositoryTypeorm,
-    private commentQueryRepository: CommentQueryRepository,
+    private commentQueryRepository: CommentQueryRepositoryTypeorm,
   ) { }
   // TODO: исправить все гарды на jwtrefreshguard
   @UseGuards(JwtAuthGuard)
@@ -74,6 +75,7 @@ export class BloggerController {
     if (!postId) return res.sendStatus(STATUS_CODE.NOT_FOUND);
 
     const post = await this.postQueryRepository.findPostByIdForPublic(postId);
+
     return res.status(STATUS_CODE.CREATED).send(post);
   }
 
@@ -191,6 +193,6 @@ export class BloggerController {
     @Query() queryParam: CommentQueryParam,
   ) {
     const userId = req.user;
-    return this.commentQueryRepository.findAllCommentBlog(userId, queryParam);
+    return this.commentQueryRepository.findAllCommentsBlog(userId, queryParam);
   }
 }
