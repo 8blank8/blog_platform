@@ -143,6 +143,97 @@ export class CommentQueryRepositoryTypeorm {
       .getOne();
   }
 
+  async findAllCommentsBlog(userId: string, queryParam: CommentQueryParam) {
+    const pagination = new CommentPagniation(
+      queryParam,
+    ).getCommentPaginationForSql();
+    const { sortBy, sortDirection, offset, pageNumber, pageSize } = pagination;
+
+    const comments = await this.commentRepository
+      .createQueryBuilder('c')
+      .addSelect((subquery) => {
+        return subquery
+          .select('COUNT(*) as "likesCount"')
+          .from(PostCommentLike, 'cl')
+          .leftJoin('cl.user', 'user')
+          .leftJoin('user.banInfo', 'ban')
+          .where(`cl.likeStatus = 'Like' AND cl."commentId" = c.id AND ban.isBanned = false`)
+      })
+      .addSelect((subquery) => {
+        return subquery
+          .select('COUNT(*) as "dislikesCount"')
+          .from(PostCommentLike, 'cl')
+          .leftJoin('cl.user', 'user')
+          .leftJoin('user.banInfo', 'ban')
+          .where(`cl.likeStatus = 'Dislike' AND cl."commentId" = c.id AND ban.isBanned = false`)
+      })
+      .addSelect((subquery) => {
+        return subquery
+          .select('cl.likeStatus')
+          .from(PostCommentLike, 'cl')
+          .where(`cl."commentId" = c.id`)
+          .andWhere('cl."userId" = :userId', { userId: userId ?? null });
+      })
+      .addSelect('u.login as "userLogin"')
+      .addSelect([
+        'p.id as "postId"',
+        'p.title as "postTitle"',
+        'blog.id as "blogId"',
+        'blog.name as "blogName"'
+      ])
+      .leftJoin('c.post', 'p')
+      .leftJoin('c.user', 'u')
+      .leftJoin('c.blog', 'blog')
+      .leftJoin('u.banInfo', 'ban')
+      .where('blog."userId" = :userId', { userId })
+      .andWhere('ban.isBanned = false')
+      .orderBy(
+        `c."${sortBy}" ${sortBy === 'createdAt' ? '' : 'COLLATE "C"'}`,
+        sortDirection,
+      )
+      .offset(offset)
+      .limit(pageSize)
+      .getRawMany();
+
+    const totalCount = await this.commentRepository
+      .createQueryBuilder('c')
+      .where('blog."userId" = :userId', { userId })
+      .leftJoin('c.blog', 'blog')
+      .getCount();
+
+    const commentsKeyMap = objectKeysMapTypeorm(comments);
+
+    return {
+      pagesCount: Math.ceil(totalCount / pageSize),
+      page: pageNumber,
+      pageSize: pageSize,
+      totalCount: totalCount,
+      items: commentsKeyMap.map(comment => this._mapCommentViewForBlogger(comment))
+    }
+  }
+  private _mapCommentViewForBlogger(comment) {
+    return {
+      id: comment.id,
+      content: comment.content,
+      createdAt: comment.createdAt,
+      commentatorInfo: {
+        userId: comment.userId,
+        userLogin: comment.userLogin,
+      },
+      likesInfo: {
+        likesCount: +comment.likesCount,
+        dislikesCount: +comment.dislikesCount,
+        myStatus: comment.likeStatus ?? 'None',
+      },
+      postInfo: {
+        id: comment.postId,
+        title: comment.postTitle,
+        blogId: comment.blogId,
+        blogName: comment.blogName
+      }
+    };
+  }
+
   _mapCommentView(comment): CommentViewSqlModel {
     return {
       id: comment.id,
