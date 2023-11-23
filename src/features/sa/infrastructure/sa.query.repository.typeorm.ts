@@ -18,6 +18,7 @@ export class SaQueryRepositoryTypeorm {
         const blogs = await this.blogRepository.createQueryBuilder('b')
             .where('name ILIKE :searchNameTerm', { searchNameTerm })
             .leftJoin('b.user', 'u')
+            // .leftJoinAndSelect('b.banInfo', 'ban')
             .addSelect(['u.id', 'u.login'])
             .orderBy(
                 `b."${sortBy}" ${sortBy === 'createdAt' ? '' : 'COLLATE "C"'}`,
@@ -51,6 +52,10 @@ export class SaQueryRepositoryTypeorm {
             blogOwnerInfo: {
                 userId: blog.user.id,
                 userLogin: blog.user.login
+            },
+            banInfo: {
+                isBanned: blog.isBanned,
+                banDate: blog.banDate
             }
         }
     }
