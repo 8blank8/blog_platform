@@ -1,6 +1,7 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Posts } from '@post/domain/typeorm/post.entity';
 import { Users } from '@user/domain/typeorm/user.entity';
+import { BlogBan } from './blog.ban.entity';
 
 @Entity()
 export class Blogs {
@@ -25,9 +26,18 @@ export class Blogs {
   @Column({ nullable: false, default: false })
   isMembership: boolean;
 
+  @Column({ default: false })
+  isBanned: boolean
+
+  @Column({ type: 'timestamp without time zone', nullable: true })
+  banDate: string | null
+
   @OneToMany(() => Posts, (post) => post.blog)
   posts: Posts[];
 
   @ManyToOne(() => Users, user => user.id)
   user: Users
+
+  @OneToOne(() => BlogBan, ban => ban.blog, { onDelete: 'CASCADE' })
+  banInfo: BlogBan
 }
