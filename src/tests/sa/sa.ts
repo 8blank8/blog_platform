@@ -20,4 +20,13 @@ export class Sa {
 
         expect(res.status).toBe(HttpStatus.NO_CONTENT)
     }
+
+    async banBlog_204(app: INestApplication, blogId: string, isBanned: boolean) {
+        const res = await request(app.getHttpServer())
+            .put(`/sa/blogs/${blogId}/ban`)
+            .set('Authorization', AUTH.BASIC)
+            .send({ isBanned: isBanned })
+
+        expect(res.status).toBe(HttpStatus.NO_CONTENT)
+    }
 }
