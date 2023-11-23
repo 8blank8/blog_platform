@@ -1,3 +1,4 @@
+import { BlogBan } from '@blog/domain/typeorm/blog.ban.entity';
 import { Blogs } from '@blog/domain/typeorm/blog.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -9,13 +10,18 @@ import { Repository } from 'typeorm';
 export class BlogQueryRepositoryTypeorm {
   constructor(
     @InjectRepository(Blogs) private blogRepository: Repository<Blogs>,
+    @InjectRepository(BlogBan) private blogBanRepository: Repository<BlogBan>,
   ) { }
 
-  async findBlogViewById(blogId: string): Promise<Blogs | null> {
-    return this.blogRepository
+  async findBlogViewById(blogId: string) {
+    const blog = await this.blogRepository
       .createQueryBuilder('b')
-      .where('id = :blogId', { blogId })
+      .where('b.id = :blogId AND b.isBanned = false', { blogId })
+      // .leftJoin('b.banInfo', 'ban')
       .getOne();
+    if (!blog) return null
+
+    return this._mapBlogView(blog)
   }
 
   async findAllBlogsUserView(queryParam: BlogQueryParamModel, userId: string) {
@@ -52,7 +58,7 @@ export class BlogQueryRepositoryTypeorm {
       page: pageNumber,
       pageSize: pageSize,
       totalCount: totalCount,
-      items: blogs,
+      items: blogs.map(blog => this._mapBlogView(blog)),
     };
   }
 
@@ -69,7 +75,9 @@ export class BlogQueryRepositoryTypeorm {
 
     const blogs = await this.blogRepository
       .createQueryBuilder('b')
-      .where('name ILIKE :searchNameTerm', { searchNameTerm })
+      .where('b.isBanned = false')
+      .andWhere('name ILIKE :searchNameTerm', { searchNameTerm })
+      // .leftJoin('b.banInfo', 'ban')
       .orderBy(
         `"${sortBy}" ${sortBy === 'createdAt' ? '' : 'COLLATE "C"'}`,
         sortDirection,
@@ -81,6 +89,8 @@ export class BlogQueryRepositoryTypeorm {
     const totalCount = await this.blogRepository
       .createQueryBuilder('b')
       .where('name ILIKE :searchNameTerm', { searchNameTerm })
+      .andWhere('b.isBanned = false')
+      // .leftJoin('b.banInfo', 'ban')
       .getCount();
 
     return {
@@ -88,7 +98,7 @@ export class BlogQueryRepositoryTypeorm {
       page: pageNumber,
       pageSize: pageSize,
       totalCount: totalCount,
-      items: blogs,
+      items: blogs.map(blog => this._mapBlogView(blog)),
     };
   }
 
@@ -99,5 +109,24 @@ export class BlogQueryRepositoryTypeorm {
       .getOne()
 
     return blog
+  }
+
+  // async findBannedBlogById(blogId: string): Promise<BlogBan | null> {
+  //   const bannedBlog = await this.blogBanRepository.createQueryBuilder('b')
+  //     .where('b."blogId" = :blogId', { blogId })
+  //     .getOne()
+
+  //   return bannedBlog
+  // }
+
+  private _mapBlogView(blog: Blogs) {
+    return {
+      id: blog.id,
+      description: blog.description,
+      createdAt: blog.createdAt,
+      isMembership: blog.isMembership,
+      name: blog.name,
+      websiteUrl: blog.websiteUrl
+    }
   }
 }
