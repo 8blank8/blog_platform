@@ -3,6 +3,8 @@ import { dropDataBase, startTestConfig } from "../utils/start.test.config"
 import { Auth } from "../auth/auth"
 import { Blog } from "./blog"
 import request from 'supertest'
+import { Sa } from "../sa/sa"
+import { AUTH } from "../enums/base.auth.enum"
 
 
 describe('blogger api', () => {
@@ -308,10 +310,302 @@ describe('blogger api', () => {
         }
       })
     })
+  })
 
-
-    afterAll(async () => {
-      await app.close()
+  describe('delete all data', () => {
+    it('delete all data', async () => {
+      await dropDataBase(app)
     })
+  })
+
+  describe('check ban blog flow', () => {
+    const user1 = new Auth()
+    const blog1 = new Blog()
+    const blog2 = new Blog()
+    const sa = new Sa()
+
+    // создать пользователя1 
+    it('create user1 should be status 201', async () => {
+      await user1.registrationUser(app, 1)
+    })
+
+    // залогинить пользователя1
+    it('login user1 should be status 200', async () => {
+      await user1.loginUser(app)
+    })
+
+    // создать два блога от пользователя1
+    it('create blog1, blog2, by user1 should be status 201', async () => {
+      await blog1.createBlog_201(
+        app,
+        {
+          name: "blog1_user1",
+          description: "is blog by user1",
+          websiteUrl: "https://website.url"
+        },
+        user1.accessToken
+      )
+
+      await blog2.createBlog_201(
+        app,
+        {
+          name: "blog2_user1",
+          description: "is blog by user1",
+          websiteUrl: "https://website.url"
+        },
+        user1.accessToken
+      )
+    })
+
+    // запросить блоги должно отображаться 2 блога
+    it('get all blog should be status 200, totalCount 2', async () => {
+      const res = await request(app.getHttpServer())
+        .get(`/blogs`)
+
+      expect(res.status).toBe(HttpStatus.OK)
+      expect(res.body.totalCount).toBe(2)
+    })
+
+    it('get blog1 by id should be status 200', async () => {
+      const res = await request(app.getHttpServer())
+        .get(`/blogs/${blog1.id}`)
+
+      expect(res.status).toBe(HttpStatus.OK)
+    })
+
+    // забанить 1 блог 
+    it('ban blog1 by sa should be status 204', async () => {
+      await sa.banBlog_204(app, blog1.id, true)
+    })
+
+    // запросить блоги должно отображаться 1 блог
+    it('get all blog should be status 200, totalCount 1', async () => {
+      const res = await request(app.getHttpServer())
+        .get(`/blogs`)
+
+      expect(res.status).toBe(HttpStatus.OK)
+      expect(res.body.totalCount).toBe(1)
+    })
+
+    it('get blog1 by id after ban blog should be status 404', async () => {
+      const res = await request(app.getHttpServer())
+        .get(`/blogs/${blog1.id}`)
+
+      expect(res.status).toBe(HttpStatus.NOT_FOUND)
+    })
+
+    it('get all blogs by sa should be status 200', async () => {
+      const res = await request(app.getHttpServer())
+        .get(`/sa/blogs`)
+        .set('Authorization', AUTH.BASIC)
+
+      expect(res.status).toBe(HttpStatus.OK)
+      expect(res.body.totalCount).toBe(2)
+
+    })
+  })
+
+  describe('delete all data', () => {
+    it('delete all data', async () => {
+      await dropDataBase(app)
+    })
+  })
+
+  describe('find all comments for all posts', () => {
+    const user1 = new Auth()
+    const user2 = new Auth()
+    const blog1 = new Blog()
+    const blog2 = new Blog()
+
+    let postId_1: string
+    let postId_2: string
+    let postId_3: string
+    let postIdBlog2: string
+
+    it('create user1 and user2 should be status 201', async () => {
+      await user1.registrationUser(app, 1)
+      await user2.registrationUser(app, 2)
+    })
+
+    it('login user1 and user2 should be status 200', async () => {
+      await user1.loginUser(app)
+      await user2.loginUser(app)
+    })
+
+    it('create blog1 by user1 should be status 201', async () => {
+      await blog1.createBlog_201(
+        app,
+        {
+          name: "blog1_user1",
+          description: "is blog for user1",
+          websiteUrl: "https://website.com"
+        },
+        user1.accessToken
+      )
+    })
+
+    it('create 3 posts for blog1 should be status 201', async () => {
+      postId_1 = await blog1.createPostByBlogId_201(
+        app,
+        {
+          title: "title_post1",
+          shortDescription: "lalsdmalmslamsldmalsmdlkam",
+          content: "it is content"
+        },
+        user1.accessToken
+      )
+
+      postId_2 = await blog1.createPostByBlogId_201(
+        app,
+        {
+          title: "title_post2",
+          shortDescription: "lalsdmalmslamsldmalsmdlkam",
+          content: "it is content"
+        },
+        user1.accessToken
+      )
+
+      postId_3 = await blog1.createPostByBlogId_201(
+        app,
+        {
+          title: "title_post3",
+          shortDescription: "lalsdmalmslamsldmalsmdlkam",
+          content: "it is content"
+        },
+        user1.accessToken
+      )
+    })
+
+    it('create blog1 by user1 should be status 201', async () => {
+      await blog2.createBlog_201(
+        app,
+        {
+          name: "blog1_user2",
+          description: "is blog for user2",
+          websiteUrl: "https://website.com"
+        },
+        user2.accessToken
+      )
+    })
+
+    it('create post for blog2 by user2 should be status 201', async () => {
+      postIdBlog2 = await blog2.createPostByBlogId_201(
+        app,
+        {
+          title: "title_post1",
+          shortDescription: "lalsdmalmslamsldmalsmdlkam",
+          content: "it is content"
+        },
+        user2.accessToken
+      )
+    })
+
+    it('create comment for post blog2 by user1 should be status 201', async () => {
+      await blog2.createCommentForPost_201(
+        app,
+        {
+          content: "content by user1 ssssssssssssssssssssssss"
+        },
+        postIdBlog2,
+        {
+          accessToken: user1.accessToken,
+          id: user1.id,
+          login: user1.login
+        }
+      )
+    })
+
+    it('create 2 comments by user1 and user2 for 3 posts should be status 201', async () => {
+      await blog1.createCommentForPost_201(
+        app,
+        {
+          content: "content by user1 ssssssssssssssssssssssss"
+        },
+        postId_1,
+        {
+          accessToken: user1.accessToken,
+          id: user1.id,
+          login: user1.login
+        }
+      )
+
+      await blog1.createCommentForPost_201(
+        app,
+        {
+          content: "content by user2 ssssssssssssssssssssssss"
+        },
+        postId_1,
+        {
+          accessToken: user2.accessToken,
+          id: user2.id,
+          login: user2.login
+        }
+      )
+
+      await blog1.createCommentForPost_201(
+        app,
+        {
+          content: "content by user1 ssssssssssssssssssssssss"
+        },
+        postId_2,
+        {
+          accessToken: user1.accessToken,
+          id: user1.id,
+          login: user1.login
+        }
+      )
+
+      await blog1.createCommentForPost_201(
+        app,
+        {
+          content: "content by user2  ssssssssssssssssssssssss"
+        },
+        postId_2,
+        {
+          accessToken: user2.accessToken,
+          id: user2.id,
+          login: user2.login
+        }
+      )
+
+      await blog1.createCommentForPost_201(
+        app,
+        {
+          content: "content by user1 ssssssssssssssssssssssss"
+        },
+        postId_3,
+        {
+          accessToken: user1.accessToken,
+          id: user1.id,
+          login: user1.login
+        }
+      )
+
+      await blog1.createCommentForPost_201(
+        app,
+        {
+          content: "content by user2 ssssssssssssssssssssssss"
+        },
+        postId_3,
+        {
+          accessToken: user2.accessToken,
+          id: user2.id,
+          login: user2.login
+        }
+      )
+    })
+
+    it('get all comments for all posts, should be status 200, totalCount 6', async () => {
+      const res = await request(app.getHttpServer())
+        .get('/blogger/blogs/comments')
+        .set('Authorization', `Bearer ${user1.accessToken}`)
+
+      expect(res.status).toBe(HttpStatus.OK)
+      expect(res.body.totalCount).toBe(6)
+    })
+  })
+
+  afterAll(async () => {
+    await app.close()
   })
 })
