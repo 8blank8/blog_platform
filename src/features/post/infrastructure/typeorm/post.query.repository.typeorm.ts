@@ -76,6 +76,7 @@ export class PostQueryRepositoryTypeorm {
       .leftJoin('p.user', 'user')
       .leftJoin('user.banInfo', 'ban')
       .where('ban.isBanned = false')
+      .andWhere('b.isBanned = false')
       .andWhere('p.id = :postId', { postId })
       .getRawOne();
 
