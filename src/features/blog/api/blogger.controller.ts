@@ -11,6 +11,9 @@ import {
   Put,
   Delete,
   Req,
+  UseInterceptors,
+  UploadedFile,
+  HttpStatus,
 } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { Response } from 'express';
@@ -34,6 +37,14 @@ import { DeleteBlogCommand } from '@blog/usecases/delete.blog.use.case';
 import { DeletePostByBlogIdCommand } from '@blog/usecases/delete.post.by.blog.id.use.case';
 import { BlogQueryRepositoryTypeorm } from '@blog/repository/typeorm/blog.query.repository.typeorm';
 import { CommentQueryRepositoryTypeorm } from '@comment/repository/typeorm/comment.query.repository.typeorm';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { dirname, join } from 'node:path';
+import { readFile } from 'node:fs';
+import { FileS3Adapter } from '@utils/adapters/file.s3.adapter';
+import { getFile } from '@utils/fs/get.file';
+import sharp from 'sharp';
+import { UploadWallpaperImageCommand } from '@blog/usecases/upload.wallpaper.image.use.case';
+import { UploadMainImageBlogCommand } from '@blog/usecases/upload.main.image.blog.command.use.case';
 // TODO: исправить путь, посмотреть в документации
 @Controller('blogger/blogs')
 export class BloggerController {
@@ -42,6 +53,7 @@ export class BloggerController {
     private postQueryRepository: PostQueryRepositoryTypeorm,
     private blogQueryRepository: BlogQueryRepositoryTypeorm,
     private commentQueryRepository: CommentQueryRepositoryTypeorm,
+    private fileS3Adapter: FileS3Adapter
   ) { }
   // TODO: исправить все гарды на jwtrefreshguard
   @UseGuards(JwtAuthGuard)
@@ -195,4 +207,59 @@ export class BloggerController {
     const userId = req.user;
     return this.commentQueryRepository.findAllCommentsBlog(userId, queryParam);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Post(':blogId/images/wallpaper')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadWallpaperForBlog(
+    @UploadedFile() file: Express.Multer.File,
+    @Param('blogId') blogId: string,
+    @Res() res: Response,
+    @Req() req
+  ) {
+    const userId = req.user
+
+    const isUpload = await this.commandBus.execute(new UploadWallpaperImageCommand(blogId, userId, file))
+    if (!isUpload) return res.sendStatus(HttpStatus.BAD_REQUEST)
+    return true
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post(':blogId/images/main')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadMainImageForBlog(
+    @UploadedFile() file: Express.Multer.File,
+    @Param('blogId') blogId: string,
+    @Res() res: Response,
+    @Req() req
+  ) {
+    const userId = req.user
+
+    const isUpload = await this.commandBus.execute(new UploadMainImageBlogCommand(blogId, userId, file))
+    if (!isUpload) return res.sendStatus(HttpStatus.BAD_REQUEST)
+
+    return true
+  }
+
+  @Get('file')
+  async getFile() {
+    const path: string = join(global.appRoot, 'view', 'file', 'file.html')
+    return getFile(path)
+  }
+
+  @Post('file')
+  @UseInterceptors(FileInterceptor('file'))
+  async postFile(
+    @UploadedFile() file: Express.Multer.File
+  ) {
+    const originalName = file.originalname
+    const buffer = file.buffer
+    // console.log(await sharp(file.buffer).metadata())
+    // console.log(file)
+    // const uri = await this.fileS3Adapter.saveImage('10', '10.jpg', buffer)
+    // console.log(file)
+    // return `<img src="${uri}"></img>`
+  }
 }
+
+
