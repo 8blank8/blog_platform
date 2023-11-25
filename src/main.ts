@@ -6,6 +6,8 @@ import { useContainer } from 'class-validator';
 import { HttpExceptionFilter } from './exception.filter';
 import { AppModule } from './app.module';
 
+global.appRoot = __dirname
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors();
