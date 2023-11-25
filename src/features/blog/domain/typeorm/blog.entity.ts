@@ -2,6 +2,7 @@ import { Column, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn 
 import { Posts } from '@post/domain/typeorm/post.entity';
 import { Users } from '@user/domain/typeorm/user.entity';
 import { BlogBan } from './blog.ban.entity';
+import { BlogImage } from './blog.image';
 
 @Entity()
 export class Blogs {
@@ -40,4 +41,7 @@ export class Blogs {
 
   @OneToOne(() => BlogBan, ban => ban.blog, { onDelete: 'CASCADE' })
   banInfo: BlogBan
+
+  @OneToMany(() => BlogImage, image => image.blog)
+  images: BlogImage[]
 }
