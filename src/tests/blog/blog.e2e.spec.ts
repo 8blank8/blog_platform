@@ -5,6 +5,7 @@ import { Blog } from "./blog"
 import request from 'supertest'
 import { Sa } from "../sa/sa"
 import { AUTH } from "../enums/base.auth.enum"
+import { join } from "node:path"
 
 
 describe('blogger api', () => {
@@ -602,6 +603,41 @@ describe('blogger api', () => {
 
       expect(res.status).toBe(HttpStatus.OK)
       expect(res.body.totalCount).toBe(6)
+    })
+  })
+
+  describe('delete all data', () => {
+    it('delete all data', async () => {
+      await dropDataBase(app)
+    })
+  })
+
+  describe('upload wallpaper for blog', () => {
+    const user6 = new Auth()
+    const blog8 = new Blog()
+
+    it('create user6 should be status 201', async () => {
+      await user6.registrationUser(app, 6)
+    })
+
+    it('login user6 should be status 200', async () => {
+      await user6.loginUser(app)
+    })
+
+    it('create blog8 by user6 should be status 201', async () => {
+      await blog8.createBlog_201(
+        app,
+        {
+          name: "blog1_user1",
+          description: "is blog for user1",
+          websiteUrl: "https://website.com"
+        },
+        user6.accessToken
+      )
+    })
+
+    it('upload wallpaper should be status 201', async () => {
+      await blog8.uploadWallpaper_201(app, user6.accessToken, join(__dirname, 'assets', '10.jpg'))
     })
   })
 

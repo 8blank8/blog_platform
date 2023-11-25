@@ -7,6 +7,7 @@ import { CommentViewSqlModel } from "@comment/models/comment.view.sql.model";
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import { PostLikeStatusType } from "@post/models/post.like.status.type";
 import { PostViewSqlModel } from "@post/models/post.view.sql.model";
+import { getFile } from "@utils/fs/get.file";
 import request from 'supertest'
 
 export class Blog {
@@ -183,6 +184,16 @@ export class Blog {
             .send(inputData)
 
         expect(res.status).toBe(HttpStatus.NO_CONTENT)
+    }
+
+    async uploadWallpaper_201(app: INestApplication, accessToken: string, filePath: string) {
+
+        const res = await request(app.getHttpServer())
+            .post(`/blogger/blogs/${this.id}/images/wallpaper`)
+            .set('Authorization', `Bearer ${accessToken}`)
+            .attach('file', filePath)
+
+        expect(res.status).toBe(HttpStatus.CREATED)
     }
 
 }
