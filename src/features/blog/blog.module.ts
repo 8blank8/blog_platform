@@ -36,6 +36,10 @@ import { UserBlogBanRepositoryTypeorm } from './infrastructure/typeorm/user.ban.
 import { BlogBanUser } from './domain/typeorm/blog.ban.user.entity';
 import { UserBlogBanQueryRepositoryTypeorm } from './infrastructure/typeorm/user.ban.blog.query.repository';
 import { BlogBan } from './domain/typeorm/blog.ban.entity';
+import { FileS3Adapter } from '@utils/adapters/file.s3.adapter';
+import { UploadWallpaperImageUseCase } from '@blog/usecases/upload.wallpaper.image.use.case';
+import { BlogImage } from './domain/typeorm/blog.image';
+import { UploadMainImageBlogUseCase } from '@blog/usecases/upload.main.image.blog.command.use.case';
 
 @Module({
   imports: [
@@ -44,7 +48,7 @@ import { BlogBan } from './domain/typeorm/blog.ban.entity';
       { name: UserBanBlog.name, schema: UserBanBlogSchema },
       { name: Blog.name, schema: BlogSchema },
     ]),
-    TypeOrmModule.forFeature([Blogs, BlogBanUser, BlogBan]),
+    TypeOrmModule.forFeature([Blogs, BlogBanUser, BlogBan, BlogImage]),
     UserModule,
     CommentModule,
     forwardRef(() => PostModule),
@@ -59,6 +63,9 @@ import { BlogBan } from './domain/typeorm/blog.ban.entity';
     DeleteBlogUseCase,
     BanUserForBlogUseCase,
 
+    UploadWallpaperImageUseCase,
+    UploadMainImageBlogUseCase,
+
     BlogRepository,
     BlogQueryRepository,
     UserBanBlogRepository,
@@ -72,7 +79,9 @@ import { BlogBan } from './domain/typeorm/blog.ban.entity';
     BlogRepositoryTypeorm,
     BlogQueryRepositoryTypeorm,
     UserBlogBanRepositoryTypeorm,
-    UserBlogBanQueryRepositoryTypeorm
+    UserBlogBanQueryRepositoryTypeorm,
+
+    FileS3Adapter
   ],
   exports: [
     BlogRepositoryTypeorm,
