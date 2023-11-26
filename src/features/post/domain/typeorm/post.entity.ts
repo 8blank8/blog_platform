@@ -10,6 +10,7 @@ import { PostComments } from '@comment/domain/typeorm/comment.entitty';
 
 import { PostLikes } from './post.like.entity';
 import { Users } from '@user/domain/typeorm/user.entity';
+import { PostImage } from './post.image.entity';
 
 @Entity()
 export class Posts {
@@ -45,4 +46,7 @@ export class Posts {
 
   @OneToMany(() => PostComments, (postComment) => postComment.post)
   postComments: PostComments[];
+
+  @OneToMany(() => PostImage, image => image.post)
+  images: PostImage[]
 }
