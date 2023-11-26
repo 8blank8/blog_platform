@@ -187,13 +187,74 @@ export class Blog {
     }
 
     async uploadWallpaper_201(app: INestApplication, accessToken: string, filePath: string) {
+        const file = await getFile(filePath)
+        if (!file) return false
 
         const res = await request(app.getHttpServer())
             .post(`/blogger/blogs/${this.id}/images/wallpaper`)
             .set('Authorization', `Bearer ${accessToken}`)
-            .attach('file', filePath)
+            .attach('file', file, { filename: 'your-filename.jpg' })
 
         expect(res.status).toBe(HttpStatus.CREATED)
+        expect(res.body).toEqual({
+            wallpaper: {
+                url: expect.any(String),
+                width: expect.any(Number),
+                height: expect.any(Number),
+                fileSize: expect.any(Number)
+            },
+            main: []
+        })
+    }
+
+    async uploadMainImage_201(app: INestApplication, accessToken: string, filePath: string) {
+        const file = await getFile(filePath)
+        if (!file) return false
+
+        const res = await request(app.getHttpServer())
+            .post(`/blogger/blogs/${this.id}/images/main`)
+            .set('Authorization', `Bearer ${accessToken}`)
+            .attach('file', file, { filename: 'your-filename.jpg' })
+
+        expect(res.status).toBe(HttpStatus.CREATED)
+        expect(res.body).toEqual({
+            wallpaper: {
+                url: expect.any(String),
+                width: expect.any(Number),
+                height: expect.any(Number),
+                fileSize: expect.any(Number)
+            },
+            main: [
+                {
+                    url: expect.any(String),
+                    width: expect.any(Number),
+                    height: expect.any(Number),
+                    fileSize: expect.any(Number)
+                }
+            ]
+        })
+    }
+
+    async uploadMainImageForPost_201(app: INestApplication, postId: string, accessToken: string, filePath: string) {
+        const file = await getFile(filePath)
+        if (!file) return false
+
+        const res = await request(app.getHttpServer())
+            .post(`/blogger/blogs/${this.id}/posts/${postId}/images/main`)
+            .set('Authorization', `Bearer ${accessToken}`)
+            .attach('file', file, { filename: 'your-filename.jpg' })
+
+        expect(res.status).toBe(HttpStatus.CREATED)
+        expect(res.body).toEqual({
+            main: [
+                {
+                    url: expect.any(String),
+                    width: expect.any(Number),
+                    height: expect.any(Number),
+                    fileSize: expect.any(Number)
+                }
+            ]
+        })
     }
 
 }
