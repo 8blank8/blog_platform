@@ -40,6 +40,7 @@ import { FileS3Adapter } from '@utils/adapters/file.s3.adapter';
 import { UploadWallpaperImageUseCase } from '@blog/usecases/upload.wallpaper.image.use.case';
 import { BlogImage } from './domain/typeorm/blog.image';
 import { UploadMainImageBlogUseCase } from '@blog/usecases/upload.main.image.blog.command.use.case';
+import { UploadMainImagePostUseCase } from '@blog/usecases/upload.main.image.post.use.case';
 
 @Module({
   imports: [
@@ -65,6 +66,7 @@ import { UploadMainImageBlogUseCase } from '@blog/usecases/upload.main.image.blo
 
     UploadWallpaperImageUseCase,
     UploadMainImageBlogUseCase,
+    UploadMainImagePostUseCase,
 
     BlogRepository,
     BlogQueryRepository,
