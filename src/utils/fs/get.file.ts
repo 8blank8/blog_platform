@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises"
 
 
-export const getFile = async (path: string): Promise<Buffer> => {
+export const getFile = async (path: string) => {
     // const file = new Promise((resolve, reject) => {
     //     readFile(path, { encoding: 'utf-8' }, (error, content) => {
     //         if (error) {
