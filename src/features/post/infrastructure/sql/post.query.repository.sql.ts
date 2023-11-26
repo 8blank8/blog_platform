@@ -9,7 +9,7 @@ import { DataSource } from 'typeorm';
 
 @Injectable()
 export class PostQueryRepositorySql {
-  constructor(@InjectDataSource() private dataSource: DataSource) {}
+  constructor(@InjectDataSource() private dataSource: DataSource) { }
 
   async findPostByBlogForBlogger(blogId: string): Promise<PostViewSqlModel[]> {
     const posts = await this.dataSource.query(
@@ -83,19 +83,17 @@ export class PostQueryRepositorySql {
                     ORDER BY pl."AddedAt" DESC
                     LIMIT 3
                 ) as "NewestLikes"
-                ${
-                  userId
-                    ? `,(
+                ${userId
+        ? `,(
                     SELECT "LikeStatus" as "MyStatus"
                     FROM "PostsLike"
                     WHERE "UserId" = '${userId}' AND "PostId" = ps."Id"
                 )`
-                    : ''
-                }
+        : ''
+      }
             FROM public."Posts" as ps
             LEFT JOIN "Blogs" as b ON ps."BlogId" = b."Id"
-            ORDER BY "${sortBy}" ${
-        sortBy !== 'CreatedAt' ? 'COLLATE "C"' : ''
+            ORDER BY "${sortBy}" ${sortBy !== 'CreatedAt' ? 'COLLATE "C"' : ''
       } ${sortDirection}
             OFFSET $1 LIMIT $2;
         `,
@@ -159,20 +157,18 @@ export class PostQueryRepositorySql {
                     ORDER BY pl."AddedAt" DESC
                     LIMIT 3
                 ) as "NewestLikes"
-                ${
-                  userId
-                    ? `,(
+                ${userId
+        ? `,(
                     SELECT "LikeStatus" as "MyStatus"
                     FROM "PostsLike"
                     WHERE "UserId" = '${userId}' AND "PostId" = ps."Id"
                 )`
-                    : ''
-                }
+        : ''
+      }
             FROM public."Posts" as ps
             LEFT JOIN "Blogs" as b ON ps."BlogId" = b."Id"
             WHERE ps."BlogId" = $3
-            ORDER BY "${sortBy}" ${
-        sortBy !== 'CreatedAt' ? 'COLLATE "C"' : ''
+            ORDER BY "${sortBy}" ${sortBy !== 'CreatedAt' ? 'COLLATE "C"' : ''
       } ${sortDirection}
             OFFSET $1 LIMIT $2;
         `,
@@ -225,15 +221,14 @@ export class PostQueryRepositorySql {
                     ORDER BY pl."AddedAt" DESC
                     LIMIT 3
                 ) as "NewestLikes"
-                ${
-                  userId
-                    ? `,(
+                ${userId
+        ? `,(
                     SELECT "LikeStatus" as "MyStatus"
                     FROM "PostsLike"
                     WHERE "UserId" = '${userId}' AND "PostId" = ps."Id"
                 )`
-                    : ''
-                }
+        : ''
+      }
             FROM public."Posts" as ps
             LEFT JOIN "Blogs" as b ON ps."BlogId" = b."Id"
             WHERE ps."Id" = $1
@@ -309,6 +304,7 @@ export class PostQueryRepositorySql {
         myStatus: post.MyStatus ?? 'None',
         newestLikes: newestLikes,
       },
+      images: []
     };
   }
 }
