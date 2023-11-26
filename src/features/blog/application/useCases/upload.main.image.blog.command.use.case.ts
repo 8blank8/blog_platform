@@ -1,7 +1,7 @@
 import { BlogImage } from "@blog/domain/typeorm/blog.image";
 import { BlogQueryRepositoryTypeorm } from "@blog/repository/typeorm/blog.query.repository.typeorm";
 import { BlogRepositoryTypeorm } from "@blog/repository/typeorm/blog.repository.typeorm";
-import { ForbiddenException } from "@nestjs/common";
+import { ForbiddenException, NotFoundException } from "@nestjs/common";
 import { CommandHandler } from "@nestjs/cqrs";
 import { FileS3Adapter } from "@utils/adapters/file.s3.adapter";
 import { join } from "path";
@@ -24,11 +24,11 @@ export class UploadMainImageBlogUseCase {
         private fileS3Adapter: FileS3Adapter
     ) { }
 
-    async execute(command: UploadMainImageBlogCommand): Promise<boolean> {
+    async execute(command: UploadMainImageBlogCommand): Promise<boolean | string> {
         const { userId, blogId, file } = command
 
         const blog = await this.blogQueryRepository.findFullBlogById(blogId)
-        if (!blog) return false
+        if (!blog) throw new NotFoundException()
         if (blog.user.id !== userId) throw new ForbiddenException()
 
         const validation = await this.validationFile(file)
@@ -36,7 +36,7 @@ export class UploadMainImageBlogUseCase {
 
         const url = this.createImageUrl(blogId, file.originalname)
 
-        await this.fileS3Adapter.saveImage(blog.id, file.originalname, file.buffer)
+        await this.fileS3Adapter.saveImage(url, file.buffer)
 
         const image = new BlogImage()
         image.blog = blog
@@ -47,13 +47,13 @@ export class UploadMainImageBlogUseCase {
         image.url = url
 
         await this.blogRepository.saveImage(image)
-        return true
+        return blog.id
     }
 
     // TODO: перенести логику в utils
     private createImageUrl(blogId: string, originalName: string): string {
         // const imageTitle = `${originalName}.${format}`
-        const url = join('content', 'blogs', blogId, 'main', originalName)
+        const url = `content/blogs/${blogId}/main/${originalName}`
         return url
     }
 
@@ -74,7 +74,7 @@ export class UploadMainImageBlogUseCase {
 
         if (size > 100000) return false
         if (format !== 'jpg' && format !== 'jpeg' && format !== 'png') return false
-        if (width !== 156 && height !== 156) return false
+        if (width !== 156 || height !== 156) return false
 
         return {
             width,
