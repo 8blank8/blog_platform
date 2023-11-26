@@ -26,6 +26,7 @@ import { PostQueryRepositoryTypeorm } from './infrastructure/typeorm/post.query.
 import { BlogModule } from '../blog/blog.module';
 import { UserModule } from '../user/user.module';
 import { CommentModule } from '../comment/comment.module';
+import { PostImage } from './domain/typeorm/post.image.entity';
 
 @Module({
   imports: [
@@ -34,7 +35,7 @@ import { CommentModule } from '../comment/comment.module';
       { name: Post.name, schema: PostSchema },
       { name: PostLike.name, schema: PostLikeSchema },
     ]),
-    TypeOrmModule.forFeature([Posts, PostLikes]),
+    TypeOrmModule.forFeature([Posts, PostLikes, PostImage]),
     UserModule,
     forwardRef(() => BlogModule),
     forwardRef(() => CommentModule),
@@ -66,4 +67,4 @@ import { CommentModule } from '../comment/comment.module';
     PostQueryRepository,
   ],
 })
-export class PostModule {}
+export class PostModule { }
