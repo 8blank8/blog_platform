@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Posts } from '@post/domain/typeorm/post.entity';
+import { PostImage } from '@post/domain/typeorm/post.image.entity';
 import { PostLikes } from '@post/domain/typeorm/post.like.entity';
 import { PostQueryParamType } from '@post/models/post.query.param.type';
 import { PostViewSqlModel } from '@post/models/post.view.sql.model';
@@ -13,6 +14,7 @@ export class PostQueryRepositoryTypeorm {
     @InjectRepository(Posts) private postRepository: Repository<Posts>,
     @InjectRepository(PostLikes)
     private postLikesRepository: Repository<PostLikes>,
+    @InjectRepository(PostImage) private postImageRepository: Repository<PostImage>,
   ) { }
 
   async findFullPostById(postId: string): Promise<Posts | null> {
@@ -71,6 +73,18 @@ export class PostQueryRepositoryTypeorm {
                 DESC LIMIT 3
             ))`,
         'newestLikes',
+      )
+      .addSelect(
+        `(SELECT ARRAY(
+              SELECT json_build_object(
+                'url', image."url", 
+                'width', image."width",
+                'height', image."height", 
+                'fileSize', image."fileSize"
+              ) FROM "post_image" as image
+              WHERE image."postId" = p."id"
+        ))`,
+        'images'
       )
       .leftJoin('p.blog', 'b')
       .leftJoin('p.user', 'user')
@@ -131,6 +145,18 @@ export class PostQueryRepositoryTypeorm {
                 DESC LIMIT 3
             ))`,
         'newestLikes',
+      )
+      .addSelect(
+        `(SELECT ARRAY(
+              SELECT json_build_object(
+                'url', image."url", 
+                'width', image."width",
+                'height', image."height", 
+                'fileSize', image."fileSize"
+              ) FROM "post_image" as image
+              WHERE image."postId" = p."id"
+        ))`,
+        'images'
       )
       .leftJoin('p.blog', 'b')
       .where('b.id = :blogId', { blogId })
@@ -249,6 +275,25 @@ export class PostQueryRepositoryTypeorm {
       .getOne();
   }
 
+  async findPostImageByBlogId(postId: string) {
+    const postImage = await this.postImageRepository.createQueryBuilder('i')
+      .where('i."postId" = :postId', { postId })
+      .getMany()
+
+    return {
+      main: postImage.map(image => this._mapPostImage(image))
+    }
+  }
+
+  private _mapPostImage(image: PostImage) {
+    return {
+      fileSize: image.fileSize,
+      height: image.height,
+      url: String(process.env.S3_VIEW_URL) + image.url,
+      width: image.width
+    }
+  }
+
   _mapPostView(post): PostViewSqlModel {
     const newestLikes = post.newestLikes.map((like) => {
       return {
@@ -257,6 +302,18 @@ export class PostQueryRepositoryTypeorm {
         login: like.login,
       };
     });
+    console.log(post)
+    let images: any = { main: [] }
+    if (post.images.length !== 0) {
+      images.main = post.images.map(image => {
+        return {
+          fileSize: image.fileSize,
+          height: image.height,
+          url: String(process.env.S3_VIEW_URL) + image.url,
+          width: image.width
+        }
+      })
+    }
 
     return {
       id: post.id,
@@ -272,6 +329,7 @@ export class PostQueryRepositoryTypeorm {
         myStatus: post.myStatus ?? 'None',
         newestLikes: newestLikes,
       },
+      images: images
     };
   }
 }
