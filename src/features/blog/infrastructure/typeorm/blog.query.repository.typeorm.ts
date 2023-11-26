@@ -13,6 +13,7 @@ export class BlogQueryRepositoryTypeorm {
   constructor(
     @InjectRepository(Blogs) private blogRepository: Repository<Blogs>,
     @InjectRepository(BlogBan) private blogBanRepository: Repository<BlogBan>,
+    @InjectRepository(BlogImage) private blogImageRepository: Repository<BlogImage>,
   ) { }
 
   async findBlogViewById(blogId: string) {
@@ -123,15 +124,49 @@ export class BlogQueryRepositoryTypeorm {
   //   return bannedBlog
   // }
 
+  async findBlogImagesByBlogId(blogId: string) {
+    const blogImages = await this.blogImageRepository.createQueryBuilder('i')
+      .where('i."blogId" = :blogId', { blogId })
+      .getMany()
+
+    console.log(this._mapBlogImages(blogImages))
+    return this._mapBlogImages(blogImages)
+  }
+
+  private _mapBlogImages(blogImages: BlogImage[]) {
+    let wallpaper: any = null
+    let main: Array<any> = []
+
+    // TODO: отправлять url без экранирования
+    blogImages.forEach(blogImage => {
+      const imageDto = {
+        url: String(process.env.S3_VIEW_URL) + blogImage.url,
+        width: blogImage.width,
+        height: blogImage.height,
+        fileSize: blogImage.fileSize
+      }
+      if (blogImage.title === 'wallpaper') {
+        wallpaper = imageDto
+      } else {
+        main.push(imageDto)
+      }
+    })
+
+    return {
+      wallpaper: wallpaper,
+      main: main
+    }
+  }
+
   private _mapBlogView(blog: Blogs) {
     let wallpaper: any = null
     let main: Array<any> = []
 
     // TODO: отправлять url без экранирования
-    if (blog.images.length) {
+    if (blog.images) {
       blog.images.forEach(image => {
         const imageDto = {
-          url: join(String(process.env.S3_VIEW_URL) + image.url),
+          url: String(process.env.S3_VIEW_URL) + image.url,
           width: image.width,
           height: image.height,
           fileSize: image.fileSize
