@@ -45,6 +45,7 @@ import { getFile } from '@utils/fs/get.file';
 import sharp from 'sharp';
 import { UploadWallpaperImageCommand } from '@blog/usecases/upload.wallpaper.image.use.case';
 import { UploadMainImageBlogCommand } from '@blog/usecases/upload.main.image.blog.command.use.case';
+import { UploadMainImagePostCommand } from '@blog/usecases/upload.main.image.post.use.case';
 // TODO: исправить путь, посмотреть в документации
 @Controller('blogger/blogs')
 export class BloggerController {
@@ -218,10 +219,11 @@ export class BloggerController {
     @Req() req
   ) {
     const userId = req.user
+    const id = await this.commandBus.execute(new UploadWallpaperImageCommand(blogId, userId, file))
+    if (!id) return res.sendStatus(HttpStatus.BAD_REQUEST)
 
-    const isUpload = await this.commandBus.execute(new UploadWallpaperImageCommand(blogId, userId, file))
-    if (!isUpload) return res.sendStatus(HttpStatus.BAD_REQUEST)
-    return true
+    const blogImage = await this.blogQueryRepository.findBlogImagesByBlogId(id)
+    return res.status(HttpStatus.CREATED).send(blogImage)
   }
 
   @UseGuards(JwtAuthGuard)
@@ -234,31 +236,31 @@ export class BloggerController {
     @Req() req
   ) {
     const userId = req.user
+    const id = await this.commandBus.execute(new UploadMainImageBlogCommand(blogId, userId, file))
+    if (!id) return res.sendStatus(HttpStatus.BAD_REQUEST)
 
-    const isUpload = await this.commandBus.execute(new UploadMainImageBlogCommand(blogId, userId, file))
-    if (!isUpload) return res.sendStatus(HttpStatus.BAD_REQUEST)
+    const blogImage = await this.blogQueryRepository.findBlogImagesByBlogId(id)
 
-    return true
+    return res.status(HttpStatus.CREATED).send(blogImage)
   }
 
-  @Get('file')
-  async getFile() {
-    const path: string = join(global.appRoot, 'view', 'file', 'file.html')
-    return getFile(path)
-  }
-
-  @Post('file')
+  @UseGuards(JwtAuthGuard)
+  @Post(':blogId/posts/:postId/images/main')
   @UseInterceptors(FileInterceptor('file'))
-  async postFile(
-    @UploadedFile() file: Express.Multer.File
+  async uploadMainImageForPost(
+    @UploadedFile() file: Express.Multer.File,
+    @Param('blogId') blogId: string,
+    @Param('postId') postId: string,
+    @Res() res: Response,
+    @Req() req
   ) {
-    const originalName = file.originalname
-    const buffer = file.buffer
-    // console.log(await sharp(file.buffer).metadata())
-    // console.log(file)
-    // const uri = await this.fileS3Adapter.saveImage('10', '10.jpg', buffer)
-    // console.log(file)
-    // return `<img src="${uri}"></img>`
+    const userId = req.user
+    const id = await this.commandBus.execute(new UploadMainImagePostCommand(blogId, postId, userId, file))
+    if (!id) return res.sendStatus(HttpStatus.BAD_REQUEST)
+
+    const blogImage = await this.postQueryRepository.findPostImageByBlogId(id)
+
+    return res.status(HttpStatus.CREATED).send(blogImage)
   }
 }
 
