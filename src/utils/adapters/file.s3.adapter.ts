@@ -18,11 +18,11 @@ export class FileS3Adapter {
         })
     }
 
-    async saveImage(blogId: string, originalName: string, buffer: Buffer): Promise<string> {
-        const key = `content/blogs/${blogId}/wallpaper/${originalName}`
+    async saveImage(path: string, buffer: Buffer): Promise<boolean> {
+        // const key = `content/blogs/${blogId}/wallpaper/${originalName}`
         const bucketParams = {
             Bucket: this.bucketName,
-            Key: key,
+            Key: path,
             Body: buffer
         }
 
@@ -37,7 +37,7 @@ export class FileS3Adapter {
             console.error(error)
         }
 
-        return key
+        return true
     }
 
     // async getImage() {
