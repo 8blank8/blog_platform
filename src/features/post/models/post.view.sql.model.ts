@@ -12,6 +12,7 @@ export class PostViewSqlModel {
     myStatus: string;
     newestLikes: NewestLike[];
   };
+  images: Array<any>
 }
 
 class NewestLike {
