@@ -1,6 +1,7 @@
 import { BlogBan } from '@blog/domain/typeorm/blog.ban.entity';
 import { Blogs } from '@blog/domain/typeorm/blog.entity';
 import { BlogImage } from '@blog/domain/typeorm/blog.image';
+import { BlogSubscription } from '@blog/domain/typeorm/blog.subscription';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -11,6 +12,7 @@ export class BlogRepositoryTypeorm {
     @InjectRepository(Blogs) private blogRepository: Repository<Blogs>,
     @InjectRepository(BlogBan) private blogBanRepository: Repository<BlogBan>,
     @InjectRepository(BlogImage) private blogImageRepository: Repository<BlogImage>,
+    @InjectRepository(BlogSubscription) private blogSubscriptionRepository: Repository<BlogSubscription>,
   ) { }
 
   async saveBlog(blog: Blogs) {
@@ -27,5 +29,17 @@ export class BlogRepositoryTypeorm {
 
   async saveImage(image: BlogImage) {
     return this.blogImageRepository.save(image)
+  }
+
+  async saveSubscription(subscription: BlogSubscription) {
+    return this.blogSubscriptionRepository.save(subscription)
+  }
+
+  async deleteSubscription(userId: string, blogId: string) {
+    return this.blogSubscriptionRepository.createQueryBuilder('s')
+      .delete()
+      .where('s."userId" = :userId', { userId })
+      .andWhere('s."blogId" = :blogId', { blogId })
+      .execute()
   }
 }
