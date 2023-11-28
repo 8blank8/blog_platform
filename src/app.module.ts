@@ -34,6 +34,7 @@ import { SecurityModule } from './features/security/security.module';
 import { AppService } from './app.service';
 import { TestingController } from '@testing/testing.controller';
 import { SaModule } from '@sa/sa.module';
+import { IntegrationModule } from '@features/integrations/integration.module';
 
 const controllers = [AppController, TestingController];
 
@@ -83,7 +84,8 @@ const saUseCase = [BindUserForBlogUseCase, BannedUserUseCase, BlogBanUseCase];
     QuizModule,
     SecurityModule,
     // TestingModule,
-    SaModule
+    SaModule,
+    IntegrationModule
   ],
   controllers: [...controllers],
   providers: [...validation, ...adapters, ...saUseCase, ...services],
