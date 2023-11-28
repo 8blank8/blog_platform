@@ -4,7 +4,9 @@ import { ForbiddenException } from '@nestjs/common';
 import { CommandHandler } from '@nestjs/cqrs';
 import { Posts } from '@post/domain/typeorm/post.entity';
 import { PostRepositoryTypeorm } from '@post/repository/typeorm/post.repository.typeorm';
+import { UserTelegramProfile } from '@user/domain/typeorm/user.telegram.profile.entity';
 import { UserQueryRepositoryTypeorm } from '@user/repository/typeorm/user.query.repository.typeorm';
+import { TelegramAdapter } from '@utils/adapters/telegram.adapter';
 
 export class CreatePostByBlogIdCommand {
   constructor(
@@ -19,7 +21,8 @@ export class CreatePostByBlogIdUseCase {
   constructor(
     private postRepository: PostRepositoryTypeorm,
     private blogQueryRepository: BlogQueryRepositoryTypeorm,
-    private userQueryRepository: UserQueryRepositoryTypeorm
+    private userQueryRepository: UserQueryRepositoryTypeorm,
+    private telegramAdapter: TelegramAdapter
   ) { }
 
   async execute(command: CreatePostByBlogIdCommand) {
@@ -41,6 +44,18 @@ export class CreatePostByBlogIdUseCase {
 
     await this.postRepository.savePost(post);
 
+    await this.sendNotificationSubscriptionsTelegram(blog.name, blog.id)
+
     return post.id;
+  }
+
+  private async sendNotificationSubscriptionsTelegram(name: string, blogId: string) {
+
+    const profiles = await this.blogQueryRepository.findSubscriptionsByBlogId(blogId)
+
+    for (let i = 0; i <= profiles.length; i++) {
+      this.telegramAdapter.sendMessage(profiles[i].user.telegramProfile.telegramId, `published posts for blog ${name}`)
+    }
+
   }
 }
