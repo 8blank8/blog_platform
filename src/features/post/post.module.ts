@@ -27,6 +27,7 @@ import { BlogModule } from '../blog/blog.module';
 import { UserModule } from '../user/user.module';
 import { CommentModule } from '../comment/comment.module';
 import { PostImage } from './domain/typeorm/post.image.entity';
+import { TelegramAdapter } from '@utils/adapters/telegram.adapter';
 
 @Module({
   imports: [
@@ -60,6 +61,8 @@ import { PostImage } from './domain/typeorm/post.image.entity';
 
     PostRepositoryTypeorm,
     PostQueryRepositoryTypeorm,
+
+    TelegramAdapter
   ],
   exports: [
     PostRepositoryTypeorm,
