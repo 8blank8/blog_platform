@@ -3,6 +3,7 @@ import { Posts } from '@post/domain/typeorm/post.entity';
 import { Users } from '@user/domain/typeorm/user.entity';
 import { BlogBan } from './blog.ban.entity';
 import { BlogImage } from './blog.image';
+import { BlogSubscription } from './blog.subscription';
 
 @Entity()
 export class Blogs {
@@ -44,4 +45,10 @@ export class Blogs {
 
   @OneToMany(() => BlogImage, image => image.blog)
   images: BlogImage[]
+
+  @OneToMany(() => BlogSubscription, subs => subs.blog)
+  subscriptions: BlogSubscription
+
+  @Column({ default: 0 })
+  subscribersCount: number
 }
