@@ -41,6 +41,9 @@ import { UploadWallpaperImageUseCase } from '@blog/usecases/upload.wallpaper.ima
 import { BlogImage } from './domain/typeorm/blog.image';
 import { UploadMainImageBlogUseCase } from '@blog/usecases/upload.main.image.blog.command.use.case';
 import { UploadMainImagePostUseCase } from '@blog/usecases/upload.main.image.post.use.case';
+import { BlogSubscription } from './domain/typeorm/blog.subscription';
+import { DeleteSubscriptionBlogUseCase } from '@blog/usecases/delete.subscription.blog.use.case';
+import { CreateSubscriptionBlogUseCase } from '@blog/usecases/create.subscription.blog.use.case';
 
 @Module({
   imports: [
@@ -49,7 +52,7 @@ import { UploadMainImagePostUseCase } from '@blog/usecases/upload.main.image.pos
       { name: UserBanBlog.name, schema: UserBanBlogSchema },
       { name: Blog.name, schema: BlogSchema },
     ]),
-    TypeOrmModule.forFeature([Blogs, BlogBanUser, BlogBan, BlogImage]),
+    TypeOrmModule.forFeature([Blogs, BlogBanUser, BlogBan, BlogImage, BlogSubscription]),
     UserModule,
     CommentModule,
     forwardRef(() => PostModule),
@@ -67,6 +70,9 @@ import { UploadMainImagePostUseCase } from '@blog/usecases/upload.main.image.pos
     UploadWallpaperImageUseCase,
     UploadMainImageBlogUseCase,
     UploadMainImagePostUseCase,
+
+    DeleteSubscriptionBlogUseCase,
+    CreateSubscriptionBlogUseCase,
 
     BlogRepository,
     BlogQueryRepository,
