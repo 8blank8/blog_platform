@@ -6,6 +6,7 @@ import { Users } from '@user/domain/typeorm/user.entity';
 import { UserQueryParamType } from '@user/models/user.query.param.type';
 import { Repository } from 'typeorm';
 import { UserBanned } from '@user/domain/typeorm/user.banned.entity';
+import { UserTelegramProfile } from '@user/domain/typeorm/user.telegram.profile.entity';
 
 @Injectable()
 export class UserQueryRepositoryTypeorm {
@@ -13,7 +14,8 @@ export class UserQueryRepositoryTypeorm {
     @InjectRepository(Users) private userQueryRepository: Repository<Users>,
     @InjectRepository(UsersConfirmationEmail)
     private userConfirmationEmailRepository: Repository<UsersConfirmationEmail>,
-    @InjectRepository(UserBanned) private userBannedRepository: Repository<UserBanned>
+    @InjectRepository(UserBanned) private userBannedRepository: Repository<UserBanned>,
+    @InjectRepository(UserTelegramProfile) private userTelegramProfileRepository: Repository<UserTelegramProfile>
   ) { }
 
   async findUserByLoginOrEmail(loginOrEmail: string): Promise<Users | null> {
@@ -33,9 +35,18 @@ export class UserQueryRepositoryTypeorm {
       .createQueryBuilder('u')
       .where('u.id = :userId', { userId: userId })
       .leftJoinAndSelect('u.banInfo', 'ban')
+      // .leftJoinAndSelect('u.telegramProfile', 't')
       .getOne();
 
     return user;
+  }
+
+  async findTelegramProfileByUserId(userId: string): Promise<UserTelegramProfile | null> {
+    const profile = await this.userTelegramProfileRepository.createQueryBuilder('p')
+      .where('p."userId" = :userId', { userId })
+      .getOne()
+
+    return profile
   }
 
   async findUserWitchBanInfo(userId: string) {
@@ -137,6 +148,15 @@ export class UserQueryRepositoryTypeorm {
       .getOne()
 
     return banInfo
+  }
+
+  async findUserByTelegramCode(code: string): Promise<Users | null> {
+    const user = await this.userQueryRepository.createQueryBuilder('u')
+      .where('u.telegramCode = :code', { code })
+      .leftJoinAndSelect('u.telegramProfile', 't')
+      .getOne()
+
+    return user
   }
 
   private _mapUserWitchBanInfo(user: Users) {
