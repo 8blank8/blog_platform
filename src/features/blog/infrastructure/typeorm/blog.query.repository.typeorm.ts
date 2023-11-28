@@ -1,6 +1,7 @@
 import { BlogBan } from '@blog/domain/typeorm/blog.ban.entity';
 import { Blogs } from '@blog/domain/typeorm/blog.entity';
 import { BlogImage } from '@blog/domain/typeorm/blog.image';
+import { BlogSubscription } from '@blog/domain/typeorm/blog.subscription';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BlogQueryParamModel } from '@sa/models/blog.query.param';
@@ -14,12 +15,14 @@ export class BlogQueryRepositoryTypeorm {
     @InjectRepository(Blogs) private blogRepository: Repository<Blogs>,
     @InjectRepository(BlogBan) private blogBanRepository: Repository<BlogBan>,
     @InjectRepository(BlogImage) private blogImageRepository: Repository<BlogImage>,
+    @InjectRepository(BlogSubscription) private blogSubscriptionRepository: Repository<BlogSubscription>,
   ) { }
-
-  async findBlogViewById(blogId: string) {
+  // TODO: написать тесты для подписки, не работает получения статуса подсписки пользователя
+  async findBlogViewById(blogId: string, userId?: string) {
     const blog = await this.blogRepository
       .createQueryBuilder('b')
       .where('b.id = :blogId AND b.isBanned = false', { blogId })
+      .leftJoinAndSelect('b.subscriptions', 's', 's."userId" = :userId', { userId })
       // .leftJoin('b.banInfo', 'ban')
       .leftJoinAndSelect('b.images', 'i',)
       .getOne();
@@ -66,7 +69,7 @@ export class BlogQueryRepositoryTypeorm {
     };
   }
 
-  async findAllBlogsView(queryParam: BlogQueryParamModel) {
+  async findAllBlogsView(queryParam: BlogQueryParamModel, userId: string) {
     const pagination = new BlogPagination(queryParam).getBlogPaginationForSql();
     const {
       searchNameTerm,
@@ -82,6 +85,7 @@ export class BlogQueryRepositoryTypeorm {
       .where('b.isBanned = false')
       .andWhere('name ILIKE :searchNameTerm', { searchNameTerm })
       .leftJoinAndSelect('b.images', 'i')
+      .leftJoinAndSelect('b.subscriptions', 's', 's."userId" = :userId', { userId })
       // .leftJoin('b.banInfo', 'ban')
       .orderBy(
         `"${sortBy}" ${sortBy === 'createdAt' ? '' : 'COLLATE "C"'}`,
@@ -97,6 +101,7 @@ export class BlogQueryRepositoryTypeorm {
       .andWhere('b.isBanned = false')
       // .leftJoin('b.banInfo', 'ban')
       .getCount();
+
 
     return {
       pagesCount: Math.ceil(totalCount / pageSize),
@@ -133,6 +138,16 @@ export class BlogQueryRepositoryTypeorm {
     return this._mapBlogImages(blogImages)
   }
 
+  async findSubscriptionsByBlogId(blogId: string): Promise<BlogSubscription[]> {
+    const subscriptions = await this.blogSubscriptionRepository.createQueryBuilder('s')
+      .where('s."blogId" = :blogId', { blogId })
+      .leftJoin('s.user', 'u')
+      .leftJoinAndSelect('u.telegramProfile', 'tp')
+      .getMany()
+
+    return subscriptions
+  }
+
   private _mapBlogImages(blogImages: BlogImage[]) {
     let wallpaper: any = null
     let main: Array<any> = []
@@ -158,7 +173,7 @@ export class BlogQueryRepositoryTypeorm {
     }
   }
 
-  private _mapBlogView(blog: Blogs) {
+  private _mapBlogView(blog: Blogs, subscribersCount?: BlogSubscription[]) {
     let wallpaper: any = null
     let main: Array<any> = []
 
@@ -189,7 +204,9 @@ export class BlogQueryRepositoryTypeorm {
       images: {
         wallpaper: wallpaper,
         main: main
-      }
+      },
+      currentUserSubscriptionStatus: blog.subscriptions.currentUserSubscriptionStatus ?? 'None',
+      subscribersCount: blog.subscribersCount
     }
   }
 }
