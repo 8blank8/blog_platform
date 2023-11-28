@@ -5,6 +5,7 @@ import { useContainer } from 'class-validator';
 
 import { HttpExceptionFilter } from './exception.filter';
 import { AppModule } from './app.module';
+import { TelegramAdapter } from '@utils/adapters/telegram.adapter';
 
 global.appRoot = __dirname
 
@@ -31,6 +32,10 @@ async function bootstrap() {
     }),
   );
   app.useGlobalFilters(new HttpExceptionFilter());
+
+  const telegramAdapter = await app.resolve(TelegramAdapter)
+  await telegramAdapter.setWebhook('https://de7a2c2f797a7b4021ff0ad1bfd04d3a.serveo.net')
+
   await app.listen(5001);
 }
 bootstrap();
