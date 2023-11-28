@@ -5,6 +5,7 @@ import { Users } from '@user/domain/typeorm/user.entity';
 import { UsersConfirmationEmail } from '@user/domain/typeorm/user.confirmation.email.entity';
 import { UsersPassword } from '@user/domain/typeorm/user.password.entity';
 import { UserBanned } from '@user/domain/typeorm/user.banned.entity';
+import { UserTelegramProfile } from '@user/domain/typeorm/user.telegram.profile.entity';
 
 @Injectable()
 export class UserRepositoryTypeorm {
@@ -14,7 +15,8 @@ export class UserRepositoryTypeorm {
     private userConfirmationRepository: Repository<UsersConfirmationEmail>,
     @InjectRepository(UsersPassword)
     private userPasswordRepository: Repository<UsersPassword>,
-    @InjectRepository(UserBanned) private userBannedRepository: Repository<UserBanned>
+    @InjectRepository(UserBanned) private userBannedRepository: Repository<UserBanned>,
+    @InjectRepository(UserTelegramProfile) private userTelegramProfileRepository: Repository<UserTelegramProfile>
   ) { }
 
   async saveUser(user: Users) {
@@ -31,6 +33,10 @@ export class UserRepositoryTypeorm {
 
   async saveUserBanned(banInfo: UserBanned) {
     return this.userBannedRepository.save(banInfo)
+  }
+
+  async saveTelegramProfile(profile: UserTelegramProfile) {
+    return this.userTelegramProfileRepository.save(profile)
   }
 
   async deleteUser(userId: string) {
