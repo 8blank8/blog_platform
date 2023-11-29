@@ -11,7 +11,10 @@ export class UserTelegramProfile {
     username: string
 
     @Column()
-    telegramId: number
+    telegramId: string
+
+    @Column()
+    userId: string
 
     @OneToOne(() => Users, user => user.telegramProfile, { onDelete: 'CASCADE' })
     user: Users
