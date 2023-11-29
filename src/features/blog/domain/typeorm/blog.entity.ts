@@ -46,7 +46,7 @@ export class Blogs {
   @OneToMany(() => BlogImage, image => image.blog)
   images: BlogImage[]
 
-  @OneToMany(() => BlogSubscription, subs => subs.blog)
+  @OneToMany(() => BlogSubscription, subs => subs.blog, { nullable: true })
   subscriptions: BlogSubscription
 
   @Column({ default: 0 })
