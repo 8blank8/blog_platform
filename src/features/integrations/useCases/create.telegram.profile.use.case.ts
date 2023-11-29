@@ -20,9 +20,12 @@ export class CreateTelegramProfileUseCase {
         if (profile) return false
 
         const telegramProfile = new UserTelegramProfile()
-        telegramProfile.telegramId = inputData.message.from.id
+        telegramProfile.telegramId = String(inputData.message.from.id)
         telegramProfile.user = user
+        telegramProfile.userId = user.id
         telegramProfile.username = inputData.message.from.username
+
+        // console.log(telegramProfile, 'create telegram profile')
 
         await this.userRepository.saveTelegramProfile(telegramProfile)
         return true
