@@ -36,10 +36,11 @@ export class BlogRepositoryTypeorm {
   }
 
   async deleteSubscription(userId: string, blogId: string) {
-    return this.blogSubscriptionRepository.createQueryBuilder('s')
+    return this.blogSubscriptionRepository.createQueryBuilder()
       .delete()
-      .where('s."userId" = :userId', { userId })
-      .andWhere('s."blogId" = :blogId', { blogId })
+      .from(BlogSubscription)
+      .where('"userId" = :userId', { userId })
+      .andWhere('"blogId" = :blogId', { blogId })
       .execute()
   }
 }
