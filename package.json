@@ -17,7 +17,8 @@
     "test-w": "jest --config src/jest.config.js --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "start:serveo": "ssh -R 80:localhost:5001 serveo.net"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.456.0",
@@ -153,7 +154,8 @@
       "^@user/models/(.*)$": "<rootDir>/features/user/models/$1",
       "^@user/repository/(.*)$": "<rootDir>/features/user/infrastructure/$1",
       "^@user/(.*)$": "<rootDir>/features/user/$1",
-      "^@src/(.*)$": "<rootDir>/$1"
+      "^@src/(.*)$": "<rootDir>/$1",
+      "^@features/(.*)$": "<rootDir>/features/$1"
     }
   }
 }
