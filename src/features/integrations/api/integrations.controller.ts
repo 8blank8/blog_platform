@@ -22,7 +22,7 @@ export class IntegrationsController {
         return res.sendStatus(HttpStatus.NO_CONTENT)
     }
 
-    // @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard)
     @Get('auth-bot-link')
     async getAuthLinkForTelegramBot(
         @Req() req
