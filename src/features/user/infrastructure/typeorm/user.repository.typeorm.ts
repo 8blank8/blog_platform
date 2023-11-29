@@ -36,7 +36,7 @@ export class UserRepositoryTypeorm {
   }
 
   async saveTelegramProfile(profile: UserTelegramProfile) {
-    return this.userTelegramProfileRepository.save(profile)
+    return this.userTelegramProfileRepository.insert(profile)
   }
 
   async deleteUser(userId: string) {
