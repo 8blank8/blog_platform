@@ -43,7 +43,7 @@ export class UserQueryRepositoryTypeorm {
 
   async findTelegramProfileByUserId(userId: string): Promise<UserTelegramProfile | null> {
     const profile = await this.userTelegramProfileRepository.createQueryBuilder('p')
-      .where('p."userId" = :userId', { userId })
+      .where('p.userId = :userId', { userId })
       .getOne()
 
     return profile
@@ -153,7 +153,7 @@ export class UserQueryRepositoryTypeorm {
   async findUserByTelegramCode(code: string): Promise<Users | null> {
     const user = await this.userQueryRepository.createQueryBuilder('u')
       .where('u.telegramCode = :code', { code })
-      .leftJoinAndSelect('u.telegramProfile', 't')
+      // .leftJoinAndSelect('u.telegramProfile', 't')
       .getOne()
 
     return user
