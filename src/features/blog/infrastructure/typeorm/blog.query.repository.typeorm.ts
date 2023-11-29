@@ -21,11 +21,25 @@ export class BlogQueryRepositoryTypeorm {
   async findBlogViewById(blogId: string, userId?: string) {
     const blog = await this.blogRepository
       .createQueryBuilder('b')
+      .select(`
+      b.id, b.name, b.description,
+       b.websiteUrl, b.createdAt, b.isMembership,
+       b."subscribersCount", s."currentUserSubscriptionStatus" as "subscriptionStatus",
+       ARRAY[
+        jsonb_build_object(
+          'url', image."url", 
+          'width', image."width",
+          'height', image."height", 
+          'fileSize', image."fileSize",
+          'title', image."title"
+        )
+    ] as images
+       `)
+      .leftJoin('b.subscriptions', 's', 's."userId" = :userId', { userId })
       .where('b.id = :blogId AND b.isBanned = false', { blogId })
-      .leftJoinAndSelect('b.subscriptions', 's', 's."userId" = :userId', { userId })
       // .leftJoin('b.banInfo', 'ban')
-      .leftJoinAndSelect('b.images', 'i',)
-      .getOne();
+      .leftJoin('b.images', 'image',)
+      .getRawOne();
     if (!blog) return null
 
     return this._mapBlogView(blog)
@@ -82,10 +96,24 @@ export class BlogQueryRepositoryTypeorm {
 
     const blogs = await this.blogRepository
       .createQueryBuilder('b')
+      .select(`
+      b.id, b.name, b.description,
+       b.websiteUrl, b.createdAt, b.isMembership,
+       b."subscribersCount", s."currentUserSubscriptionStatus" as "subscriptionStatus",
+       ARRAY[
+        jsonb_build_object(
+          'url', image."url", 
+          'width', image."width",
+          'height', image."height", 
+          'fileSize', image."fileSize",
+          'title', image."title"
+        )
+    ] as images
+       `)
       .where('b.isBanned = false')
       .andWhere('name ILIKE :searchNameTerm', { searchNameTerm })
-      .leftJoinAndSelect('b.images', 'i')
-      .leftJoinAndSelect('b.subscriptions', 's', 's."userId" = :userId', { userId })
+      .leftJoin('b.images', 'image')
+      .leftJoin('b.subscriptions', 's', 's."userId" = :userId', { userId })
       // .leftJoin('b.banInfo', 'ban')
       .orderBy(
         `"${sortBy}" ${sortBy === 'createdAt' ? '' : 'COLLATE "C"'}`,
@@ -93,7 +121,7 @@ export class BlogQueryRepositoryTypeorm {
       )
       .offset(offset)
       .limit(pageSize)
-      .getMany();
+      .getRawMany();
 
     const totalCount = await this.blogRepository
       .createQueryBuilder('b')
@@ -141,11 +169,21 @@ export class BlogQueryRepositoryTypeorm {
   async findSubscriptionsByBlogId(blogId: string): Promise<BlogSubscription[]> {
     const subscriptions = await this.blogSubscriptionRepository.createQueryBuilder('s')
       .where('s."blogId" = :blogId', { blogId })
-      .leftJoin('s.user', 'u')
-      .leftJoinAndSelect('u.telegramProfile', 'tp')
+      .leftJoinAndSelect('s.telegramProfile', 'tp')
       .getMany()
 
     return subscriptions
+  }
+
+  async findOneSubscriptionByUserId(blogId: string, userId: string): Promise<BlogSubscription | null> {
+    const subscription = await this.blogSubscriptionRepository.createQueryBuilder('s')
+      .where('s."blogId" = :blogId AND s."userId" = :userId', { blogId, userId })
+      // .leftJoinAndSelect('u.telegramProfile', 'tp')
+      .getOne()
+
+    if (!subscription) return null
+
+    return subscription
   }
 
   private _mapBlogImages(blogImages: BlogImage[]) {
@@ -173,7 +211,7 @@ export class BlogQueryRepositoryTypeorm {
     }
   }
 
-  private _mapBlogView(blog: Blogs, subscribersCount?: BlogSubscription[]) {
+  private _mapBlogView(blog) {
     let wallpaper: any = null
     let main: Array<any> = []
 
@@ -188,7 +226,8 @@ export class BlogQueryRepositoryTypeorm {
         }
         if (image.title === 'wallpaper') {
           wallpaper = imageDto
-        } else {
+        }
+        if (image.title === 'main') {
           main.push(imageDto)
         }
       });
@@ -205,7 +244,7 @@ export class BlogQueryRepositoryTypeorm {
         wallpaper: wallpaper,
         main: main
       },
-      currentUserSubscriptionStatus: blog.subscriptions.currentUserSubscriptionStatus ?? 'None',
+      currentUserSubscriptionStatus: blog.subscriptionStatus ?? 'None',
       subscribersCount: blog.subscribersCount
     }
   }
