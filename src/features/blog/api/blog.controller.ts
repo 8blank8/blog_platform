@@ -86,7 +86,7 @@ export class BlogController {
     const userId = req.user
 
     const isSubscription = await this.commandBus.execute(new CreateSubscriptionBlogCommand(userId, blogId))
-    if (!isSubscription) res.sendStatus(HttpStatus.NOT_FOUND)
+    if (!isSubscription) return res.sendStatus(HttpStatus.NOT_FOUND)
 
     return res.sendStatus(HttpStatus.NO_CONTENT)
   }
@@ -101,7 +101,7 @@ export class BlogController {
     const userId = req.user
 
     const isSubscription = await this.commandBus.execute(new DeleteSubscriptionBlogCommand(userId, blogId))
-    if (!isSubscription) res.sendStatus(HttpStatus.NOT_FOUND)
+    if (!isSubscription) return res.sendStatus(HttpStatus.NOT_FOUND)
 
     return res.sendStatus(HttpStatus.NO_CONTENT)
   }
