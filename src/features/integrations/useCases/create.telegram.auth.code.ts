@@ -11,7 +11,7 @@ export class CreateTelegramAuthCodeUseCase {
         private userRepository: UserRepositoryTypeorm
     ) { }
 
-    async execute(userId: string): Promise<string | boolean> {
+    async execute(userId: string): Promise<{ link: string } | boolean> {
 
         const user = await this.userQueryRepository.findUserByIdForSa(userId)
         const profile = await this.userQueryRepository.findTelegramProfileByUserId(userId)
@@ -23,6 +23,6 @@ export class CreateTelegramAuthCodeUseCase {
 
         await this.userRepository.saveUser(user)
 
-        return `https://t.me/blog_patf_bot?start=code=${code}`
+        return { link: `https://t.me/blog_patf_bot?code=${code}` }
     }
 }
