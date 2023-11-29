@@ -25,12 +25,19 @@ export class CreateSubscriptionBlogUseCase {
 
         const user = await this.userQueryRepository.findUserByIdForSa(userId)
         const blog = await this.blogQueryRepository.findFullBlogById(blogId)
+        const telegramProfile = await this.userQueryRepository.findTelegramProfileByUserId(userId)
+        const prevSubscription = await this.blogQueryRepository.findOneSubscriptionByUserId(blogId, userId)
+        if (prevSubscription) return false
         if (!user || !blog) return false
 
         const subscription = new BlogSubscription()
         subscription.blog = blog
         subscription.user = user
         subscription.currentUserSubscriptionStatus = 'Subscribed'
+
+        if (telegramProfile) {
+            subscription.telegramProfile = telegramProfile
+        }
 
         blog.subscribersCount += 1
 
