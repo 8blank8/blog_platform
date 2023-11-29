@@ -610,64 +610,157 @@ describe('blogger api', () => {
   //   })
   // })
 
+  // describe('delete all data', () => {
+  //   it('delete all data', async () => {
+  //     await dropDataBase(app)
+  //   })
+  // })
+
+  // describe('upload wallpaper for blog', () => {
+  //   const user6 = new Auth()
+  //   const blog8 = new Blog()
+
+  //   let postId: string
+
+  //   it('create user6 should be status 201', async () => {
+  //     await user6.registrationUser(app, 6)
+  //   })
+
+  //   it('login user6 should be status 200', async () => {
+  //     await user6.loginUser(app)
+  //   })
+
+  //   it('create blog8 by user6 should be status 201', async () => {
+  //     await blog8.createBlog_201(
+  //       app,
+  //       {
+  //         name: "blog1_user1",
+  //         description: "is blog for user1",
+  //         websiteUrl: "https://website.com"
+  //       },
+  //       user6.accessToken
+  //     )
+  //   })
+
+  //   it('upload wallpaper should be status 201', async () => {
+  //     const path = join(__dirname, '10.jpg')
+  //     await blog8.uploadWallpaper_201(app, user6.accessToken, path)
+  //   })
+
+  //   // it('upload main image should be status 201', async () => {
+  //   //   const path = join(__dirname, '10.jpg')
+  //   //   await blog8.uploadMainImage_201(app, user6.accessToken, path)
+  //   // })
+
+  //   // it('create post for blog8 should be status 201', async () => {
+  //   //   postId = await blog8.createPostByBlogId_201(
+  //   //     app,
+  //   //     {
+  //   //       title: "title_post",
+  //   //       shortDescription: "sdsf;dsf;skd;fks;dkf;",
+  //   //       content: "skanfkdnsaknfdksnfksfkdsnkfnskd"
+  //   //     },
+  //   //     user6.accessToken
+  //   //   )
+  //   // })
+
+  //   // it('upload main image should be status 201', async () => {
+  //   //   const path = join(__dirname, '10.jpg')
+  //   //   await blog8.uploadMainImageForPost_201(app, postId, user6.accessToken, path)
+  //   // })
+  // })
+
   describe('delete all data', () => {
     it('delete all data', async () => {
       await dropDataBase(app)
     })
   })
 
-  describe('upload wallpaper for blog', () => {
-    const user6 = new Auth()
-    const blog8 = new Blog()
+  describe('test subscribes', () => {
+    const user1 = new Auth()
+    const user2 = new Auth()
+    const user3 = new Auth()
 
-    let postId: string
+    const blog1 = new Blog()
 
-    it('create user6 should be status 201', async () => {
-      await user6.registrationUser(app, 6)
+    it('create and login user1, user2, user3, should be status 201', async () => {
+      await user1.registrationUser(app, 1)
+      await user2.registrationUser(app, 2)
+      await user3.registrationUser(app, 3)
+
+      await user1.loginUser(app)
+      await user2.loginUser(app)
+      await user3.loginUser(app)
     })
 
-    it('login user6 should be status 200', async () => {
-      await user6.loginUser(app)
-    })
-
-    it('create blog8 by user6 should be status 201', async () => {
-      await blog8.createBlog_201(
+    it('create blog1 by user1, should be status 201', async () => {
+      await blog1.createBlog_201(
         app,
         {
-          name: "blog1_user1",
-          description: "is blog for user1",
-          websiteUrl: "https://website.com"
+          name: "blog1",
+          description: "blog_description",
+          websiteUrl: "https://site.com"
         },
-        user6.accessToken
+        user1.accessToken
       )
     })
 
-    it('upload wallpaper should be status 201', async () => {
-      const path = join(__dirname, '10.jpg')
-      await blog8.uploadWallpaper_201(app, user6.accessToken, path)
+    it('subscription user2, user3 by blog1, should be status 201', async () => {
+      await blog1.subscriptionForBlog(app, user2.accessToken)
+      await blog1.subscriptionForBlog(app, user3.accessToken)
     })
 
-    // it('upload main image should be status 201', async () => {
-    //   const path = join(__dirname, '10.jpg')
-    //   await blog8.uploadMainImage_201(app, user6.accessToken, path)
-    // })
+    it('find blog1 by user2, should be status 200', async () => {
+      const res = await request(app.getHttpServer())
+        .get(`/blogs/${blog1.id}`)
+        .set('Authorization', `Bearer ${user2.accessToken}`)
 
-    // it('create post for blog8 should be status 201', async () => {
-    //   postId = await blog8.createPostByBlogId_201(
-    //     app,
-    //     {
-    //       title: "title_post",
-    //       shortDescription: "sdsf;dsf;skd;fks;dkf;",
-    //       content: "skanfkdnsaknfdksnfksfkdsnkfnskd"
-    //     },
-    //     user6.accessToken
-    //   )
-    // })
+      expect(res.status).toBe(HttpStatus.OK)
 
-    // it('upload main image should be status 201', async () => {
-    //   const path = join(__dirname, '10.jpg')
-    //   await blog8.uploadMainImageForPost_201(app, postId, user6.accessToken, path)
-    // })
+      expect(res.body).toEqual({
+        id: blog1.id,
+        description: blog1.description,
+        createdAt: blog1.createdAt,
+        isMembership: blog1.isMembership,
+        name: blog1.name,
+        websiteUrl: blog1.websiteUrl,
+        images: {
+          wallpaper: null,
+          main: []
+        },
+        currentUserSubscriptionStatus: 'Subscribed',
+        subscribersCount: 2
+      })
+    })
+
+    it('find all blogs by user3, should be status 200', async () => {
+      const res = await request(app.getHttpServer())
+        .get('/blogs')
+        .set('Authorization', `Bearer ${user3.accessToken}`)
+
+      expect(res.status).toBe(HttpStatus.OK)
+
+      expect(res.body.items[0]).toEqual({
+        id: blog1.id,
+        description: blog1.description,
+        createdAt: blog1.createdAt,
+        isMembership: blog1.isMembership,
+        name: blog1.name,
+        websiteUrl: blog1.websiteUrl,
+        images: {
+          wallpaper: null,
+          main: []
+        },
+        currentUserSubscriptionStatus: 'Subscribed',
+        subscribersCount: 2
+      })
+
+    })
+
+    it('user2 delete subscription for blog1, should be status 204', async () => {
+      await blog1.deleteSubscriptionForBlog(app, user2.accessToken)
+    })
+
   })
 
   afterAll(async () => {

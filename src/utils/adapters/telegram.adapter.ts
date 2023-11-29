@@ -18,7 +18,7 @@ export class TelegramAdapter {
         })
     }
 
-    async sendMessage(telegramId: number, text: string) {
+    async sendMessage(telegramId: string, text: string) {
         await this.axiosInstance.post('sendMessage', {
             chat_id: telegramId,
             text: text

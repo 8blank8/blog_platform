@@ -257,6 +257,21 @@ export class Blog {
         })
     }
 
+    async subscriptionForBlog(app: INestApplication, accessToken: string) {
+        const res = await request(app.getHttpServer())
+            .post(`/blogs/${this.id}/subscription`)
+            .set('Authorization', `Bearer ${accessToken}`)
+
+        expect(res.status).toBe(HttpStatus.NO_CONTENT)
+    }
+
+    async deleteSubscriptionForBlog(app: INestApplication, accessToken: string) {
+        const res = await request(app.getHttpServer())
+            .delete(`/blogs/${this.id}/subscription`)
+            .set('Authorization', `Bearer ${accessToken}`)
+
+        expect(res.status).toBe(HttpStatus.NO_CONTENT)
+    }
 }
 
 class UserInfo {
