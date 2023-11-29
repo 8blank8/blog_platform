@@ -23,14 +23,18 @@ export class DeleteSubscriptionBlogUseCase {
 
         const { userId, blogId } = command
 
-        const user = await this.userQueryRepository.findUserByIdForSa(userId)
+        // const user = await this.userQueryRepository.findUserByIdForSa(userId)
         const blog = await this.blogQueryRepository.findFullBlogById(blogId)
-        if (!user || !blog) return false
+        const subscription = await this.blogQueryRepository.findOneSubscriptionByUserId(blogId, userId)
+        if (!blog || !subscription) return false
+        if (subscription.currentUserSubscriptionStatus === 'Unsubscribed') return false
 
         blog.subscribersCount -= 1
-
         await this.blogRepository.saveBlog(blog)
-        await this.blogRepository.deleteSubscription(user.id, blog.id)
+
+        subscription.currentUserSubscriptionStatus = 'Unsubscribed'
+        await this.blogRepository.saveSubscription(subscription)
+        // await this.blogRepository.deleteSubscription(user.id, blog.id)
 
         return true
     }
