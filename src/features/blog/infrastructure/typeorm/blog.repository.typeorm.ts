@@ -4,6 +4,7 @@ import { BlogImage } from '@blog/domain/typeorm/blog.image';
 import { BlogSubscription } from '@blog/domain/typeorm/blog.subscription';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UserTelegramProfile } from '@user/domain/typeorm/user.telegram.profile.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -41,6 +42,14 @@ export class BlogRepositoryTypeorm {
       .from(BlogSubscription)
       .where('"userId" = :userId', { userId })
       .andWhere('"blogId" = :blogId', { blogId })
+      .execute()
+  }
+
+  async updateTelegramProfileForSubscription(userId: string, profile: UserTelegramProfile) {
+    await this.blogSubscriptionRepository.createQueryBuilder()
+      .update(BlogSubscription)
+      .set({ telegramProfile: profile })
+      .where('"userId" = :userId', { userId })
       .execute()
   }
 }
