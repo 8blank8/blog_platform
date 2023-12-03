@@ -3,13 +3,16 @@ import { UserTelegramProfile } from "@user/domain/typeorm/user.telegram.profile.
 import { UserQueryRepositoryTypeorm } from "@user/repository/typeorm/user.query.repository.typeorm";
 import { UserRepositoryTypeorm } from "@user/repository/typeorm/user.repository.typeorm";
 import { TelegramResponseModel } from "../models/telegram.response.model";
+import { BlogQueryRepositoryTypeorm } from "@blog/repository/typeorm/blog.query.repository.typeorm";
+import { BlogRepositoryTypeorm } from "@blog/repository/typeorm/blog.repository.typeorm";
 
 
 @Injectable()
 export class CreateTelegramProfileUseCase {
     constructor(
         private userQueryRepository: UserQueryRepositoryTypeorm,
-        private userRepository: UserRepositoryTypeorm
+        private userRepository: UserRepositoryTypeorm,
+        private blogRepository: BlogRepositoryTypeorm
     ) { }
 
     async execute(code: string, inputData: TelegramResponseModel): Promise<boolean> {
@@ -24,10 +27,10 @@ export class CreateTelegramProfileUseCase {
         telegramProfile.user = user
         telegramProfile.userId = user.id
         telegramProfile.username = inputData.message.from.username
-
-        // console.log(telegramProfile, 'create telegram profile')
-
         await this.userRepository.saveTelegramProfile(telegramProfile)
+
+        await this.blogRepository.updateTelegramProfileForSubscription(user.id, telegramProfile)
+
         return true
     }
 }
