@@ -51,15 +51,14 @@ export class CreatePostByBlogIdUseCase {
 
   private async sendNotificationSubscriptionsTelegram(name: string, blogId: string) {
 
-    const subscriptions = await this.blogQueryRepository.findSubscriptionsByBlogId(blogId)
+    const telegramIds = await this.blogQueryRepository.findSubscriptiosWithTelegramProfile(blogId)
 
-    const profiles = subscriptions.filter(subscription => subscription.telegramProfile)
-    console.log(profiles, 'profiles ..................')
-    if (profiles.length === 0) return false
-    console.log(profiles, 'for send notification')
-    for (let i = 0; i <= profiles.length; i++) {
-      const profile = profiles[i]
-      await this.telegramAdapter.sendMessage(profile.telegramProfile.telegramId, `published posts for blog ${name}`)
+    if (telegramIds.length === 0) return false
+
+    for (let i = 0; i < telegramIds.length; i++) {
+      const telegramId = telegramIds[i].telegramId
+
+      await this.telegramAdapter.sendMessage(telegramId, `published posts for blog ${name}`)
     }
 
   }
