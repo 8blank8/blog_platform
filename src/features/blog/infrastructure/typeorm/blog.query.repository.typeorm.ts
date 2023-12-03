@@ -175,6 +175,16 @@ export class BlogQueryRepositoryTypeorm {
     return subscriptions
   }
 
+  async findSubscriptiosWithTelegramProfile(blogId: string): Promise<{ telegramId: string; }[]> {
+    const telegramIds = await this.blogSubscriptionRepository.createQueryBuilder('s')
+      .select('tp."telegramId" as "telegramId"')
+      .where(`s."blogId" = :blogId AND tp."telegramId" is not null AND s."currentUserSubscriptionStatus" = 'Subscribed'`, { blogId })
+      .leftJoin('s.telegramProfile', 'tp')
+      .getRawMany()
+
+    return telegramIds
+  }
+
   async findOneSubscriptionByUserId(blogId: string, userId: string): Promise<BlogSubscription | null> {
     const subscription = await this.blogSubscriptionRepository.createQueryBuilder('s')
       .where('s."blogId" = :blogId AND s."userId" = :userId', { blogId, userId })
