@@ -34,7 +34,7 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionFilter());
 
   const telegramAdapter = await app.resolve(TelegramAdapter)
-  await telegramAdapter.setWebhook('https://a1cccac0067e8dd33ef1aab550014e0a.serveo.net')
+  await telegramAdapter.setWebhook('https://0b084319dd12a94a825425d36895d5dc.serveo.net')
 
   await app.listen(5001);
 }

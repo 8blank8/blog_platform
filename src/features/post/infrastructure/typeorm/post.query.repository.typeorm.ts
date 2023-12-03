@@ -302,7 +302,7 @@ export class PostQueryRepositoryTypeorm {
         login: like.login,
       };
     });
-    console.log(post)
+
     let images: any = { main: [] }
     if (post.images.length !== 0) {
       images.main = post.images.map(image => {
